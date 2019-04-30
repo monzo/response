@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Reponse</title>
+  <link rel="shortcut icon" href="{% static "images/favicon.png" %}">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Reponse">
+  <meta name="author" content="Monzo">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="{% static "manifest.json" %}">
+
+  <link href="{% static "bootstrap/css/bootstrap.css" %}" rel="stylesheet">
+  <link href="{% static "common.css" %}" rel="stylesheet">
+
+  {% block head %}{% endblock %}
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img  id="logo" src="{% static "images/response.png" %}" />
+        <strong>Response</strong>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          {% block navbar %}{% endblock %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container bg-white mt-4 mb-4">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  {% comment %} <script src="{% static "jquery/jquery.min.js" %}"></script> {% endcomment %}
+  <script src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+  {% block javascript %}{% endblock %}
+
+</body>
+
+</html>
