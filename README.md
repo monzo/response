@@ -40,7 +40,11 @@ Broadly speaking, this sets things up as below:
 
 ## 2. Configure Response
 
-Response is configured using environment variables, which for local development can be set in the `docker-compose.yaml` file.
+Response is configured using environment variables in a `.env` file. Create your own:
+```
+$ cp env.example .env
+```
+and update the variables in it:
 
 ### OAuth Access Token (`SLACK_TOKEN`)
 
