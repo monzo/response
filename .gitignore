@@ -8,3 +8,4 @@ __pycache__
 db.sqlite3
 Pipfile
 virtual-env
+*.env

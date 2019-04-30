@@ -15,10 +15,7 @@ services:
       - db
     environment:
       POSTGRES: "true"
-      SLACK_TOKEN: "<SET_THIS>"
-      SLACK_SIGNING_SECRET: "<SET_THIS>"
-      INCIDENT_CHANNEL_NAME: "<SET_THIS>"
-      INCIDENT_BOT_NAME: "<SET_THIS>"
+    env_file: .env
     volumes:
       - ./:/app
     stdin_open: true
