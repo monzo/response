@@ -1,0 +1,111 @@
+
+/* ------- Status bits-------- */
+
+#status {
+  color: grey;
+}
+
+#status .live {
+  padding: 5px;
+  background: red;
+  color: lightpink;
+  margin-right: 5px;
+  animation: blinker 1s linear infinite;
+}
+
+#status .resolved {
+  padding: 5px;
+  background: green;
+  color: lightgreen;
+  margin-right: 5px;
+}
+
+@keyframes blinker {
+  50% {
+      opacity: 0.6;
+  }
+}
+
+/* ------- Summary bullets -------- */
+
+
+.summary-data li {
+  margin: 0 0 2px 0;
+}
+
+.summary-data li > span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* ------- The Timeline-------- */
+
+/* The actual timeline (the vertical ruler) */
+.timeline {
+  position: relative;
+  margin: 0 auto;
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  background-color: #c3c8cf;
+  top: 0;
+  bottom: 0;
+  left: 28px;
+  margin-left: -3px;
+}
+
+/* Container around content */
+.timeline .container {
+  padding: 10px 0px;
+  position: relative;
+  background-color: inherit;
+  width: 100%;
+  padding-left: 50px;
+}
+
+/* Make sure that all arrows are pointing leftwards */
+.timeline .container::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  left: 40px;
+  border: medium solid white;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent #f7f7f7 transparent transparent;
+}
+
+/* The circles on the timeline */
+.timeline .container::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  left: 22px;
+  background-color: #c3c8cf;
+  border: 4px solid #c3c8cf;
+  top: 25px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* The actual content */
+.timeline .content {
+  padding: 10px 10px;
+  background-color: #f7f7f7;
+  position: relative;
+  border-radius: 6px;
+  word-wrap: break-word;
+}
+
+.timeline .content p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-right: 80px;
+}

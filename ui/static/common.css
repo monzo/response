@@ -1,0 +1,12 @@
+body {
+    background: #eeeeeeff;
+    overflow-wrap: break-word;
+    text-decoration: none;
+}
+
+#logo {
+    height: 30px;
+    position: relative;
+    top: -2px;
+    margin-right: 10px;
+}

@@ -1,0 +1,14 @@
+{
+    "short_name": "Response",
+    "name": "Response",
+    "icons": [
+        {
+            "src": "/static/images/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#14233c"
+}

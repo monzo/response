@@ -1,0 +1,4 @@
+virtual-env
+.vscode
+db.sqlite
+postgres_data

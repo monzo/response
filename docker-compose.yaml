@@ -1,0 +1,50 @@
+version: '3'
+services:
+
+  response:
+    build:
+      context: .
+      dockerfile: Dockerfile.response
+    image: response
+    container_name: response
+    entrypoint: bash
+    command: /app/startup.sh
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      POSTGRES: "true"
+    env_file: .env
+    volumes:
+      - ./:/app
+    stdin_open: true
+    tty: true
+
+  cron:
+    build:
+      context: .
+      dockerfile: Dockerfile.cron
+    image: cron
+    container_name: cron
+    depends_on:
+      - response
+    tty: true
+
+  db:
+    image: "postgres:11.2"
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  ngrok:
+    image: gtriggiano/ngrok-tunnel
+    container_name: ngrok
+    environment:
+      TARGET_HOST: "response"
+      TARGET_PORT: 8000
+    ports:
+      - "4040:4040"
+
+volumes:
+  postgres_data:

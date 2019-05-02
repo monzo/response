@@ -1,0 +1,11 @@
+.vscode
+.envrc
+.DS_Store
+postgres_data
+
+__pycache__
+/static/
+db.sqlite3
+Pipfile
+virtual-env
+*.env
