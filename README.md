@@ -8,7 +8,7 @@ The tool integrates deeply with Slack and revolves around the following ideals:
   Context switching during an incident is often unavoidable.  Response aims to limit this, by enabling actions to be carried out without leaving the conversation.
 
 - **Make the easy thing the right thing**
-  If something needs doing, bring it to the attention of the responder when it makes sense, or better still automate it way.
+  If something needs doing, bring it to the attention of the responder when it makes sense, or better still automate it away.
 
 <p align="center">
   <img width="300px" src="./docs/headline_post.png"><br />
