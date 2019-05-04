@@ -130,7 +130,7 @@ In the Event Subscriptions page we need to configure the following:
 - In the Request URL enter: `https://<public-url>/slack/event`
 - You need to have the server running and available as Slack sends a challenge to this address and expects a specific response.
 
-- Under the Subcribe to Bot Events section, add the following:
+- Under the Subscribe to Bot Events section, add the following:
   - `app_mention`
   - `pin_added`
   - `pin_removed`
