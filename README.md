@@ -71,7 +71,7 @@ Response uses the Slack signing secret to restrict access to public endpoints.
 
 When an incident is declared, a 'headline' post is sent to a central channel.
 
-- The default channel is `#incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else.
+- The default channel is `incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else (note: do not inclide the #).
 
 ### Bot Name (`INCIDENT_BOT_NAME`)
 
