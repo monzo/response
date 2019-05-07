@@ -13,6 +13,33 @@ if os.environ.get("POSTGRES"):
         }
     }
 
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': " {levelname:5s} - {module:10.15s} - {message}",
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
+
+
 SLACK_TOKEN = get_env_var("SLACK_TOKEN", True)
 SLACK_SIGNING_SECRET = get_env_var("SLACK_SIGNING_SECRET", True)
 INCIDENT_CHANNEL_NAME = get_env_var("INCIDENT_CHANNEL_NAME", True)
