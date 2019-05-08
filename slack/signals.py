@@ -22,8 +22,6 @@ def update_headline_after_incident_save(sender, instance, **kwargs):
         )
         headline_post.update_in_slack()
 
-        print("Updating the headline post")
-
     except HeadlinePost.DoesNotExist:
         headline_post = HeadlinePost.objects.create_headline_post(
             incident=instance
