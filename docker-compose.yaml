@@ -45,6 +45,8 @@ services:
       TARGET_PORT: 8000
     ports:
       - "4040:4040"
+    depends_on:
+      - response
 
 volumes:
   postgres_data:
