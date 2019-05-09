@@ -54,7 +54,7 @@
         <h2>Timeline</h2>
         {% if events %}
         <div class="timeline">
-            {% for event in events.all %}
+            {% for event in events.all|dictsort:"timestamp" %}
             <div class="container">
                 <div class="content">
                     {{ event.icon|safe }}{{ event.timestamp|date:"H:i:s" }}
