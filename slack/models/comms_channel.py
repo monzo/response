@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
+from urllib.parse import urljoin
 
 from core.models.incident import Incident
 
@@ -17,7 +19,13 @@ class CommsChannelManager(models.Manager):
         try:
             name = f"inc-10{incident.pk}"
             channel_id = create_channel(name)
-            set_channel_topic(channel_id, incident.report)
+
+            doc_url = urljoin(
+                settings.SITE_URL,
+                reverse('incident_doc', kwargs={'incident_id': incident.pk})
+            )
+
+            set_channel_topic(channel_id, f"{incident.report} - {doc_url}")
         except SlackError as e:
             logger.error('Failed to create comms channel {e}')
 
