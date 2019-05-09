@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% load unslackify %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "incidents.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="row pb-4">
+
+    <div class="col-lg-12 text-center">
+        {% comment %} ----- Heading ----- {% endcomment %}
+        <h1 class="mt-3" id="title">Incidents</h1>
+    </div>
+
+    {% if incidents.count > 0 %}
+    <div class="col-lg-12">
+        {% comment %} ----- Incidents ----- {% endcomment %}
+        <h2>{{ incident_filter}}</h2>
+        <div class="table-responsive">
+            <table id="incidents" class="table table-hover">
+                <tr class="d-flex">
+                    <th class="col-1">Incident</th>
+                    {%if show_status %}<th class="col-1">Status</th>{% endif %}
+                    <th class="col-2">Start Time</th>
+                    <th class="col-1">Severity</th>
+                    <th class="col-3">Summary</th>
+                    <th class="col-2">Reporter</th>
+                    <th class="col-2">Lead</th>
+                </tr>
+                {% for incident in incidents %}
+                    <tr class="d-flex">
+                        <td class="col-1"><a href="/incident/{{ incident.pk }}">{{ incident.pk }}</a></td>
+                        {%if show_status %}<td class="col-1" nowrap>{{ incident.status_text|upper }}</td>{% endif %}
+                        <td class="col-2">{{ incident.start_time }}</td>
+                        <td class="col-1">{% if incident.severity %}{{ incident.severity_text|upper }}{% endif %}</td>
+                        <td class="col-3">{{ incident.summary }}</td>
+                        <td class="col-2">{{ incident.reporter|slack_id_to_fullname }}</td>
+                        <td class="col-2">{% if incident.lead %}{{ incident.lead|slack_id_to_fullname }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if incidents.count == 0 %}
+        <h4 class="no-incidents">Awesome, no incidents! &#128526;</h4>
+    {% endif %}
+</div>
+{% endblock %}
