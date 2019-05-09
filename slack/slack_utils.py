@@ -41,6 +41,15 @@ def create_channel(channel_name):
 
     return response['channel']['id']
 
+def set_channel_topic(channel_id, channel_topic):
+    response = slack_client.api_call(
+        "channels.setTopic",
+        channel=channel_id,
+        topic=channel_topic
+    )
+
+    return response
+
 
 def send_message(channel_id, text, attachments=None, thread_ts=None):
     response = slack_client.api_call(

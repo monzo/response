@@ -4,7 +4,7 @@ from django.db import models
 
 from core.models.incident import Incident
 
-from slack.slack_utils import create_channel, send_message, SlackError, rename_channel
+from slack.slack_utils import create_channel, set_channel_topic, send_message, SlackError, rename_channel
 from slack.block_kit import *
 
 import logging
@@ -17,6 +17,7 @@ class CommsChannelManager(models.Manager):
         try:
             name = f"inc-10{incident.pk}"
             channel_id = create_channel(name)
+            set_channel_topic(channel_id, incident.report)
         except SlackError as e:
             logger.error('Failed to create comms channel {e}')
 
