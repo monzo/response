@@ -93,7 +93,7 @@ def send_ephemeral_message(channel_id, user_id, text, attachments=None):
         attachments=attachments,
     )
     if not response.get("ok", False):
-        raise SlackError('Fail to send ephemeral message to {} : {}'.format(user_id, response['error']))
+        raise SlackError('Failed to send ephemeral message to {} : {}'.format(user_id, response['error']))
     return response
 
 
