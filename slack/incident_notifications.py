@@ -23,7 +23,7 @@ def remind_incident_lead(incident: Incident):
         pass
 
 @recurring_notification(interval_mins=720, max_notifications=6)
-def remind_incident_lead(incident: Incident):
+def remind_close_incident(incident: Incident):
     try:
         comms_channel = CommsChannel.objects.get(incident=incident)
         if not incident.is_closed():
