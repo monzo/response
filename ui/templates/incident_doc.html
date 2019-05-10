@@ -22,7 +22,7 @@
 
         {% comment %} ----- Summary ----- {% endcomment %}
         <h2>Summary</h2>
-        <p>{{ incident.summary|unslackify|markdown_filter|safe  }}</p>
+        <p>{% if incident.summary %}{{ incident.summary|unslackify|markdown_filter|safe  }}{% endif %}</p>
         <ul class="summary-data">
             {% if incident.impact %}<li><span>Impact:</span>{{ incident.impact|unslackify|markdown_filter|safe }}</li>{% endif %}
             <li><span>Reporter:</span>{{ incident.reporter|slack_id_to_fullname }}</li>
