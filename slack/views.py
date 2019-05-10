@@ -9,9 +9,12 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from core.models.incident import Incident
-from slack.decorators import handle_action, handle_event, handle_notifications
-from slack.slack_utils import channel_reference
+from slack.decorators import handle_action, handle_event, handle_notifications, handle_dialog
 from slack.authentication import slack_authenticate
+from slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers
+from slack.settings import INCIDENT_REPORT_DIALOG
+from slack.slack_utils import channel_reference
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,24 +29,25 @@ def slash_command(request):
     @param request the request from slack containing the slash command
     @return: return a HTTP response to indicate the request was handled
     """
-    report = request.POST.get('text')
-
-    if not report:
-        return HttpResponse("It looks like you forgot to provide any details 🤔 \
-        \n\nCan you try again with something like `/incident something has happened`?")
 
     user_id = request.POST.get('user_id')
+    trigger_id = request.POST.get('trigger_id')
+    report = request.POST.get('text')
 
-    Incident.objects.create_incident(
-        report=report,
-        reporter=user_id,
-        report_time=datetime.now(),
+    dialog = Dialog(
+        title="Report an Incident",
+        submit_label="Report",
+        elements=[
+            Text(label="Report", name="report", placeholder="What's the tl;dr?", value=report),
+            TextArea(label="Summary", name="summary", optional=True, placeholder="Can you share any more details?"),
+            TextArea(label="Impact", name="impact", optional=True, placeholder="Who or what might be affected?", hint="Think about affected people, systems, and processes"),
+            SelectFromUsers(label="Lead", name="lead", optional=True),
+            SelectWithOptions([(i, s.capitalize()) for i, s in Incident.SEVERITIES], label="Severity", name="severity", optional=True)
+        ]
     )
 
-    incidents_channel_ref = channel_reference(settings.INCIDENT_CHANNEL_ID)
-    text = f"Thanks for raising the incident 🙏\n\nHead over to {incidents_channel_ref} to complete the report and/or help deal with the issue"
-
-    return HttpResponse(text)
+    dialog.send_open_dialog(INCIDENT_REPORT_DIALOG, trigger_id)
+    return HttpResponse()
 
 
 @csrf_exempt
@@ -56,8 +60,14 @@ def action(request):
     @return: return a HTTP response to indicate the request was handled
     """
     payload = json.loads(request.POST['payload'])
+    action_type = payload['type']
 
-    handle_action.after_response(payload)
+    if action_type == 'dialog_submission':
+        handle_dialog.after_response(payload)
+    elif action_type == 'block_actions':
+        handle_action.after_response(payload)
+    else:
+        logger.error(f"No handler for action type {action_type}")
 
     return HttpResponse()
 

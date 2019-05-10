@@ -3,12 +3,16 @@ from django.db import models
 
 
 class IncidentManager(models.Manager):
-    def create_incident(self, report, reporter, report_time):
+    def create_incident(self, report, reporter, report_time, summary=None, impact=None, lead=None, severity=None):
         incident = self.create(
             report=report,
             reporter=reporter,
             report_time=report_time,
             start_time=report_time,
+            summary=summary,
+            impact=impact,
+            lead=lead,
+            severity=severity,
         )
         return incident
 
@@ -26,9 +30,9 @@ class Incident(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
 
     # Additional info
-    summary = models.TextField(blank=True, help_text="What's the high level summary?")
-    impact = models.TextField(blank=True, help_text="What impact is this having?")
-    lead = models.CharField(max_length=50, blank=True, help_text="Who is leading?")
+    summary = models.TextField(blank=True, null=True, help_text="What's the high level summary?")
+    impact = models.TextField(blank=True, null=True, help_text="What impact is this having?")
+    lead = models.CharField(max_length=50, blank=True, null=True, help_text="Who is leading?")
 
     # Severity
     SEVERITIES = (

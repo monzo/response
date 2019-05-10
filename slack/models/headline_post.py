@@ -21,6 +21,7 @@ class HeadlinePostManager(models.Manager):
 
 class HeadlinePost(models.Model):
 
+    EDIT_INCIDENT_BUTTON = "edit-incident-button"
     CLOSE_INCIDENT_BUTTON = "close-incident-button"
     CREATE_COMMS_CHANNEL_BUTTON = "create-comms-channel-button"
 
@@ -52,7 +53,8 @@ class HeadlinePost(models.Model):
         msg.add_block(Section(block_id="incident_doc", text=Text(f"📄 Document: <{doc_url}|Incident {self.incident.pk}>")))
 
         channel_ref = channel_reference(self.comms_channel.channel_id) if self.comms_channel else None
-        msg.add_block(Section(block_id="comms_channel", text=Text(f"🗣 Comms Channel: {channel_ref or '-'}")))
+        if channel_ref:
+            msg.add_block(Section(block_id="comms_channel", text=Text(f"🗣 Comms Channel: {channel_ref or '-'}")))
 
         # Add buttons (if the incident is open)
         if not self.incident.is_closed():
@@ -61,6 +63,8 @@ class HeadlinePost(models.Model):
 
             if not self.comms_channel:
                 actions.add_element(Button(":speaking_head_in_silhouette: Create Comms Channel", self.CREATE_COMMS_CHANNEL_BUTTON, value=self.incident.pk))
+
+            actions.add_element(Button(":pencil2: Edit", self.EDIT_INCIDENT_BUTTON, value=self.incident.pk))
 
             actions.add_element(Button(":white_check_mark: Close", self.CLOSE_INCIDENT_BUTTON, value=self.incident.pk))
 

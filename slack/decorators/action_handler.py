@@ -30,9 +30,10 @@ def handle_action(payload):
         user_id = payload['user']['id']
         incident_id = actions[0]['value']
         message = payload['message']
+        trigger_id = payload['trigger_id']
 
         try:
             incident = Incident.objects.get(id=incident_id)
-            handler(incident, user_id, message)
+            handler(incident, user_id, message, trigger_id=trigger_id)
         except Incident.DoesNotExist:
             logger.error(f"Can't find incident {incident_id} associated with action {action_id}")
