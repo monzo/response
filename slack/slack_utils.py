@@ -29,6 +29,22 @@ def reference_to_id(value):
     return m.group(1) if m else None
 
 
+def get_channel_id(channel_name):
+    response = slack_client.api_call(
+        "channels.list",
+        exclude_archived=True,
+        exclude_members=True,
+    )
+    if not response.get("ok", False):
+        raise SlackError(f"Failed to list channels : {response['error']}")
+
+    for channel in response['channels']:
+        if channel['name'] == channel_name:
+            return channel['id']
+
+    return None
+
+
 def create_channel(channel_name):
     response = slack_client.api_call(
         "channels.create",
@@ -49,6 +65,16 @@ def set_channel_topic(channel_id, channel_topic):
     )
 
     return response
+
+
+def get_or_create_channel(channel_name):
+    try:
+        return create_channel(channel_name)
+    except SlackError:
+        try:
+            return get_channel_id(channel_name)
+        except SlackError:
+            return None
 
 
 def send_message(channel_id, text, attachments=None, thread_ts=None):
@@ -76,7 +102,7 @@ def send_ephemeral_message(channel_id, user_id, text, attachments=None):
         attachments=attachments,
     )
     if not response.get("ok", False):
-        raise SlackError('Fail to send ephemeral message to {} : {}'.format(user_id, response['error']))
+        raise SlackError('Failed to send ephemeral message to {} : {}'.format(user_id, response['error']))
     return response
 
 

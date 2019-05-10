@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 from core.models.incident import Incident
 
-from slack.slack_utils import create_channel, set_channel_topic, send_message, SlackError, rename_channel
+from slack.slack_utils import get_or_create_channel, set_channel_topic, send_message, SlackError, rename_channel
 from slack.block_kit import *
 
 import logging
@@ -17,8 +17,8 @@ class CommsChannelManager(models.Manager):
     def create_comms_channel(self, incident):
         "Creates a comms channel in slack, and saves a reference to it in the DB"
         try:
-            name = f"inc-10{incident.pk}"
-            channel_id = create_channel(name)
+            name = f"inc-{100+incident.pk}"
+            channel_id = get_or_create_channel(name)
 
             doc_url = urljoin(
                 settings.SITE_URL,
