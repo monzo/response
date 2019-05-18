@@ -89,3 +89,9 @@ class Incident(models.Model):
 
     def status_text(self):
         return 'resolved' if self.is_closed() else 'live'
+
+    def status_emoji(self):
+        if self.is_closed():
+            return ":droplet:"
+        else:
+            return ":fire:"   

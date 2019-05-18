@@ -43,6 +43,7 @@ class HeadlinePost(models.Model):
         msg.add_block(Divider())
 
         # Add additional info
+        msg.add_block(Section(block_id="status", text=Text(f"{self.incident.status_emoji()} Status: {self.incident.status_text().capitalize()}")))
         severity_text = self.incident.severity_text().capitalize() if self.incident.severity_text() else "-"
         msg.add_block(Section(block_id="severity", text=Text(f"{self.incident.severity_emoji()} Severity: {severity_text}")))
 
