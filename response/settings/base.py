@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ui.apps.UiConfig',
-    'core.apps.CoreConfig',
-    'slack.apps.SlackConfig',
     'after_response',
     'rest_framework',
     'bootstrap4',
+    'core.apps.CoreConfig',
+    'slack.apps.SlackConfig',
+    'pagerduty.apps.PagerdutyConfig',
 ]
 
 MIDDLEWARE = [

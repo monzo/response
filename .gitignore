@@ -9,3 +9,4 @@ db.sqlite3
 Pipfile
 virtual-env
 *.env
+/src/

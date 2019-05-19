@@ -1,3 +1,4 @@
+-e git+https://github.com/monzo/pagerduty-api-python-client.git#egg=pypd
 bleach==3.1.0
 certifi==2019.3.9
 chardet==3.0.4
