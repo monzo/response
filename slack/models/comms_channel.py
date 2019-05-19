@@ -16,7 +16,7 @@ class CommsChannelManager(models.Manager):
         "Creates a comms channel in slack, and saves a reference to it in the DB"
         try:
             name = f"inc-{100+incident.pk}"
-            channel_id = get_or_create_channel(name)
+            channel_id = get_or_create_channel(name, auto_unarchive=True)
         except SlackError as e:
             logger.error('Failed to create comms channel {e}')
 
