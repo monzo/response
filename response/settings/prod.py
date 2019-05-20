@@ -1,6 +1,6 @@
 from .base import *
 
-SITE_URL =  os.environ.get("TUNNEL_HOSTNAME")
+SITE_URL =  os.environ.get("SITE_URL")
 
 if os.environ.get("POSTGRES"):
     DATABASES = {
