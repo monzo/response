@@ -63,6 +63,8 @@ def set_channel_topic(channel_id, channel_topic):
         channel=channel_id,
         topic=channel_topic
     )
+    if not response.get("ok", False):
+        raise SlackError('Fail to set channel topic for {} : {}'.format(channel_id, response['error']))
 
     return response
 
