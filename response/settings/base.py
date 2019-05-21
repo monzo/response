@@ -207,7 +207,6 @@ def get_channel_id(channel_name, token):
 
 def get_env_var(setting, warn_only=False):
     value = os.getenv(setting, None)
-    value = value.replace('"', '')  # remove start/end quotes
 
     if not value:
         error_msg = f"ImproperlyConfigured: Set {setting} environment variable"
@@ -215,5 +214,7 @@ def get_env_var(setting, warn_only=False):
             logger.warn(error_msg)
         else:
             raise ImproperlyConfigured(error_msg)
+    else:
+        value = value.replace('"', '')  # remove start/end quotes
 
     return value
