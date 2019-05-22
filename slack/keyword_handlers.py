@@ -10,4 +10,4 @@ logger = logging.getLogger(__name__)
 
 @keyword_handler(['status page', 'statuspage'])
 def status_page_notification(comms_channel: CommsChannel, user: str, text: str, ts: str):
-    comms_channel.post_in_channel(f"ℹ️ You mentioned the Status Page - <{settings.STATUS_PAGE}|here's the runbook> on how to put it up.")
+    comms_channel.post_in_channel(f"ℹ️ You mentioned the Status Page - <{settings.STATUS_PAGE_RUNBOOK}|here's the runbook> on how to put it up.")
