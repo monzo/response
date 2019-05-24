@@ -9,3 +9,25 @@ db.sqlite3
 Pipfile
 virtual-env
 *.env
+
+.DS_Store
+js-ui/node_modules
+js-ui/dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+js-ui/npm-debug.log*
+js-ui/yarn-debug.log*
+js-ui/yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
