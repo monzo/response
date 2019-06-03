@@ -1,12 +1,10 @@
 from datetime import datetime
 from django.conf import settings
 from django.db import models
-from django.urls import reverse
-from urllib.parse import urljoin
 
 from core.models.incident import Incident
 
-from slack.slack_utils import get_or_create_channel, set_channel_topic, send_message, SlackError, rename_channel
+from slack.slack_utils import get_or_create_channel, send_message, SlackError, rename_channel
 from slack.block_kit import *
 
 import logging
@@ -21,16 +19,6 @@ class CommsChannelManager(models.Manager):
             channel_id = get_or_create_channel(name)
         except SlackError as e:
             logger.error('Failed to create comms channel {e}')
-
-        try:
-            doc_url = urljoin(
-                settings.SITE_URL,
-                reverse('incident_doc', kwargs={'incident_id': incident.pk})
-            )
-
-            set_channel_topic(channel_id, f"{incident.report} - {doc_url}")
-        except SlackError as e:
-            logger.error('Failed to set channel topic {e}')
 
         comms_channel = self.create(
             incident=incident,
