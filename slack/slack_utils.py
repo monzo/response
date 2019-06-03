@@ -57,6 +57,17 @@ def create_channel(channel_name):
 
     return response['channel']['id']
 
+def set_channel_topic(channel_id, channel_topic):
+    response = slack_client.api_call(
+        "channels.setTopic",
+        channel=channel_id,
+        topic=channel_topic
+    )
+    if not response.get("ok", False):
+        raise SlackError('Fail to set channel topic for {} : {}'.format(channel_id, response['error']))
+
+    return response
+
 
 def get_or_create_channel(channel_name):
     try:
