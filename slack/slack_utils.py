@@ -57,6 +57,17 @@ def create_channel(channel_name):
 
     return response['channel']['id']
 
+def archive_channel(channel_id):
+    response = slack_client.api_call(
+        "channel.archive",
+        channel=channel_id,
+    )
+
+    if not response.get("ok", False):
+        raise SlackError(f"Failed to archive channel {channel_id}: {response['error']}")
+    
+    return response['ok']
+
 
 def get_or_create_channel(channel_name):
     try:
@@ -122,8 +133,6 @@ def remove_reaction(reaction, channel_id, thread_ts):
 
 
 def invite_user_to_channel(user_id, channel_id):
-    if user_id is None:
-        user_id = get_slack_token_owner()
     response = slack_client.api_call(
         "channels.invite",
         user=user_id,
