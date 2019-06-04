@@ -23,9 +23,15 @@ def handle_create_comms_channel(incident: Incident, user_id: str, message: json,
         return
 
     comms_channel = CommsChannel.objects.create_comms_channel(incident)
-
+    print("settings: {}".format(settings))
+    print("BOT_NAME: {}".format(settings.INCIDENT_BOT_NAME))
     # Invite the bot to the channel
-    invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
+    # invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
+    invite_user_id = settings.INCIDENT_BOT_ID
+    if invite_user_id is None:
+        invite_user_id = incident.reporter
+     # Invite the bot to the channel
+    invite_user_to_channel(invite_user_id, comms_channel.channel_id)
 
     # Un-invite the user who owns the Slack token,
     #   otherwise they'll be added to every incident channel

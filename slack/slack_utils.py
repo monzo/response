@@ -122,6 +122,8 @@ def remove_reaction(reaction, channel_id, thread_ts):
 
 
 def invite_user_to_channel(user_id, channel_id):
+    if user_id is None:
+        user_id = get_slack_token_owner()
     response = slack_client.api_call(
         "channels.invite",
         user=user_id,

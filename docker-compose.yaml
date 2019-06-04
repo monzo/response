@@ -37,16 +37,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
-  ngrok:
-    image: gtriggiano/ngrok-tunnel
-    container_name: ngrok
-    environment:
-      TARGET_HOST: "response"
-      TARGET_PORT: 8000
-    ports:
-      - "4040:4040"
-    depends_on:
-      - response
+  # ngrok:
+  #   image: gtriggiano/ngrok-tunnel
+  #   container_name: ngrok
+  #   environment:
+  #     TARGET_HOST: "response"
+  #     TARGET_PORT: 8000
+  #   ports:
+  #     - "4040:4040"
+  #   depends_on:
+  #     - response
 
 volumes:
   postgres_data:
