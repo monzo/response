@@ -173,16 +173,28 @@ MARKDOWN_FILTER_WHITELIST_STYLES = [
 
 # Useful Functions for env specific settings
 
-def get_user_id(user_name, token):
+def get_user_id(user_name, token, cursor=""):
     slack_client = SlackClient(token)
     response = slack_client.api_call(
-        "users.list"
+        "users.list",
+        cursor=cursor,
     )
     if not response.get("ok", False):
         raise ImproperlyConfigured(f"Failed to get user id of \"{user_name}\" : {response['error']}")
+
+    resp_meta = response.get("response_metadata", None)
+    if resp_meta is not None:
+        next_cursor = resp_meta.get("next_cursor", "")
+
+    user = ""
     for user in response['members']:
         if user['name'] == user_name:
-            return user['id']
+            user = user['id']
+
+    if user != "":
+        return user
+    if user == "" and cursor != "":
+        get_user_id(user_name, token, next_cursor)
 
     raise ImproperlyConfigured(f"Failed to get user id of \"{user_name}\"")
 

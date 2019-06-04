@@ -61,3 +61,4 @@ def set_severity(incident: Incident, user_id: str, message: str):
     comms_channel.post_in_channel(f"The incident has been running for {duration}")
 
     return True, None
+
