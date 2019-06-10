@@ -29,10 +29,10 @@ def reference_to_id(value):
     return m.group(1) if m else None
 
 
-def get_channel_id(channel_name):
+def get_channel_id(channel_name, auto_unarchive=False):
     response = slack_client.api_call(
         "channels.list",
-        exclude_archived=True,
+        exclude_archived=False,
         exclude_members=True,
     )
     if not response.get("ok", False):
@@ -40,9 +40,12 @@ def get_channel_id(channel_name):
 
     for channel in response['channels']:
         if channel['name'] == channel_name:
+            if channel['is_archived'] and auto_unarchive:
+                unarchive_channel(channel['id'])
+
             return channel['id']
 
-    return None
+    raise SlackError(f"Couldn't find id for channel {channel_name}")
 
 
 def create_channel(channel_name):
@@ -58,12 +61,22 @@ def create_channel(channel_name):
     return response['channel']['id']
 
 
-def get_or_create_channel(channel_name):
+def unarchive_channel(channel_id):
+    response = slack_client.api_call(
+        "channels.unarchive",
+        channel=channel_id,
+    )
+
+    if not response.get("ok", False):
+        raise SlackError(f"Couldn't unarchive channel {channel_id} : {response['error']}")
+
+
+def get_or_create_channel(channel_name, auto_unarchive=False):
     try:
         return create_channel(channel_name)
     except SlackError:
         try:
-            return get_channel_id(channel_name)
+            return get_channel_id(channel_name, auto_unarchive)
         except SlackError:
             return None
 

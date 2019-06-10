@@ -235,7 +235,8 @@ Action handlers are used to handle button presses.  Buttons are assigned IDs whe
 
 ```
 @action_handler(HeadlinePost.CLOSE_INCIDENT_BUTTON)
-def handle_close_incident(incident: Incident, user_id: str, message: json) -> json:
+def handle_close_incident(action_context: ActionContext):
+    incident = action_context.incident
     incident.end_time = datetime.now()
     incident.save()
 ```

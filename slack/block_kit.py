@@ -43,9 +43,10 @@ class Block:
 
 
 class Section(Block):
-    def __init__(self, block_id=None, text=None, fields=None):
+    def __init__(self, block_id=None, text=None, accessory=None, fields=None):
         super().__init__(block_id=block_id)
         self.text = text
+        self.accessory = accessory
         self.fields = fields
 
     def add_field(self, field):
@@ -58,15 +59,21 @@ class Section(Block):
             "type": "section",
         }
 
+        if not (self.fields or self.text or self.accessory):
+            raise ValueError
+
         if self.block_id:
             block['block_id'] = self.block_id
 
+        if self.fields:
+            block['fields'] = [t.serialize() for t in self.fields]
+            return block
+
         if self.text:
             block['text'] = self.text.serialize()
-        elif self.fields:
-            block['fields'] = [t.serialize() for t in self.fields]
-        else:
-            raise ValueError
+
+        if self.accessory:
+            block['accessory'] = self.accessory.serialize()
 
         return block
 

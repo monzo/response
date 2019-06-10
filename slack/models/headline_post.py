@@ -24,6 +24,7 @@ class HeadlinePost(models.Model):
     EDIT_INCIDENT_BUTTON = "edit-incident-button"
     CLOSE_INCIDENT_BUTTON = "close-incident-button"
     CREATE_COMMS_CHANNEL_BUTTON = "create-comms-channel-button"
+    PAGE_ON_CALL_BUTTON = "page-on-call-button"
 
     objects = HeadlinePostManager()
     incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
@@ -64,6 +65,9 @@ class HeadlinePost(models.Model):
 
             if not self.comms_channel:
                 actions.add_element(Button(":speaking_head_in_silhouette: Create Comms Channel", self.CREATE_COMMS_CHANNEL_BUTTON, value=self.incident.pk))
+
+            if settings.PAGERDUTY_ENABLED:
+                actions.add_element(Button(":pager: Page On-call", self.PAGE_ON_CALL_BUTTON, value=self.incident.pk))
 
             actions.add_element(Button(":pencil2: Edit", self.EDIT_INCIDENT_BUTTON, value=self.incident.pk))
 

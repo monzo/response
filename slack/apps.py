@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.conf import settings
 
 
 class SlackConfig(AppConfig):
@@ -13,3 +14,6 @@ class SlackConfig(AppConfig):
         import slack.keyword_handlers
         import slack.incident_notifications
         import slack.dialog_handlers
+
+        if settings.PAGERDUTY_ENABLED:
+            import slack.workflows.pagerduty
