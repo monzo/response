@@ -7,8 +7,6 @@ if settings.PAGERDUTY_ENABLED:
 
 
 def trigger_incident(title, key, details=None, from_email=None, escalation_policy=None):
-    print("Trigger", title, key, details)
-
     data = {
         'type': 'incident',
         'title': title,

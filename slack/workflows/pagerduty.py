@@ -86,7 +86,7 @@ def page_specialist_dialog(user_id: str, channel_id: str, submission: json, resp
         comms_channel = CommsChannel.objects.get(channel_id=channel_id)
         incident = comms_channel.incident
     except CommsChannel.DoesNotExist:
-        print("Uh oh")
+        logger.error(f"Couldn't find comms channel with id {channel_id}")
         return
 
     specialist = Escalation.objects.get(name=state)
