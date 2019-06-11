@@ -6,15 +6,33 @@ from rest_framework.decorators import action
 from core.models.incident import Incident
 from core.models.action import Action
 
+from slack.models import SlackUser
+from django.contrib.auth.models import User
+
 from datetime import datetime, date
 import calendar
+
+
+class SlackUserSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+
+    class Meta:
+        model = SlackUser
+        fields = ('user_id', 'owner')
+
+class SlackUserViewSet(viewsets.ModelViewSet):
+    # ViewSets define the view behavior.
+    queryset = SlackUser.objects.all()
+    serializer_class = SlackUserSerializer
 
 class ActionSerializer(serializers.HyperlinkedModelSerializer):
     # Serializers define the API representation.
     incident = serializers.PrimaryKeyRelatedField(queryset=Incident.objects.all(), required=False)
+    user = serializers.PrimaryKeyRelatedField(queryset=SlackUser.objects.all(), required=False)
+
     class Meta:
         model = Action
-        fields = ('pk', 'user_id', 'details', 'done', 'incident')
+        fields = ('pk', 'details', 'done', 'incident', 'user')
 
 class ActionViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
@@ -23,9 +41,12 @@ class ActionViewSet(viewsets.ModelViewSet):
 
 
 class IncidentSerializer(serializers.HyperlinkedModelSerializer):
+    reporter = serializers.PrimaryKeyRelatedField(queryset=SlackUser.objects.all(), required=False)
+    lead = serializers.PrimaryKeyRelatedField(queryset=SlackUser.objects.all(), required=False)
+
     class Meta:
         model = Incident
-        fields = ('pk','report', 'reporter', 'start_time', 'end_time', 'report_time', 'action_set')
+        fields = ('pk','report', 'reporter', 'lead', 'start_time', 'end_time', 'report_time', 'action_set')
 
     def __init__(self, *args, **kwargs):
         super(IncidentSerializer, self).__init__(*args, **kwargs)
@@ -64,6 +85,7 @@ class IncidentViewSet(viewsets.ModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'incidents', IncidentViewSet, base_name='Incidents')
 router.register(r'actions', ActionViewSet)
+router.register(r'slack_users', SlackUserViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

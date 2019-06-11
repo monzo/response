@@ -8,4 +8,6 @@ urlpatterns = [
     path('action', views.action, name='action'),
     path('event', views.event, name='event'),
     path('cron_minute', views.cron_minute, name='cron_minute'),
+    path('claim_slack_user/<user_id>/', views.claim_slack_user, name='claim_slack_user'),
+    path('confirm_claim_slack_user', views.confirm_claim_slack_user, name='confirm_claim_slack_user'),
 ]

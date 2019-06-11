@@ -1,8 +1,9 @@
-from core.models import Incident
-from slack.models import CommsChannel
+from core.models import Incident, Action
+from slack.models import CommsChannel, SlackUser
 from slack.decorators import incident_command, get_help
 from slack.slack_utils import reference_to_id, rename_channel, SlackError
 from datetime import datetime
+
 
 @incident_command(['help'], helptext='Display a list of commands and usage')
 def send_help_text(incident: Incident, user_id: str, message: str):
@@ -25,8 +26,9 @@ def update_impact(incident: Incident, user_id: str, message: str):
 
 @incident_command(['lead'], helptext='Assign someone as the incident lead')
 def set_incident_lead(incident: Incident, user_id: str, message: str):
-    assignee = reference_to_id(message)
-    incident.lead = assignee or user_id
+    assignee = reference_to_id(message) or user_id
+    user, created = SlackUser.objects.get_or_create(user_id=assignee)
+    incident.lead = user
     incident.save()
     return True, None
 
@@ -75,4 +77,13 @@ def set_severity(incident: Incident, user_id: str, message: str):
 
     comms_channel.post_in_channel(f"The incident has been closed! 📖 -> 📕")
 
+    return True, None
+
+@incident_command(['action'], helptext='Set an action for this event')
+def set_action(incident: Incident, user_id: str, message: str):
+    comms_channel = CommsChannel.objects.get(incident=incident)
+    if incident.lead:
+        Action(incident=incident, details=message, user=incident.lead).save()
+    else:
+        comms_channel.post_in_channel(f"Actions require an incident lead")
     return True, None

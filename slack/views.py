@@ -1,23 +1,27 @@
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 import after_response
-
+import urllib.parse
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from core.models.incident import Incident
+from .models import SlackUser
 from slack.decorators import handle_action, handle_event, handle_notifications, handle_dialog
 from slack.authentication import slack_authenticate
 from slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers
 from slack.settings import INCIDENT_REPORT_DIALOG
-from slack.slack_utils import channel_reference
-
+from slack.slack_utils import channel_reference, send_message
+from django.core.signing import dumps, loads
 
 logger = logging.getLogger(__name__)
 
+from .models.slack_user import SlackUser
 
 @csrf_exempt
 @slack_authenticate
@@ -105,3 +109,31 @@ def cron_minute(request):
     "Handles actions that need to take place every minute"
     handle_notifications()
     return HttpResponse()
+
+def claim_slack_user(request, user_id): # Me UHMBFACG5
+    slack_user = SlackUser.objects.get(user_id=user_id)
+    if slack_user.owner:
+        return HttpResponseForbidden("User was already claimed")
+
+    token = dumps({
+        'created': datetime.now().isoformat(),
+        'slack_user_id': slack_user.user_id })
+
+    url = request.build_absolute_uri(reverse("confirm_claim_slack_user")) + f'?token={token}'
+    send_message(slack_user.user_id,f'Would you like to link your slack account with response user `{request.user.username}` <{url}|Link account>')
+
+    return HttpResponse('')
+
+def confirm_claim_slack_user(request):
+    token = loads(request.GET.get('token'))
+
+    # Only want tokens less than x minutes old or newer
+    if datetime.strptime(token['created'], "%Y-%m-%dT%H:%M:%S.%f") > datetime.now() - timedelta(minutes=10):
+        slack_user = SlackUser.objects.get(user_id=token['slack_user_id'])
+        if slack_user.owner:
+            return HttpResponseForbidden("User was already claimed")
+        slack_user.owner = request.user
+        slack_user.save()
+        return HttpResponse("🔗 Accounts linked. You may close this window.")
+
+    return HttpResponseNotFound("⛔️ Failed to link your accounts. Your token has expired. 🎟")

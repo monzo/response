@@ -32,7 +32,7 @@ class Incident(models.Model):
     # Additional info
     summary = models.TextField(blank=True, null=True, help_text="What's the high level summary?")
     impact = models.TextField(blank=True, null=True, help_text="What impact is this having?")
-    lead = models.CharField(max_length=50, blank=True, null=True, help_text="Who is leading?")
+    lead = models.ForeignKey('slack.slackuser', on_delete=models.PROTECT, blank=True, null=True, help_text="Who is leading?")
 
     # Severity
     SEVERITIES = (
@@ -94,4 +94,4 @@ class Incident(models.Model):
         if self.is_closed():
             return ":droplet:"
         else:
-            return ":fire:"   
+            return ":fire:"
