@@ -2,7 +2,7 @@ from core.models import Incident
 from slack.models import CommsChannel
 from slack.decorators import incident_command, get_help
 from slack.slack_utils import reference_to_id, rename_channel, SlackError
-
+from datetime import datetime
 
 @incident_command(['help'], helptext='Display a list of commands and usage')
 def send_help_text(incident: Incident, user_id: str, message: str):
@@ -59,5 +59,20 @@ def set_severity(incident: Incident, user_id: str, message: str):
 
     comms_channel = CommsChannel.objects.get(incident=incident)
     comms_channel.post_in_channel(f"The incident has been running for {duration}")
+
+    return True, None
+
+@incident_command(['close'], helptext='Close this incident.')
+def set_severity(incident: Incident, user_id: str, message: str):
+    comms_channel = CommsChannel.objects.get(incident=incident)
+
+    if incident.is_closed():
+        comms_channel.post_in_channel(f"The incident was already closed at {incident.end_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        return True, None
+
+    incident.end_time = datetime.now()
+    incident.save()
+
+    comms_channel.post_in_channel(f"The incident has been closed! 📖 -> 📕")
 
     return True, None
