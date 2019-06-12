@@ -2,6 +2,7 @@ from datetime import datetime
 from django.db import models
 
 from core.models import Incident
+from . import SlackUser
 
 
 class PinnedMessageManager(models.Manager):
@@ -25,7 +26,7 @@ class PinnedMessageManager(models.Manager):
 
 class PinnedMessage(models.Model):
     incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
-    author_id = models.CharField(max_length=50, blank=False, null=False)
+    author_id = models.ForeignKey(SlackUser, on_delete=models.PROTECT, blank=False, null=False)
     message_ts = models.CharField(max_length=50, blank=False, null=False)
     text = models.TextField()
     timestamp = models.DateTimeField()

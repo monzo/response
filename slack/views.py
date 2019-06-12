@@ -110,7 +110,7 @@ def cron_minute(request):
     handle_notifications()
     return HttpResponse()
 
-def claim_slack_user(request, user_id): # Me UHMBFACG5
+def claim_slack_user(request, user_id):
     slack_user = SlackUser.objects.get(user_id=user_id)
     if slack_user.owner:
         return HttpResponseForbidden("User was already claimed")
