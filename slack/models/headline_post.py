@@ -35,6 +35,9 @@ class HeadlinePost(models.Model):
         "Creates/updates the slack headline post with the latest incident info"
         msg = Message()
 
+        # Set the fallback text so notifications look nice
+        msg.set_fallback_text(f"{self.incident.report} reported by {user_reference(self.incident.reporter)}")
+
         # Add report/people
         msg.add_block(Section(block_id="report", text=Text(f"*{self.incident.report}*")))
         msg.add_block(Section(block_id="reporter", text=Text(f"🙋🏻‍♂️ Reporter: {user_reference(self.incident.reporter)}")))
