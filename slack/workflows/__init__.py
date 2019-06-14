@@ -1,1 +1,1 @@
-from pagerduty import *
+from .statuspage import *

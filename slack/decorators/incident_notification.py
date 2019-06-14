@@ -24,7 +24,7 @@ class NotificationHandler(object):
         return self.key
 
 
-def single_notification(initial_delay_mins=0):
+def single_notification(initial_delay_mins=0, func=None):
     """
     Register a handler that'll be called once in each open incident
     """
@@ -38,6 +38,8 @@ def single_notification(initial_delay_mins=0):
             )
         )
         return fn
+    if func:
+        return _wrapper(func)
     return _wrapper
 
 

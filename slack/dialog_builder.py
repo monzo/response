@@ -82,7 +82,7 @@ class SelectWithOptions(Element):
     def __init__(self, options, label=None, name=None, optional=False, hint=None, subtype=None, value=None, placeholder=None):
         super().__init__(label, name, optional, hint, subtype, value, placeholder)
         self.type = "select"
-        self.options = [{"label": l, "value": v} for v, l in options]
+        self.options = [{"label": l, "value": v} for l, v in options]
 
 
 class SelectFromUsers(Element):

@@ -19,11 +19,16 @@ class ActionContext:
         self.response_url = response_url
 
 
-def action_handler(callback_id):
+def action_handler(callback_id, func=None):
     def _wrapper(fn):
         SLACK_ACTION_MAPPINGS[callback_id] = fn
         return fn
+    if func:
+        return _wrapper(func)
     return _wrapper
+
+def remove_action_handler(callback_id):
+    SLACK_ACTION_MAPPINGS.pop(callback_id, None)
 
 
 @after_response.enable

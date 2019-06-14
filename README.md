@@ -79,6 +79,11 @@ We want to invite the Bot to all Incident Channels, so need to know its ID.
 
 - The default bot name is `incident` - change the `INCIDENT_BOT_NAME` if your app uses something different.
 
+### Database encrypted field key(`ENCRYPTED_FIELD_KEY`)
+
+Used to encrypt potentially sensitive values stored in the database for workflows.
+
+- This can be any value but keep it secure and don't lose it. You will be unable to decrypt values from the database without it.
 
 ## 3. Run Response
 

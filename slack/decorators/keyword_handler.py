@@ -7,11 +7,13 @@ logger = logging.getLogger(__name__)
 KEYWORD_HANDLERS = {}
 
 
-def keyword_handler(keywords):
+def keyword_handler(keywords, func=None):
     def _wrapper(fn):
         for keyword in keywords:
             KEYWORD_HANDLERS[keyword] = fn
         return fn
+    if func:
+        return _wrapper(func)
     return _wrapper
 
 
