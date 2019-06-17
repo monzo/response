@@ -8,7 +8,11 @@ slack_client = SlackClient(slack_token)
 
 class Message:
     def __init__(self):
+        self.fallback_text = None
         self.blocks = []
+
+    def set_fallback_text(self, text):
+        self.fallback_text = text
 
     def add_block(self, block):
         self.blocks.append(block)
@@ -27,6 +31,7 @@ class Message:
 
         response = slack_client.api_call(
             api_call,
+            text=self.fallback_text,
             channel=channel,
             ts=ts,
             blocks=self.serialize(),
