@@ -20,6 +20,9 @@ class NotificationHandler(object):
         self.interval_mins = interval_mins
         self.max_notifications = max_notifications
 
+    def __str__(self):
+        return self.key
+
 
 def single_notification(initial_delay_mins=0):
     """
@@ -79,7 +82,8 @@ def handle_notifications():
                     try:
                         handler.callback(incident)
                     except:
-                        pass
+                        logger.error(f"Error calling notification handler {handler}")
+
                     notification.time = datetime.now()
                     notification.repeat_count = notification.repeat_count + 1
                     notification.save()
@@ -92,7 +96,8 @@ def handle_notifications():
                     try:
                         handler.callback(incident)
                     except:
-                        pass
+                        logger.error(f"Error calling notification handler {handler}")
+
                     notification = Notification(
                         incident=incident,
                         key=handler.key,
