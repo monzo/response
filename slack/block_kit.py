@@ -107,11 +107,40 @@ class Divider(Block):
         }
 
 
+class Confirm(Block):
+    def __init__(self, title, text, confirm, deny):
+        self.title = title
+        self.text = text
+        self.confirm = confirm
+        self.deny = deny
+
+    def serialize(self):
+        return {
+            "title": {
+                "type": "plain_text",
+                "text": self.title
+            },
+            "text": {
+                "type": "mrkdwn",
+                "text": self.text
+            },
+            "confirm": {
+                "type": "plain_text",
+                "text": self.confirm
+            },
+            "deny": {
+                "type": "plain_text",
+                "text": self.deny
+            }
+        }
+
+
 class Button:
-    def __init__(self, text, action_id, value=None):
+    def __init__(self, text, action_id, value=None, confirm=None):
         self.text = Text(text=text, text_type="plain_text")
         self.action_id = action_id
         self.value = value
+        self.confirm = confirm
 
     def serialize(self):
         button = {
@@ -119,6 +148,9 @@ class Button:
             "text": self.text.serialize(),
             "action_id": self.action_id,
         }
+
+        if self.confirm:
+            button['confirm'] = self.confirm.serialize()
 
         if self.value:
             button['value'] = str(self.value)
