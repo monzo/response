@@ -67,8 +67,7 @@ class HeadlinePost(models.Model):
                 actions.add_element(Button(":speaking_head_in_silhouette: Create Comms Channel", self.CREATE_COMMS_CHANNEL_BUTTON, value=self.incident.pk))
 
             if settings.PAGERDUTY_ENABLED:
-                confirm = Confirm("Page an On-caller", "Are you sure you want to page someone?",
-                                  "Yes - I need help now!", "No")
+                confirm = Confirm("Page an On-caller", "Are you sure you want to page someone?", "Yes - I need help now!", "No")
                 actions.add_element(Button(":pager: Page On-call", self.PAGE_ON_CALL_BUTTON, value=self.incident.pk, confirm=confirm))
 
             actions.add_element(Button(":pencil2: Edit", self.EDIT_INCIDENT_BUTTON, value=self.incident.pk))
