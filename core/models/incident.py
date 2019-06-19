@@ -94,4 +94,14 @@ class Incident(models.Model):
         if self.is_closed():
             return ":droplet:"
         else:
-            return ":fire:"   
+            return ":fire:"
+
+
+# Used to store external identifiers
+class IncidentExtension(models.Model):
+    class Meta:
+        unique_together = ("incident", "key")
+
+    incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
+    key      = models.CharField(max_length=50, blank=False, null=False)
+    value    = models.CharField(max_length=100, blank=False, null=False)

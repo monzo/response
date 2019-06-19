@@ -24,7 +24,7 @@ def get_commands():
     return COMMAND_MAPPINGS.keys()
 
 
-def incident_command(commands: list, helptext=""):
+def incident_command(commands: list, func=None, helptext=""):
     """
     @incident_command is a decorator which registers a function as a handler
     for a set of command strings
@@ -46,7 +46,14 @@ def incident_command(commands: list, helptext=""):
         COMMAND_HELP[', '.join(commands)] = helptext
 
         return fn
+    if func:
+        return _wrapper(func)
     return _wrapper
+
+def remove_incident_command(commands: list):
+    for command in commands:
+        COMMAND_MAPPINGS.pop(command, None)
+        COMMAND_HELP.pop(', '.join(commands), None)
 
 
 def handle_incident_command(command_name, message, thread_ts, channel_id, user_id):

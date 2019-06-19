@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 EVENT_MAPPINGS = defaultdict(list)
 
 
-def slack_event(event):
+def slack_event(event, func=None):
     '''
     @slack_event is a decorator which registers a function as a handler
     for a particular slack_event (e.g. app_mention, pin_added, etc.)
@@ -30,7 +30,8 @@ def slack_event(event):
     def _wrapper(fn):
         EVENT_MAPPINGS[event].append(fn)
         return fn
-
+    if func:
+        return _wrapper(func)
     return _wrapper
 
 

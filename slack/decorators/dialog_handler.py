@@ -6,11 +6,15 @@ logger = logging.getLogger(__name__)
 DIALOG_HANDLERS = {}
 
 
-def dialog_handler(callback_id):
+def dialog_handler(callback_id, func=None):
     def _wrapper(fn):
         DIALOG_HANDLERS[callback_id] = fn
+    if func:
+        return _wrapper(func)
     return _wrapper
 
+def remove_dialog_handler(callback_id):
+    DIALOG_HANDLERS.pop(callback_id, None)
 
 @after_response.enable
 def handle_dialog(payload):
