@@ -36,6 +36,8 @@ class Message:
             ts=ts,
             blocks=self.serialize(),
         )
+        if not response['ok']:
+            print(f'Error: {response.get("error", None)}, Need: {response.get("needed", None)}')
         return response
 
 
