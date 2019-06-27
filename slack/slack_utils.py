@@ -4,6 +4,8 @@ from django.conf import settings
 
 from slugify import slugify
 from slackclient import SlackClient
+from functools import partial
+from core.models.incident import ExternalUser
 
 slack_token = settings.SLACK_TOKEN
 slack_client = SlackClient(slack_token)
@@ -226,3 +228,6 @@ def rename_channel(channel_id, new_name):
     if not response.get("ok", False):
         raise SlackError(
             'Failed to rename channel : {}'.format(response['error']))
+
+
+GetOrCreateSlackExternalUser = lambda *args, **kwargs: ExternalUser.objects.get_or_create(app_id='slack', *args, **kwargs)[0]

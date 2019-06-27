@@ -1,4 +1,4 @@
-from .constants import *
+from slack.workflows.statuspage.constants import *
 
 from core.models import Incident
 from slack.block_kit import Message, Button, Section, Actions, Text

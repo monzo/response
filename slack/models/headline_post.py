@@ -40,8 +40,8 @@ class HeadlinePost(models.Model):
 
         # Add report/people
         msg.add_block(Section(block_id="report", text=Text(f"*{self.incident.report}*")))
-        msg.add_block(Section(block_id="reporter", text=Text(f"🙋🏻‍♂️ Reporter: {user_reference(self.incident.reporter)}")))
-        incident_lead_text = user_reference(self.incident.lead) if self.incident.lead else "-"
+        msg.add_block(Section(block_id="reporter", text=Text(f"🙋🏻‍♂️ Reporter: {user_reference(self.incident.reporter.external_id)}")))
+        incident_lead_text = user_reference(self.incident.lead.external_id) if self.incident.lead else "-"
         msg.add_block(Section(block_id="lead", text=Text(f"👩‍🚒 Incident Lead: {incident_lead_text}")))
 
         msg.add_block(Divider())

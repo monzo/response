@@ -50,3 +50,6 @@ class CommsChannel(models.Model):
 
     def rename(self, new_name):
         rename_channel(self.channel_id, new_name)
+
+    def __str__(self):
+        return self.incident.report
