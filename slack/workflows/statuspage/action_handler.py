@@ -1,7 +1,7 @@
 import requests
 import slack.dialog_builder as dialog_bld
 
-from .connections import get_status_page_conn
+from slack.workflows.statuspage.connections import get_status_page_conn
 
 from slack.decorators import ActionContext
 from core.models import IncidentExtension

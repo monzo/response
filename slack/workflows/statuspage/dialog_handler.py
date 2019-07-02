@@ -1,6 +1,6 @@
 import json
 
-from .connections import get_status_page_conn
+from slack.workflows.statuspage.connections import get_status_page_conn
 
 from slack.models import Incident
 from core.models import IncidentExtension

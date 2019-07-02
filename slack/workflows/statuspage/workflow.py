@@ -3,12 +3,12 @@ import statuspageio
 import logging
 logger = logging.getLogger(name="statuspage init")
 
-from .action_handler import *
-from .incident_command import *
-from .dialog_handler import *
-from .constants import *
+from slack.workflows.statuspage.action_handler import *
+from slack.workflows.statuspage.incident_command import *
+from slack.workflows.statuspage.dialog_handler import *
+from slack.workflows.statuspage.constants import *
 
-from .connections import set_status_page_conn
+from slack.workflows.statuspage.connections import set_status_page_conn
 
 from slack.models import Workflow
 from slack.decorators import incident_command, remove_incident_command

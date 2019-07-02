@@ -11,6 +11,8 @@ from slack.slack_utils import invite_user_to_channel, get_slack_token_owner, lea
 
 from slack.decorators import action_handler, ActionContext
 
+import logging
+logger = logging.getLogger(__name__)
 
 @action_handler(HeadlinePost.CLOSE_INCIDENT_BUTTON)
 def handle_close_incident(ac: ActionContext):
@@ -26,7 +28,10 @@ def handle_create_comms_channel(ac: ActionContext):
     comms_channel = CommsChannel.objects.create_comms_channel(ac.incident)
 
     # Invite the bot to the channel
-    invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
+    try:
+        invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
+    except Exception as ex:
+        logger.error(ex)
 
     # Un-invite the user who owns the Slack token,
     #   otherwise they'll be added to every incident channel
@@ -52,7 +57,7 @@ def handle_edit_incident_button(ac: ActionContext):
             Text(label="Report", name="report", value=ac.incident.report),
             TextArea(label="Summary", name="summary", value=ac.incident.summary, optional=True, placeholder="Can you share any more details?"),
             TextArea(label="Impact", name="impact", value=ac.incident.impact, optional=True, placeholder="Who or what might be affected?", hint="Think about affected people, systems, and processes"),
-            SelectFromUsers(label="Lead", name="lead", value=ac.incident.lead, optional=True),
+            SelectFromUsers(label="Lead", name="lead", value=ac.incident.lead.external_id, optional=True),
             SelectWithOptions([(i, s.capitalize()) for i, s in Incident.SEVERITIES], value=ac.incident.severity, label="Severity", name="severity", optional=True)
         ]
     )
