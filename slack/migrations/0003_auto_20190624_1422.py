@@ -60,10 +60,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userstats',
             name='user',
-            field=models.ForeignKey(default=5555, on_delete=django.db.models.deletion.CASCADE, to='core.ExternalUser'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='core.ExternalUser'),
             preserve_default=False,
         ),
         migrations.RunPython(move_userstats_user_id_forward),
+        migrations.AlterField(
+            model_name='userstats',
+            name='user',
+            field=models.ForeignKey(null=False, on_delete=django.db.models.deletion.CASCADE, to='core.ExternalUser'),
+        ),
         migrations.AlterUniqueTogether(
             name='userstats',
             unique_together={('incident', 'user')},
@@ -80,10 +85,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pinnedmessage',
             name='author',
-            field=models.ForeignKey(default=5555, on_delete=django.db.models.deletion.PROTECT, to='core.ExternalUser'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='core.ExternalUser'),
             preserve_default=False,
         ),
         migrations.RunPython(move_pinnedmessage_user_id_forward),
+        migrations.AlterField(
+            model_name='pinnedmessage',
+            name='author',
+            field=models.ForeignKey(null=False, on_delete=django.db.models.deletion.PROTECT, to='core.ExternalUser'),
+        ),
         migrations.RemoveField(
             model_name='pinnedmessage',
             name='author_id_tmp',
