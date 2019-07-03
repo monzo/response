@@ -25,8 +25,8 @@
         <p>{% if incident.summary %}{{ incident.summary|unslackify|markdown_filter|safe  }}{% endif %}</p>
         <ul class="summary-data">
             {% if incident.impact %}<li><span>Impact:</span>{{ incident.impact|unslackify|markdown_filter|safe }}</li>{% endif %}
-            <li><span>Reporter:</span>{{ incident.reporter|slack_id_to_fullname }}</li>
-            {% if incident.lead %}<li><span>Lead:</span>{{ incident.lead|slack_id_to_fullname }}</li>{% endif %}
+            <li><span>Reporter:</span>{{ incident.reporter.display_name }}</li>
+            {% if incident.lead %}<li><span>Lead:</span>{{ incident.lead.display_name }}</li>{% endif %}
 
             <li><span>Start Time:</span>{% if incident.start_time %}{{ incident.start_time }}{% endif %}</li>
             <li><span>Report Time:</span>{% if incident.report_time %}{{ incident.report_time }}{% endif %}</li>
@@ -39,9 +39,9 @@
             {% if user_stats %}
                 <li><span>Participants:</span>
                     <ul id="participant">
-                        {% for user in user_stats %}
+                        {% for stats in user_stats %}
                             <li>
-                            {{ user.user_id|slack_id_to_fullname }} ({{user.message_count}} messages)
+                            {{ stats.user.display_name }} ({{stats.message_count}} messages)
                             </li>
                         {% endfor %}
                     </ul>
