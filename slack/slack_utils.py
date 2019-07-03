@@ -230,4 +230,7 @@ def rename_channel(channel_id, new_name):
             'Failed to rename channel : {}'.format(response['error']))
 
 
-GetOrCreateSlackExternalUser = lambda *args, **kwargs: ExternalUser.objects.get_or_create(app_id='slack', *args, **kwargs)[0]
+def GetOrCreateSlackExternalUser(external_id, *args, **kwargs):
+    if not 'display_name' in kwargs:
+        kwargs['display_name'] = get_user_profile(external_id)['name']
+    return ExternalUser.objects.get_or_create(app_id='slack', external_id=external_id, *args, **kwargs)[0]

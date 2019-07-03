@@ -21,13 +21,11 @@ def report_incident(user_id: str, channel_id: str, submission: json, response_ur
     lead_id = submission['lead']
     severity = submission['severity']
 
-    name = get_user_profile(user_id)['name']
-    reporter = GetOrCreateSlackExternalUser(external_id=user_id, display_name=name)
+    reporter = GetOrCreateSlackExternalUser(external_id=user_id)
 
     lead = None
     if lead_id:
-        lead_name = get_user_profile(lead_id)['name']
-        lead = GetOrCreateSlackExternalUser(external_id=lead_id, display_name=lead_name)
+        lead = GetOrCreateSlackExternalUser(external_id=lead_id)
 
     Incident.objects.create_incident(
         report=report,
@@ -54,8 +52,7 @@ def edit_incident(user_id: str, channel_id: str, submission: json, response_url:
 
     lead = None
     if lead_id:
-        lead_name = get_user_profile(lead_id)['name']
-        lead = GetOrCreateSlackExternalUser(external_id=lead_id, display_name=lead_name)
+        lead = GetOrCreateSlackExternalUser(external_id=lead_id)
 
     try:
         incident = Incident.objects.get(pk=state)

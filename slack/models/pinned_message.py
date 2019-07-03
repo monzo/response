@@ -2,39 +2,39 @@ from datetime import datetime
 from django.db import models
 
 from slack.slack_utils import get_user_profile, GetOrCreateSlackExternalUser
-from core.models import Incident, ExternalUser
+from core.models import Incident, ExternalUser, Timeline
 
 
 class PinnedMessageManager(models.Manager):
     def add_pin(self, incident, message_ts, author_id, text):
-        name = get_user_profile(author_id)['name']
-        author = GetOrCreateSlackExternalUser(external_id=author_id, display_name=name)
+        author = GetOrCreateSlackExternalUser(external_id=author_id)
 
-        PinnedMessage.objects.get_or_create(
+        timeline = Timeline.objects.new_event(
+            editable=False,
+            source="slack_pin",
             incident=incident,
+            author=author,
+            text=text,
+            timestamp=datetime.fromtimestamp(float(message_ts)),
+        )
+
+        return PinnedMessage.objects.get_or_create(
+            timeline=timeline,
             message_ts=message_ts,
-            defaults={
-                'author': author,
-                'text': text,
-                'timestamp': datetime.fromtimestamp(float(message_ts)),
-            }
         )
 
     def remove_pin(self, incident, message_ts):
-        PinnedMessage.objects.filter(
-            incident=incident,
+        pinned_message = PinnedMessage.objects.get(
             message_ts=message_ts,
-        ).delete()
-
+        )
+        pinned_message.timeline.delete()
+        pinned_message.delete()
 
 class PinnedMessage(models.Model):
-    incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
-    author = models.ForeignKey(ExternalUser, on_delete=models.PROTECT, blank=False, null=False)
+    timeline = models.ForeignKey(Timeline, on_delete=models.CASCADE)
     message_ts = models.CharField(max_length=50, blank=False, null=False)
-    text = models.TextField()
-    timestamp = models.DateTimeField()
 
     objects = PinnedMessageManager()
 
     def __str__(self):
-        return f"{self.text}"
+        return f"{self.message_ts}: {self.timeline.text}"

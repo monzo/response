@@ -16,8 +16,7 @@ class UserStats(models.Model):
 
     @staticmethod
     def increment_message_count(incident, user_id):
-        name = get_user_profile(user_id)['name']
-        user = GetOrCreateSlackExternalUser(external_id=user_id, display_name=name)
+        user = GetOrCreateSlackExternalUser(external_id=user_id)
 
         user_stats, created = UserStats.objects.get_or_create(incident=incident, user=user)
 
