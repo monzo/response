@@ -194,7 +194,7 @@ def get_channel_id(channel_name, token):
     next_cursor = None
     slack_client = SlackClient(token)
 
-    print(f"get_channel_id - Searching for {channel_name} id...")
+    logger.info(f"get_channel_id - Searching for {channel_name} id...")
 
     while next_cursor != "":
         response = slack_client.api_call(
@@ -208,9 +208,9 @@ def get_channel_id(channel_name, token):
         # see if there's a next_cursor
         try:
             next_cursor = response["response_metadata"]["next_cursor"]
-            print(f"get_channel_id - next_cursor == [{next_cursor}]")
+            logger.info(f"get_channel_id - next_cursor == [{next_cursor}]")
         except:
-            print(f"get_channel_id - I guess checking next_cursor in response object didn't work.")
+            logger.error(f"get_channel_id - I guess checking next_cursor in response object didn't work.")
 
         if not response.get("ok", False):
             raise ImproperlyConfigured(f"get_channel_id - API call not OK; failed to get channel id for \"{channel_name}\" : {response['error']}")
@@ -218,12 +218,12 @@ def get_channel_id(channel_name, token):
         for channel in response['channels']:
             try:
                 if channel['name'] == channel_name:
-                    print(f"get_channel_id - Found channel_id={channel['id']}")
+                    logger.info(f"get_channel_id - Found channel_id={channel['id']}")
                     return channel['id']
             except:
-                print(f"get_channel_id - Died trying to see if previous {channel} was {channel_name}")
+                logger.error(f"get_channel_id - Died trying to see if previous {channel} was {channel_name}")
 
-    print(f"get_channel_id - Did not find {channel_name}!")
+    logger.error(f"get_channel_id - Did not find {channel_name}!")
     raise ImproperlyConfigured(f"Failed to get channel id for \"{channel_name}\"")
 
 
