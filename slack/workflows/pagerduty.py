@@ -68,10 +68,10 @@ def handle_escalatations(incident: Incident, user_id: str, message: str):
 @action_handler(ESCALATE_BUTTON)
 def handle_page_oncall_engineer(context: ActionContext):
     dialog = Dialog(
-        title=f"Escalate to {context.button_value}",
+        title=f"Escalate to a specialist",
         submit_label="Escalate",
         elements=[
-            DialogText(label="Message", name="message", placeholder="Why do you need them?", hint="You might be waking this person up.  Please make this friendly and clear."),
+            DialogText(label="Message", name="message", placeholder=f"Why do you need {context.button_value}?", hint="You might be waking this person up.  Please make this friendly and clear."),
         ],
         state=context.button_value
     )
