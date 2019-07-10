@@ -18,6 +18,7 @@ services:
     env_file: .env
     volumes:
       - ./:/app
+      - pypd:/app/pypd
     stdin_open: true
     tty: true
 
@@ -50,3 +51,4 @@ services:
 
 volumes:
   postgres_data:
+  pypd:
