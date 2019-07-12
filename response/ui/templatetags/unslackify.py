@@ -4,7 +4,7 @@ import logging
 import emoji_data_python
 from django import template
 
-from slack.slack_utils import slack_to_human_readable, get_user_profile
+from response.slack.slack_utils import slack_to_human_readable, get_user_profile
 
 register = template.Library()
 
