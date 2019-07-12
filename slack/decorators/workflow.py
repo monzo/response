@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger('__init__')
 
 from django.db.models.signals import post_save
-from django.db.utils import ProgrammingError
+from django.db.utils import ProgrammingError, OperationalError
 from django.dispatch import receiver
 
 from slack.apps import SlackConfig
@@ -26,7 +26,7 @@ def register_workflow(name, *args, **kwargs):
             else:
                 workflow_object.disable(db_workflow)
             return db_workflow
-        except ProgrammingError as ex:
+        except (ProgrammingError, OperationalError) as ex:
             logger.warn(f'This will error before workflow migration has been completed (first run) \n{ex}')
     return _wrapper
 
