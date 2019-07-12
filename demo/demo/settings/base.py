@@ -46,9 +46,7 @@ INSTALLED_APPS = [
     'after_response',
     'rest_framework',
     'bootstrap4',
-    'response.core.apps.CoreConfig',
-    'response.slack.apps.SlackConfig',
-    'response.pagerduty.apps.PagerdutyConfig',
+    'response.apps.ResponseConfig',
 ]
 
 MIDDLEWARE = [
