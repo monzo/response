@@ -1,0 +1,4 @@
+include LICENSE
+include README.md
+recursive-include response/ui/static *
+recursive-include response/ui/templates *
