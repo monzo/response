@@ -18,6 +18,7 @@ services:
     env_file: .env
     volumes:
       - ./:/app
+      - ../:/response
       - pypd:/app/pypd
     stdin_open: true
     tty: true
