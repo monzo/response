@@ -12,8 +12,8 @@ from slack.incident_commands import incident_command
 from slack.slack_utils import user_reference
 from slack.models import CommsChannel, HeadlinePost
 
-from pagerduty.models import Escalation
-from pagerduty.incident import trigger_incident
+from response.pagerduty.models import Escalation
+from response.pagerduty.incident import trigger_incident
 import pypd
 
 from django.conf import settings
