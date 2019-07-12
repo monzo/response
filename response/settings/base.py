@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'core.apps.CoreConfig',
     'slack.apps.SlackConfig',
-    'pagerduty.apps.PagerdutyConfig',
+    'response.pagerduty.apps.PagerdutyConfig',
 ]
 
 MIDDLEWARE = [
