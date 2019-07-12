@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.models import Incident
+from response.core.models import Incident
 
 
 class Notification(models.Model):

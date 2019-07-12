@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from core.models.incident import Incident
+from response.core.models.incident import Incident
 from slack.decorators import handle_action, handle_event, handle_notifications, handle_dialog
 from slack.authentication import slack_authenticate
 from slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers

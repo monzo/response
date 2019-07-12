@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework.decorators import action
 
-from core.models.incident import Incident
-from core.models.action import Action
-from core.models.user_external import ExternalUser
+from response.core.models.incident import Incident
+from response.core.models.action import Action
+from response.core.models.user_external import ExternalUser
 
 from django.contrib.auth.models import User
 

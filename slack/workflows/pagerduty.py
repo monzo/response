@@ -1,7 +1,7 @@
 import json
 import after_response
 
-from core.models import Incident
+from response.core.models import Incident
 
 
 from slack.block_kit import Message, Section, Divider, Text, Button

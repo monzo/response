@@ -1,6 +1,6 @@
 import after_response
 
-from core.models.incident import Incident
+from response.core.models.incident import Incident
 from slack.models import CommsChannel
 
 import logging

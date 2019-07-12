@@ -1,4 +1,4 @@
-from core.models import Incident, Action, ExternalUser
+from response.core.models import Incident, Action, ExternalUser
 from slack.models import CommsChannel
 from slack.decorators import incident_command, get_help
 from slack.slack_utils import reference_to_id, get_user_profile, rename_channel, SlackError, GetOrCreateSlackExternalUser

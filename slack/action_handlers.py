@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 from django.conf import settings
-from core.models.incident import Incident
+from response.core.models.incident import Incident
 
 from slack.settings import INCIDENT_EDIT_DIALOG
 from slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers

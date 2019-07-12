@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db import models
-from core.models.incident import Incident
-from core.models.user_external import ExternalUser
+from response.core.models.incident import Incident
+from response.core.models.user_external import ExternalUser
 
 
 class Action(models.Model):
