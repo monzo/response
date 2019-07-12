@@ -1,14 +1,15 @@
 
-from datetime import datetime
+def test_raise_incident_opens_dialog(slack_client, httpserver):
+    httpserver.expect_oneshot_request(
+        method="POST", uri="/api/dialog.open",
+    ).respond_with_json({"ok": True})
 
-
-def test_raise_incident(slack_client, httpserver):
-    print(httpserver.port)
     r = slack_client.post(
         "slack/slash_command",
         data={
             "user_id": "U123",
-            "trigger_id": "13345224609.738474920.8088930838d88f008e0",
+            "trigger_id": "foo",
         },
     )
     r.raise_for_status()
+    httpserver.check_assertions()
