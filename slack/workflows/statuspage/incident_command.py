@@ -1,6 +1,6 @@
 from slack.workflows.statuspage.constants import *
 
-from core.models import Incident
+from response.core.models import Incident
 from slack.block_kit import Message, Button, Section, Actions, Text
 from slack.models import CommsChannel
 

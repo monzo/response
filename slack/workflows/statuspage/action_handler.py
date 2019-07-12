@@ -4,7 +4,7 @@ import slack.dialog_builder as dialog_bld
 from slack.workflows.statuspage.connections import get_status_page_conn
 
 from slack.decorators import ActionContext
-from core.models import IncidentExtension
+from response.core.models import IncidentExtension
 from slack.block_kit import Text
 
 OPEN_STATUS_PAGE_DIALOG = 'open-status-page-dialog'

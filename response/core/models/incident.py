@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from core.models.user_external import ExternalUser
+from response.core.models.user_external import ExternalUser
 
 class IncidentManager(models.Manager):
     def create_incident(self, report, reporter, report_time, summary=None, impact=None, lead=None, severity=None):

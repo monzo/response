@@ -1,4 +1,4 @@
-from core.models import Incident
+from response.core.models import Incident
 from slack.models import CommsChannel
 from slack .decorators import recurring_notification, single_notification
 

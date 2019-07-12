@@ -5,7 +5,7 @@ from django.conf import settings
 from slugify import slugify
 from slackclient import SlackClient
 from functools import partial
-from core.models.incident import ExternalUser
+from response.core.models.incident import ExternalUser
 
 slack_token = settings.SLACK_TOKEN
 slack_client = SlackClient(slack_token)

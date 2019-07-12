@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 from urllib.parse import urljoin
 
-from core.models.incident import Incident
+from response.core.models.incident import Incident
 from slack.models.comms_channel import CommsChannel
 
 from slack.block_kit import *

@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.core.signals import request_finished
 from django.dispatch import receiver
 
-from core.models import Incident
+from response.core.models import Incident
 from slack.models import HeadlinePost
 
 from time import sleep

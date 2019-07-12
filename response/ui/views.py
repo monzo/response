@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, Http404
 
-from core.models import Incident
+from response.core.models import Incident
 from slack.models import PinnedMessage, UserStats
 
 
