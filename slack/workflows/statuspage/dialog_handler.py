@@ -3,7 +3,7 @@ import json
 from slack.workflows.statuspage.connections import get_status_page_conn
 
 from slack.models import Incident
-from core.models import IncidentExtension
+from response.core.models import IncidentExtension
 from slack.slack_utils import send_ephemeral_message
 
 

@@ -4,7 +4,7 @@ from datetime import datetime
 from django.conf import settings
 
 from slack.settings import INCIDENT_EDIT_DIALOG, INCIDENT_REPORT_DIALOG
-from core.models.incident import Incident, ExternalUser
+from response.core.models.incident import Incident, ExternalUser
 from slack.models import HeadlinePost, CommsChannel
 from slack.decorators import dialog_handler
 from slack.slack_utils import send_ephemeral_message, channel_reference, get_user_profile, GetOrCreateSlackExternalUser

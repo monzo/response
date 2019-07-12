@@ -1,6 +1,6 @@
 import logging
 
-from core.models import Incident
+from response.core.models import Incident
 from slack.models import CommsChannel
 from slack.slack_utils import add_reaction, remove_reaction, send_ephemeral_message, send_message, SlackError
 

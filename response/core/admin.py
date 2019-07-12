@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Incident, Action, ExternalUser
+from response.core.models import Incident, Action, ExternalUser
 
 admin.site.register(Action)
 admin.site.register(Incident)
