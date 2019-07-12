@@ -20,5 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('slack/', include('slack.urls')),
     path('core/', include('core.urls')),
-    path('', include('ui.urls')),
+    path('', include('response.ui.urls')),
 ]
