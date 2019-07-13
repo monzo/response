@@ -1,3 +1,4 @@
+import os
 import pytest
 
 import hashlib
@@ -47,7 +48,7 @@ class ResponseSlackSession(Session):
 
 @pytest.fixture(scope="session")
 def slack_signing_secret():
-    return "0fb064cb851b5bd336614ea00e9ec1a8"
+    return os.getenv("SLACK_SIGNING_SECRET", "shh-this-has-been-set-in-tests")
 
 @pytest.fixture(scope="session")
 def slack_client(slack_signing_secret, server_url):
