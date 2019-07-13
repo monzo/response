@@ -23,6 +23,8 @@ echo ""
 echo "⏲️  Running e2e test container..."
 docker run -it --rm \
     --name response-e2e \
+    -e RESPONSE_ADDR=http://host.docker.internal:8000 \
+    -p 9999:9999 \
     -v "$(pwd)":/usr/src/response \
     -w /usr/src/response/e2e \
     python:3.7 \

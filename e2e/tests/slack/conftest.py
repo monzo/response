@@ -53,3 +53,39 @@ def slack_signing_secret():
 def slack_client(slack_signing_secret, server_url):
     c = ResponseSlackSession(secret=slack_signing_secret, prefix_url=server_url)
     return c
+
+@pytest.fixture
+def slack_httpserver(httpserver):
+    httpserver.expect_request(
+        method="POST", uri="/api/dialog.open",
+    ).respond_with_json({"ok": True})
+
+    httpserver.expect_request(
+        method="POST", uri="/api/users.info",
+    ).respond_with_json({
+        "ok": True,
+        "user": {
+            "name": "Opsy McOpsface",
+            "profile": {
+                "real_name":  "Opsy McOpsface",
+            },
+        },
+    })
+
+    httpserver.expect_request(
+        method="POST", uri="/api/chat.postMessage",
+    ).respond_with_json({
+        "ok": True,
+        "ts": "123",
+    })
+
+    httpserver.expect_request(
+        method="POST", uri="/api/chat.update",
+    ).respond_with_json({
+        "ok": True,
+    })
+
+    yield httpserver
+    httpserver.clear_all_handlers()
+    httpserver.clear_assertions()
+

@@ -1,3 +1,5 @@
+from datetime import datetime
+import os
 import pytest
 import requests
 
@@ -18,7 +20,7 @@ class ResponseSession(Session):
 
 @pytest.fixture(scope="session")
 def server_url():
-    return "http://localhost:8000"
+    return os.getenv("RESPONSE_ADDR",  "http://localhost:8000")
 
 @pytest.fixture(scope="session")
 def client(server_url):
@@ -26,7 +28,15 @@ def client(server_url):
     return s
 
 @pytest.fixture(autouse=True,scope="session")
-def check_health(client):
-    r = client.get("core/")
-    r.raise_for_status()
+def wait_for_server(client):
+    start_time = datetime.now()
+    while True:
+        try:
+            r = client.get("core/")
+            r.raise_for_status()
+            return
+        except:
+            time_elapsed = datetime.now() - start_time
+            if time_elapsed.total_seconds() >= 10:
+                raise
 
