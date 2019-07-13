@@ -1,9 +1,26 @@
+from datetime import datetime
 import json
 
-def test_submit_dialog(slack_client, httpserver):
-    httpserver.expect_oneshot_request(
-        method="POST", uri="/api/dialog.open",
+def test_submit_dialog_creates_incident(client, slack_client, slack_httpserver):
+    slack_httpserver.expect_request(
+        method="POST", uri="/api/users.info",
+    ).respond_with_json({
+        "ok": True,
+        "user": {
+            "name": "Opsy McOpsface",
+            "profile": {
+                "real_name":  "Opsy McOpsface",
+            },
+        },
+    })
+
+    slack_httpserver.expect_request(
+        method="POST", uri="/api/chat.postMessage",
     ).respond_with_json({"ok": True})
+
+    incident_ts = datetime.now().timestamp()
+
+    report = f"something's wrong ({incident_ts})"
 
     r = slack_client.post(
         "slack/action",
@@ -18,11 +35,11 @@ def test_submit_dialog(slack_client, httpserver):
                     "id": "C123",
                 },
                 "submission": {
-                    "report": "",
-                    "summary": "",
-                    "impact": "",
-                    "lead_id": "",
-                    "severity": "",
+                    "report": report,
+                    "summary": "not sure what tho",
+                    "impact": "lots",
+                    "lead": "U123",
+                    "severity": "major",
                 },
                 "response_url": "",
                 "state": "",
@@ -30,4 +47,10 @@ def test_submit_dialog(slack_client, httpserver):
         },
     )
     r.raise_for_status()
-    httpserver.check_assertions()
+    slack_httpserver.check_assertions()
+
+    r = client.get("/core/incidents")
+    r.raise_for_status()
+    incidents = r.json()
+
+    assert incidents[-1]["report"] == report
