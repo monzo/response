@@ -11,7 +11,7 @@ if [[ -e "demo/.env" ]]; then
     exit 1
 fi
 
-cat << EOF > demo/.env
+cat <<EOF >demo/.env
 SLACK_TOKEN=xoxp-e2e-tests
 SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET:-e2e-secret}
 INCIDENT_CHANNEL_NAME=incidents
@@ -23,15 +23,14 @@ DJANGO_SETTINGS_MODULE=demo.settings.dev
 SLACK_API_MOCK=host.docker.internal:9999
 EOF
 
-
 echo "🌐 Starting demo app..."
 docker-compose -f "demo/docker-compose.yaml" up -d
 
-function finish {
+function finish() {
     echo ""
     echo "🔽 Cleaning up demo app..."
-    docker-compose -f "demo/docker-compose.yaml" down 
-    docker-compose -f "demo/docker-compose.yaml" rm 
+    docker-compose -f "demo/docker-compose.yaml" down
+    docker-compose -f "demo/docker-compose.yaml" rm
 
     echo "🔽 Cleaning up env file..."
     rm -rf demo/.env
@@ -40,7 +39,6 @@ function finish {
 if [[ -z "$SKIP_CLEANUP" ]]; then
     trap finish EXIT
 fi
-
 
 echo ""
 echo "⏲️  Running e2e test container..."
@@ -53,4 +51,3 @@ docker run -it --rm \
     -w /usr/src/response/e2e \
     python:3.7 \
     bash _run_in_docker.sh
-
