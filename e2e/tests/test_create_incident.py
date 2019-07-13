@@ -3,6 +3,9 @@ import json
 
 
 def test_raise_incident_opens_dialog(slack_client, slack_httpserver):
+    """
+    Test that we can post to slash_command
+    """
     r = slack_client.post(
         "slack/slash_command", data={"user_id": "U123", "trigger_id": "foo"}
     )
@@ -11,6 +14,9 @@ def test_raise_incident_opens_dialog(slack_client, slack_httpserver):
 
 
 def test_submit_dialog_creates_incident(client, slack_client, slack_httpserver):
+    """
+    Test that we can submit a dialog and an incident gets created
+    """
     slack_httpserver.expect_request(
         method="POST", uri="/api/users.info"
     ).respond_with_json(
