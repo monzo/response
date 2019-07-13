@@ -11,6 +11,11 @@ from urllib.parse import urljoin, urlencode
 
 
 class ResponseSession(Session):
+    """ResponseSession
+    A requests.Session that automatically prefixes the base
+    URL of the response server and adds authentication.
+    """
+
     def __init__(
         self,
         prefix_url="http://localhost:8000",
@@ -54,18 +59,19 @@ def wait_for_server(client):
 
 
 class ResponseSlackSession(Session):
-    def __init__(
-        self,
-        secret="",
-        prefix_url="http://localhost:8000",
-        username="admin",
-        password="admin",
-        *args,
-        **kwargs
-    ):
+    """ResponseSlackSession
+    A requests.Session that can make authenticated & signed requests to the
+    response Slack webhook API.
+    """
+
+    def __init__(self, secret="", prefix_url="http://localhost:8000", *args, **kwargs):
+        """__init__
+
+        :param secret: Slack signing secret - this can be anything, but must match what is given to the response server
+        :param prefix_url: Base URL of the response server
+        """
         super(ResponseSlackSession, self).__init__(*args, **kwargs)
         self.prefix_url = prefix_url
-        self.auth = (username, password)
         self.secret = secret
 
     def generate_signature(self, secret, data):
@@ -108,6 +114,10 @@ def slack_client(slack_signing_secret, server_url):
 
 @pytest.fixture
 def slack_httpserver(httpserver):
+    """slack_httpserver
+    A fixture that can listen for requests from response to the Slack API, and
+    respond with JSON stubs.
+    """
     httpserver.expect_request(method="POST", uri="/api/dialog.open").respond_with_json(
         {"ok": True}
     )
