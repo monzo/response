@@ -1,0 +1,15 @@
+language: generic
+sudo: required
+
+os:
+- linux
+
+env:
+  global:
+  - SLACK_SIGNING_SECRET:shhdonttellanyone
+
+before_install:
+  - docker --version
+
+script:
+  - ./e2e/run.sh
