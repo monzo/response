@@ -10,3 +10,5 @@ Pipfile
 virtual-env
 *.env
 /src/
+
+*.egg-info/
