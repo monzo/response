@@ -12,4 +12,4 @@ before_install:
   - docker --version
 
 script:
-  - ./e2e/run.sh
+  - bash ./e2e/run.sh
