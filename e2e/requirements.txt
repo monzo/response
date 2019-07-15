@@ -1,0 +1,4 @@
+pytest
+pytest-env
+pytest-httpserver
+requests

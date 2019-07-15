@@ -1,0 +1,15 @@
+language: generic
+sudo: required
+
+os:
+- linux
+
+env:
+  global:
+  - SLACK_SIGNING_SECRET:shhdonttellanyone
+
+jobs:
+  include:
+  - stage: E2E tests
+    script:
+    - bash ./e2e/run.sh

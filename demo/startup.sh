@@ -1,6 +1,6 @@
 #! /bin/bash
 
-pip install /response
+pip install -e /response
 
 wait_for_db()
 {
