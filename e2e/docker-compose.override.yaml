@@ -1,0 +1,16 @@
+version: '3'
+services:
+  e2e-test:
+    image: python:3.7
+    volumes:
+      - $PWD:/usr/src/response
+    working_dir: /usr/src/response/e2e
+    entrypoint: bash
+    command: _run_in_docker.sh
+    depends_on:
+      - response
+    environment:
+      - RESPONSE_ADDR=http://response:8000
+    env_file: .env
+    tty: true
+
