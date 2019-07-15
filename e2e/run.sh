@@ -4,6 +4,10 @@ set -euo pipefail
 
 SKIP_CLEANUP=${SKIP_CLEANUP:-}
 
+echo "ℹ️  Docker version is $(docker --version)"
+echo "ℹ️  docker-compose version is $(docker-compose --version)"
+
+echo ""
 echo "🌤️  Configuring environment"
 
 if [[ -e "demo/.env" ]]; then
