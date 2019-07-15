@@ -9,7 +9,16 @@ env:
   - SLACK_SIGNING_SECRET:shhdonttellanyone
 
 before_install:
+  # Install newer version of Docker, at least 18.03 - this includes `host.docker.internal` DNS address which we rely on
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
   - docker --version
 
-script:
-  - bash ./e2e/run.sh
+jobs:
+  include:
+  - stage: E2E tests
+    script:
+    - bash ./e2e/run.sh
