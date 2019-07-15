@@ -1,12 +1,11 @@
 from django.apps import AppConfig
-from django.conf import settings
 
 
-class SlackConfig(AppConfig):
-    name = 'response.slack'
+class ResponseConfig(AppConfig):
+    name = 'response'
 
     def ready(self):
-        from . import (settings,
+        from .slack import (settings,
                        signals,
                        action_handlers,
                        event_handlers,
@@ -16,4 +15,4 @@ class SlackConfig(AppConfig):
                        dialog_handlers,
                        workflows)
         if settings.PAGERDUTY_ENABLED:
-            from .workflows import pagerduty
+            from .slack.workflows import pagerduty
