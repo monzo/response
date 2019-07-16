@@ -18,4 +18,5 @@ deploy:
     secure: CzUj0FeZEUh5pbBOVelSEcgau6nJ5ra5OnwbHSIxht65uCQjXV0mxMBI6f+xmJh7tT+otY+8AV7A5zxox89vPshqjoktBifx+WVmD9BaXdDJzuO8ydsc1y28B9DMyAG3HUr5tgmxFsIRmSkG2cGh5uOI8jf+c+nVtZPuEMh1vgpZPIQxZmPU9Hw+cUXO/5gl7FuJwkQjoRqOjLhVdVWvvIQ4YAA1Za+i/PUpCmhVOsHdiRd+5/Ico/z0UzD6Ev5aJMOoT/nxO00TkR3h/scrV9wH05DdxOSknb4U7DwBRso7qDPLrx2pNPECYwyWgW4DiXMgJtMnU6RIn76+DPDTXBWik6WI4bSDzYZ5RKSyg/ULNPNYEpSv1+7npcKjVKcOVlyzmYlaLyvhr/NIvalitl+6W+5g4ncZ06N7zVClWZMNImdqUC6eAmypkbj4XgCATT7f/iinAz5x+vMayhJcKBCashE8t4wtjYMaP9eY6+YomuYLPxM8mBXOc3xN1KOWdoDq8EPL4M6tF3kFvOCimJGbvqKV5hSK6Z2GGCnnKyAcs+ukjWOsXZrdEebxYt03L4JE3vIamUeTEME00hP5QylpoM/+SWE4iH2SiR9X3VGIuzHGQri36hRO6EDD1oSCruZ7ps5S7WNkswbJNGK4AnWwaoMbqRdLJDopEX+UTWI=
   skip_existing: true
   skip_cleanup: true
-  if: tag IS present
+  on:
+    tags: true
