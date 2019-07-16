@@ -1,6 +1,7 @@
 import os
 from setuptools import find_packages, setup
 
+VERSION='0.0.1a4'
 
 INSTALL_REQUIRES = [
     'Django>=2.2',
@@ -32,7 +33,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='django-incident-response',
-    version='0.0.1a3',
+    version=VERSION,
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(exclude="demo"),
