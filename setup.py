@@ -1,6 +1,25 @@
 import os
 from setuptools import find_packages, setup
 
+
+INSTALL_REQUIRES = [
+    'Django>=2.2',
+    'bleach==3.1.0',
+    'cryptography>=2.7',
+    'django-after-response>=0.2.2',
+    'django-bootstrap4>=0.0.7',
+    'djangorestframework>=3.9.2',
+    'emoji-data-python==1.1.0',
+    'markdown2>=2.3.7',
+    'python-slugify>=1.2.6',
+    'slackclient>=1.3,<2',
+    'statuspageio>=0.0.1',
+]
+
+DEPENDENCY_LINKS = [
+    'git+https://github.com/monzo/pagerduty-api-python-client.git#egg=pypd',
+]
+
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
@@ -17,7 +36,10 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(exclude="demo"),
+    dependency_links=DEPENDENCY_LINKS,
+    install_requires=INSTALL_REQUIRES,
     package_dir={"response": "response"},
+    python_requires='>3.6',
     include_package_data=True,
     license='MIT License',  # example license
     description='A real-time incident response and reporting tool',
@@ -26,12 +48,11 @@ setup(
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 2.2',  # replace "X.Y" as appropriate
+        'Framework :: Django :: 2.2',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',  # example license
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Topic :: Internet :: WWW/HTTP',

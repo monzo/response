@@ -22,7 +22,7 @@ class ResponseSession(Session):
         username="admin",
         password="admin",
         *args,
-        **kwargs
+        **kwargs,
     ):
         super(ResponseSession, self).__init__(*args, **kwargs)
         self.prefix_url = prefix_url
@@ -54,7 +54,8 @@ def wait_for_server(client):
             return
         except:
             time_elapsed = datetime.now() - start_time
-            if time_elapsed.total_seconds() >= 10:
+            if time_elapsed.total_seconds() >= 60:
+                print(f"time elapsed: {time_elapsed.total_seconds()}s")
                 raise
 
 
