@@ -25,6 +25,144 @@ Follow the instructions in [demo/README](demo/README.md) to set up an example Dj
 
 ---
 
+# Install and use it
+
+[Start a new Django project](https://docs.djangoproject.com/en/2.2/intro/tutorial01/), if you don't have one already:
+```
+$ django-admin startproject myincidentresponse
+```
+
+Install response:
+```
+$ pip install django-incident-response
+```
+
+In `settings.py`, add these lines to `INSTALLED_APPS`:
+```
+INSTALLED_APPS = [
+    ...
+    "response.ui.apps.UiConfig",
+    "after_response",
+    "rest_framework",
+    "bootstrap4",
+    "response.apps.ResponseConfig",
+]
+```
+
+<details>
+<summary>If using the UI, you'll want to add these settings too:</summary>
+
+```
+STATIC_ROOT = "static"
+
+# Django Rest Framework
+# https://www.django-rest-framework.org/
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 100,
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+}
+# 
+
+# Markdown Filter
+
+MARKDOWN_FILTER_WHITELIST_TAGS = [
+    "a",
+    "p",
+    "code",
+    "h1",
+    "h2",
+    "ul",
+    "li",
+    "strong",
+    "em",
+    "img",
+]
+
+MARKDOWN_FILTER_WHITELIST_ATTRIBUTES = ["src", "style"]
+
+MARKDOWN_FILTER_WHITELIST_STYLES = [
+    "width",
+    "height",
+    "border-color",
+    "background-color",
+    "white-space",
+    "vertical-align",
+    "text-align",
+    "border-style",
+    "border-width",
+    "float",
+    "margin",
+    "margin-bottom",
+    "margin-left",
+    "margin-right",
+    "margin-top",
+]
+```
+
+</details>
+
+---
+# Configuring Response as a Slack App
+
+## 1. Create a Slack App
+
+- Navigate to [https://api.slack.com/apps](https://api.slack.com/apps) and click `Create New App`.
+- Give it a name, e.g. 'Response', and select the relevant workspace.
+
+- In the OAuth and Permissions page, scroll down to scopes.
+
+- Add the following scopes:
+  - `channels:history`
+  - `channels:read`
+  - `channels:write`
+  - `chat:write:bot`
+  - `chat:write:user`
+  - `users:read`
+
+- At the top of the page, the `Install App to Workspace` button is now available.  Click it!
+
+## 2. Add config to `settings.py`
+
+### OAuth Access Token (`SLACK_TOKEN`)
+
+Response needs an OAuth access token to use the Slack API.
+
+- Copy the token that starts `xoxp-...` from the OAuth & Permissions section of your Slack App and use it to set the `SLACK_TOKEN` variable.
+
+**Note:** Since some of the APIs commands we use require a _user_ token, we only need the token starting with `xoxp-...`.  If/when Slack allow these actions to be controlled by Bots, we can use the _bot_ token, starting `xoxb-...`.
+
+### Signing Secret (`SIGNING_SECRET`)
+
+Response uses the Slack signing secret to restrict access to public endpoints.
+
+- Copy the Signing secret from the Basic Information page and use it to set the `SIGNING SECRET` variable.
+
+### Incident Channel and ID (`INCIDENT_CHANNEL_NAME`, `INCIDENT_CHANNEL_ID`)
+
+When an incident is declared, a 'headline' post is sent to a central channel.
+
+- The default channel is `incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else (note: do not include the #).
+
+See the demo app for an example of how to get the incident channel ID from the Slack API.
+
+### Bot Name and ID (`INCIDENT_BOT_NAME`, `INCIDENT_BOT_ID`)
+
+We want to invite the Bot to all Incident Channels, so need to know its ID.
+
+- The default bot name is `incident` - change the `INCIDENT_BOT_NAME` if your app uses something different.
+
+### Database encrypted field key(`ENCRYPTED_FIELD_KEY`)
+
+Used to encrypt potentially sensitive values stored in the database for workflows.
+
+- This can be any value but keep it secure and don't lose it. You will be unable to decrypt values from the database without it.
+
+---
+
 # Development
 
 ## Django
