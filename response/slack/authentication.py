@@ -76,9 +76,12 @@ def verify_signature(timestamp, signature, secret,  data):
     # Generate a new hash using the app's signing secret and request data
 
     # Compare the generated hash and incoming request signature
+    request_hash = generate_signature(timestamp, secret, data)
+    return hmac.compare_digest(request_hash, signature)
+
+def generate_signature(timestamp, secret, data):
     req = str.encode('v0:' + str(timestamp) + ':') + data
-    request_hash = 'v0=' + hmac.new(
+    return 'v0=' + hmac.new(
         str.encode(secret),
         req, hashlib.sha256
     ).hexdigest()
-    return hmac.compare_digest(request_hash, signature)
