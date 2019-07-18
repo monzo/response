@@ -12,7 +12,7 @@ The following steps explain how to create a Slack app, run Response locally, and
 
 Broadly speaking, this sets things up as below:
 <p align="center">
-  <img width="600px" src="./docs/response.svg">
+  <img width="600px" src="../docs/response.svg">
 </p>
 
 ## 1. Create a Slack App

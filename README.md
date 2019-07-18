@@ -15,7 +15,7 @@ The tool integrates deeply with Slack and revolves around the following ideals:
   <em>The headline post when an incident is declared</em>
 </p>
 
-If you're interested in how we use this tool at Monzo, there's an overview in [this video](https://twitter.com/evnsio/status/1116026261401247745).
+📺 If you're interested in how we use this tool at Monzo, there's an overview in [this video](https://twitter.com/evnsio/status/1116026261401247745).
 
 ---
 
@@ -65,7 +65,7 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
 }
-# 
+#
 
 # Markdown Filter
 
