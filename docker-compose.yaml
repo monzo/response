@@ -22,6 +22,23 @@ services:
     stdin_open: true
     tty: true
 
+  static:
+    build:
+      context: .
+      dockerfile: Dockerfile.static
+    image: static
+    container_name: static
+    entrypoint: bash
+    command: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ui/static:/static
+    ports:
+      - "8080:8080"
+      - "443:443"
+    stdin_open: true
+    tty: true
+
   cron:
     build:
       context: .
