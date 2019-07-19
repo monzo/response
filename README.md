@@ -19,7 +19,7 @@ Response is a Django app which you can include in your project.  If you're just 
 
 # Quick Start
 
-Ready to create your own instance of Response?  This quick start explains how to start a project from scratch.
+Ready to create your own project using Response?  This quick start explains how to start one from scratch.
 
 [Start a new Django project](https://docs.djangoproject.com/en/2.2/intro/tutorial01/), if you don't have one already:
 ```
@@ -38,14 +38,14 @@ INSTALLED_APPS = [
     "after_response",
     "rest_framework",
     "bootstrap4",
-    "response",
+    "response.apps.ResponseConfig",
 ]
 ```
 
-Add the following to `settings.py` to configure the rest API and markdown processor in the UI:
+Add the following to `settings.py`:
 
 ```
-USE_TZ = False # if this exists elsewhere in your setting.py, just update the value
+USE_TZ = False # if this exists elsewhere in your settings.py, just update the value
 
 STATIC_ROOT = "static"
 
@@ -82,7 +82,7 @@ urlpatterns = [
 ```
 
 ---
-# Configuring Response as a Slack App
+# Configuring your project as a Slack App
 
 ## 1. Create a Slack App
 
@@ -103,7 +103,9 @@ urlpatterns = [
 
 ## 2. Add config to `settings.py`
 
-### SITE_URL = "http://localhost:8000"
+### Base site address (`SITE_URL`)
+
+Response needs to know where it is running in order to create links to the UI in Slack.  Whilst running locally, you might want this set to something like "http://localhost:8000".
 
 
 ### OAuth Access Token (`SLACK_TOKEN`)
@@ -124,15 +126,20 @@ Response uses the Slack signing secret to restrict access to public endpoints.
 
 When an incident is declared, a 'headline' post is sent to a central channel.
 
-- The default channel is `incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else (note: do not include the #).
-
 See the demo app for an example of how to get the incident channel ID from the Slack API.
 
 ### Bot Name and ID (`INCIDENT_BOT_NAME`, `INCIDENT_BOT_ID`)
 
 We want to invite the Bot to all Incident Channels, so need to know its ID.
 
-- The default bot name is `incident` - change the `INCIDENT_BOT_NAME` if your app uses something different.
+
+### Running the server
+
+```
+python3 manage.py migrate
+python3 manage.py runserver 0.0.0.0:8000
+```
+
 ---
 
 # Development
