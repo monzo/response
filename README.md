@@ -43,62 +43,31 @@ INSTALLED_APPS = [
 ]
 ```
 
-<details>
-<summary>Response has a UI for displaying live incident information.  If you'd like to use it, you'll want to add these settings too:</summary>
+Add the following to `settings.py` to configure the rest API and markdown processor in the UI:
 
 ```
 STATIC_ROOT = "static"
 
 # Django Rest Framework
-# https://www.django-rest-framework.org/
-
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
 }
 #
 
 # Markdown Filter
-
 MARKDOWN_FILTER_WHITELIST_TAGS = [
-    "a",
-    "p",
-    "code",
-    "h1",
-    "h2",
-    "ul",
-    "li",
-    "strong",
-    "em",
-    "img",
+    "a", "p", "code", "h1", "h2", "ul", "li", "strong", "em", "img",
 ]
 
 MARKDOWN_FILTER_WHITELIST_ATTRIBUTES = ["src", "style"]
 
 MARKDOWN_FILTER_WHITELIST_STYLES = [
-    "width",
-    "height",
-    "border-color",
-    "background-color",
-    "white-space",
-    "vertical-align",
-    "text-align",
-    "border-style",
-    "border-width",
-    "float",
-    "margin",
-    "margin-bottom",
-    "margin-left",
-    "margin-right",
-    "margin-top",
+    "width", "height", "border-color", "background-color", "white-space",
+    "vertical-align", "text-align", "border-style", "border-width", "float",
+    "margin", "margin-bottom", "margin-left", "margin-right", "margin-top",
 ]
-```
-
-</details>
-
 ```
 
 In `urls.py`, add the following to `urlpatterns`:
