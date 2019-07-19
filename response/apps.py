@@ -10,9 +10,14 @@ class ResponseConfig(AppConfig):
                             action_handlers,
                             event_handlers,
                             incident_commands,
+<<<<<<< HEAD
                             keyword_handlers,
                             incident_notifications,
                             dialog_handlers,
                             workflows)
         if settings.PAGERDUTY_ENABLED:
             from .slack.workflows import pagerduty
+=======
+                            incident_notifications,
+                            dialog_handlers)
+>>>>>>> release-0.1
