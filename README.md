@@ -7,7 +7,7 @@ Dealing with incidents can be stressful. On top of dealing with the issue at han
   <em>The headline post when an incident is declared</em>
 </p>
 
-If you're interested in how we use this tool at Monzo, there's an overview in [📺 this video](https://twitter.com/evnsio/status/1116026261401247745).
+If you're interested in how we use this tool at Monzo, there's an overview in [this video](https://twitter.com/evnsio/status/1116026261401247745).
 
 ---
 
@@ -17,9 +17,7 @@ Response is a Django app which you can include in your project.  If you're just 
 
 ---
 
-# Quick Start
-
-Ready to create your own project using Response?  This quick start explains how to start one from scratch.
+# Adding Response to your own project
 
 [Start a new Django project](https://docs.djangoproject.com/en/2.2/intro/tutorial01/), if you don't have one already:
 ```
@@ -82,7 +80,8 @@ urlpatterns = [
 ```
 
 ---
-# Configuring your project as a Slack App
+
+# Completing the setup and config with Slack
 
 ## 1. Create a Slack App
 
@@ -101,12 +100,11 @@ urlpatterns = [
 
 - At the top of the page, the `Install App to Workspace` button is now available.  Click it!
 
-## 2. Add config to `settings.py`
+## 2. Update your `settings.py`
 
 ### Base site address (`SITE_URL`)
 
 Response needs to know where it is running in order to create links to the UI in Slack.  Whilst running locally, you might want this set to something like "http://localhost:8000".
-
 
 ### OAuth Access Token (`SLACK_TOKEN`)
 
@@ -133,96 +131,66 @@ See the demo app for an example of how to get the incident channel ID from the S
 We want to invite the Bot to all Incident Channels, so need to know its ID.
 
 
-### Running the server
+## 3. Running the server
 
+Before you can complete the Slack app setup, you need to have the app running somewhere that's accesible to to the internet.  That means either deploying your Django project somewhere (see [here]()https://lmgtfy.com/?q=deploy+django+app&s=) or running it locally and exposing with something like [ngrok](https://ngrok.com/).
+
+For simplicity, we'll assume you're developing using ngrok.
+
+First make sure your DB is fully migrated and up-to-date:
 ```
 python3 manage.py migrate
+```
+
+Next, run the Django development server:
+```
 python3 manage.py runserver 0.0.0.0:8000
 ```
 
+Finally, run ngrok:
+```
+ngrok http 8000
+```
+
+Make note of the ngrok url as you'll need it in the following section as the `public-url`.
+
 ---
 
-# Development
+## 4. Complete the Slack App Setup
 
-## Django
-Response is built using [Django](https://www.djangoproject.com/). If you're not familiar with it, there are good [docs here](https://docs.djangoproject.com/en/2.1/).
+Head back to your Slack app and
 
-## Making Changes
+### Slash Command
 
-- The docker-compose setup maps your Response working directory into the running container.  Any changes made locally will automatically be reflected in the running instance.
+- In the Slash commands page click `Create New Command`.
 
-- In some cases, it may be necessary to run commands within the container.  This can be done with:
+- Enter the following info:
+  - Command:  `/incident`
+  - Request URL: `https://<public-url>/slack/slash_command`
+  - Short Description: `Trigger an incident`
+  - Usage Hint: `What's the problem?`
 
-```
-docker-compose exec -ti response
-```
+### Event Subscriptions
 
-- If you need to rebuild the app you can use:
+In the Event Subscriptions page we need to configure the following:
 
-```
-docker-compose build
-```
+- Toggle `Enable Events` to On
+- In the Request URL enter: `https://<public-url>/slack/event`
+- You need to have the server running and available as Slack sends a challenge to this address and expects a specific response.
 
-## Building Blocks
+- Under the Subscribe to Bot Events section, add the following:
+  - `app_mention`
+  - `pin_added`
+  - `pin_removed`
+  - `message.channels`
 
-It's likely you'll want to configure Response to support your own environment and processes.  To make this easier, Response provides some useful building blocks in the form of function decorators.
+### Configure interactive components
 
-### Incident Commands: `@incident_command`
+- In the Interactive Components page, enable and set the URL to `https://<public-url>/slack/action`.
 
-The `@incident_command` decorator allows you to define a new incident command handler in single function.
+### Bot Users
 
-**Example** if you wanted a command to show how long an incident had been running you'd simply need to add this one function:
+- In the Bot Users page, configure the Display Name and Default Username to `incident`.
+- Toggle 'Always Show My Bot as Online' to On.
 
-```
-@incident_command(['duration'], helptext='How long has this incident been running?')
-def update_duration(incident: Incident, user_id: str, message: str):
-    duration = incident.duration()
 
-    comms_channel = CommsChannel.objects.get(incident=incident)
-    comms_channel.post_in_channel(f"⏱ The incident has been running for {duration}")
-
-    return True, None
-```
-
-### Incident Notifications: `@recurring_notification` / `@single_notification`
-
-These decorators allow you to define Notifications which get posted to comms channel as specific intervals.
-
-**Example** if you wanted to remind the engineer to take break every 15 minutes you could define a function similar to the following:
-
-```
-@recurring_notification(interval_mins=30, max_notifications=10)
-def take_a_break(incident: Incident):
-    comms_channel = CommsChannel.objects.get(incident=incident)
-    comms_channel.post_in_channel("👋 30 minutes have elapsed. Think about taking a few minutes away from the screen.")
-```
-
-### Keyword Handlers: `@keyword_handler`
-
-These decorators allow functions to called when a specific keyword or phrase appears in a message posted in comms channel.
-
-**Example** if you wanted to remind people where to find your runbooks when they mention 'runbook' you could do the following:
-
-```
-@keyword_handler(['runbook', 'run book'])
-def runbook_notification(comms_channel: CommsChannel, user: str, text: str, ts: str):
-    comms_channel.post_in_channel("📗 If you're looking for our runbooks they can be found here https://...")
-```
-
-### Event Handlers: `@event_handler`
-
-Slack can send events for pretty much anything going on in your team. The full list is available [here](https://api.slack.com/events), and new handlers can be added to Response by using the `@event_handler` decorator.
-
-Examples of these can be found in [event_handlers.py](https://github.com/monzo/response/blob/master/slack/event_handlers.py).
-
-### Action Handlers: `@action_handler`
-
-Action handlers are used to handle button presses.  Buttons are assigned IDs when they are created (see [here](https://github.com/monzo/response/blob/master/slack/models/headline_post.py#L57)), and a handler can be linked by simply using the same ID.
-
-```
-@action_handler(HeadlinePost.CLOSE_INCIDENT_BUTTON)
-def handle_close_incident(action_context: ActionContext):
-    incident = action_context.incident
-    incident.end_time = datetime.now()
-    incident.save()
-```
