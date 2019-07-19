@@ -8,6 +8,12 @@ language: python
 python:
   - "3.7"
 
+branches:
+  only:
+  - master
+  # Build any release branches/tags
+  - /^release-.+$/
+
 env:
   global:
   - SLACK_SIGNING_SECRET:shhdonttellanyone
