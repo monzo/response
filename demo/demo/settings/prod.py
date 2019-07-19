@@ -1,6 +1,6 @@
 from .base import *
 
-SITE_URL =  os.environ.get("SITE_URL")
+SITE_URL = os.environ.get("SITE_URL")
 
 DEBUG = False
 
