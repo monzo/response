@@ -13,6 +13,9 @@ env:
   - SLACK_SIGNING_SECRET:shhdonttellanyone
 jobs:
   include:
+  - stage: Unit tests
+    script:
+    - bash ./hack/_run_tests.sh
   - stage: E2E tests
     script:
     - bash ./e2e/run.sh
