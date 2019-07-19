@@ -1,3 +1,2 @@
-from django.shortcuts import render
-
 from .slack.views import *
+from .ui.views import *
