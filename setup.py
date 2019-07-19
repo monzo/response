@@ -1,7 +1,7 @@
 import os
 from setuptools import find_packages, setup
 
-VERSION='0.0.1a4'
+VERSION = '0.0.1a4'
 
 INSTALL_REQUIRES = [
     'Django>=2.2',
@@ -18,7 +18,6 @@ INSTALL_REQUIRES = [
 ]
 
 DEPENDENCY_LINKS = [
-    'git+https://github.com/monzo/pagerduty-api-python-client.git#egg=pypd',
 ]
 
 # allow setup.py to be run from any path
@@ -60,4 +59,3 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
 )
-

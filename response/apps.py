@@ -10,6 +10,5 @@ class ResponseConfig(AppConfig):
                             action_handlers,
                             event_handlers,
                             incident_commands,
-                            keyword_handlers,
                             incident_notifications,
                             dialog_handlers)
