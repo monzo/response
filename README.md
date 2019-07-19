@@ -1,31 +1,25 @@
 # Response ⚡
 
-Dealing with incidents can be stressful. On top of dealing with the issue at hand, responders are often responsible for handling comms, both internal and external, reporting, and coordinating the efforts of other engineers. To reduce the pressure and cognitive burden on its engineers, Monzo built Response to help coordinate and report incidents.
-
-The tool integrates deeply with Slack and revolves around the following ideals:
-
-- **Limit context switching**
-  Context switching during an incident is often unavoidable.  Response aims to limit this, by enabling actions to be carried out without leaving the conversation.
-
-- **Make the easy thing the right thing**
-  If something needs doing, bring it to the attention of the responder when it makes sense, or better still automate it away.
+Dealing with incidents can be stressful. On top of dealing with the issue at hand, responders are often responsible for handling comms, coordinating the efforts of other engineers, and reporting what happened after the fact.  Monzo built Response to help reduce the pressure and cognitive burden on engineers during an incident, and to make it easy to create information rich reports for others to learn from.
 
 <p align="center">
   <img width="300px" src="./docs/headline_post.png"><br />
   <em>The headline post when an incident is declared</em>
 </p>
 
-📺 If you're interested in how we use this tool at Monzo, there's an overview in [this video](https://twitter.com/evnsio/status/1116026261401247745).
+If you're interested in how we use this tool at Monzo, there's an overview in [📺 this video](https://twitter.com/evnsio/status/1116026261401247745).
 
 ---
 
 # Try it out
 
-Follow the instructions in [demo/README](demo/README.md) to set up an example Django app that uses Response that you can run locally!
+Response is a Django app which you can include in your project.  If you're just looking to give it a try, follow the instuctions for the [demo app](demo/README.md)!
 
 ---
 
-# Install and use it
+# Quick Start
+
+Ready to create your own instance of Response?  This quick start explains how to start a project from scratch.
 
 [Start a new Django project](https://docs.djangoproject.com/en/2.2/intro/tutorial01/), if you don't have one already:
 ```
@@ -41,16 +35,16 @@ In `settings.py`, add these lines to `INSTALLED_APPS`:
 ```
 INSTALLED_APPS = [
     ...
-    "response.ui.apps.UiConfig",
     "after_response",
     "rest_framework",
     "bootstrap4",
+    "response.ui.apps.UiConfig",
     "response.apps.ResponseConfig",
 ]
 ```
 
 <details>
-<summary>If using the UI, you'll want to add these settings too:</summary>
+<summary>Response has a UI for displaying live incident information.  If you'd like to use it, you'll want to add these settings too:</summary>
 
 ```
 STATIC_ROOT = "static"
@@ -105,6 +99,18 @@ MARKDOWN_FILTER_WHITELIST_STYLES = [
 
 </details>
 
+```
+
+In `urls.py`, add the following to `urlpatterns`:
+```
+urlpatterns = [
+    ...
+    path('slack/', include('response.slack.urls')),
+    path('core/', include('response.core.urls')),
+    path('', include('response.ui.urls')),
+]
+```
+
 ---
 # Configuring Response as a Slack App
 
@@ -126,6 +132,9 @@ MARKDOWN_FILTER_WHITELIST_STYLES = [
 - At the top of the page, the `Install App to Workspace` button is now available.  Click it!
 
 ## 2. Add config to `settings.py`
+
+### SITE_URL = "http://localhost:8000"
+
 
 ### OAuth Access Token (`SLACK_TOKEN`)
 
