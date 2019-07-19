@@ -30,6 +30,7 @@ pyparsing==2.4.0
 pytest==5.0.1
 pytest-django==3.5.1
 pytest-env==0.6.2
+pytest-pythonpath==0.7.3
 pytest-sugar==0.9.2
 pytest-watch==4.2.0
 python-slugify==3.0.2
