@@ -17,9 +17,6 @@ INSTALL_REQUIRES = [
     'statuspageio>=0.0.1',
 ]
 
-DEPENDENCY_LINKS = [
-]
-
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
@@ -36,7 +33,6 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(exclude="demo"),
-    dependency_links=DEPENDENCY_LINKS,
     install_requires=INSTALL_REQUIRES,
     package_dir={"response": "response"},
     python_requires='>3.6',
