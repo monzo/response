@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'after_response',
     'rest_framework',
     'bootstrap4',
-    'response.ui.apps.UiConfig',
     'response.apps.ResponseConfig',
 ]
 
