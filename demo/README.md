@@ -48,7 +48,7 @@ Response needs an OAuth access token to use the Slack API.
 
 **Note:** Since some of the APIs commands we use require a _user_ token, we only need the token starting with `xoxp-...`.  If/when Slack allow these actions to be controlled by Bots, we can use the _bot_ token, starting `xoxb-...`.
 
-### Signing Secret (`SIGNING_SECRET`)
+### Signing Secret (`SLACK_SIGNING_SECRET`)
 
 Response uses the Slack signing secret to restrict access to public endpoints.
 

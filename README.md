@@ -158,7 +158,7 @@ Make note of the ngrok url as you'll need it in the following section as the `pu
 
 ## 4. Complete the Slack App Setup
 
-Head back to your Slack app and
+Head back to the Slack web UI and complete the configuration of your app.
 
 ### Slash Command
 
@@ -194,3 +194,10 @@ In the Event Subscriptions page we need to configure the following:
 - Toggle 'Always Show My Bot as Online' to On.
 
 
+## 5. Test it's working!
+
+In Slack, start an incident with `/incident Something's happened`.  You should see a post in your incidents channel!
+
+- Visit the incident doc by clicking the Doc link.
+- Create a comms channel by clicking the button.
+- In the comms channel check out the `@incident` commands.  You can find the ones available by entering `@incident help`.
