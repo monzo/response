@@ -1,6 +1,6 @@
 # Configuring your Slack app
 
-The steps here outline how to complete the Slack side setup for Response.  The app will need to be running, and accesible on a public domain to complete these steps as Slack validates the URL before it'll accept the change.
+The steps here outline how to complete the Slack side setup for Response.  The app will need to be running, and accessible on a public domain to complete these steps as Slack validates the URL before it'll accept the change.
 
 ## Slash Command
 
