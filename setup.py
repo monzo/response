@@ -1,7 +1,7 @@
 import os
 from setuptools import find_packages, setup
 
-VERSION='0.0.1a4'
+VERSION = '0.0.1a4'
 
 INSTALL_REQUIRES = [
     'Django>=2.2',
@@ -15,10 +15,6 @@ INSTALL_REQUIRES = [
     'python-slugify>=1.2.6',
     'slackclient>=1.3,<2',
     'statuspageio>=0.0.1',
-]
-
-DEPENDENCY_LINKS = [
-    'git+https://github.com/monzo/pagerduty-api-python-client.git#egg=pypd',
 ]
 
 # allow setup.py to be run from any path
@@ -37,7 +33,6 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(exclude="demo"),
-    dependency_links=DEPENDENCY_LINKS,
     install_requires=INSTALL_REQUIRES,
     package_dir={"response": "response"},
     python_requires='>3.6',
@@ -60,4 +55,3 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
 )
-
