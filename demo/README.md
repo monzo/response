@@ -1,6 +1,6 @@
 # Response Demo App
 
-This is an example Django project using the django-incident-response package that you can use to test drive `response` locally. You'll need access to be able to add and configure apps in a Slack workspace of your choosing - you can sign up for a free account, if necessary.
+This is an example Django project using the django-incident-response package that you can use to test drive Response locally. You'll need access to be able to add and configure apps in a Slack workspace of your choosing - you can sign up for a free account, if necessary.
 
 All commands should be run from this directory (`demo`).
 
@@ -98,38 +98,7 @@ response    | Quit the server with CONTROL-C.
 
 ## 4. Complete the Slack App Setup
 
-### Slash Command
-
-- In the Slash commands page click `Create New Command`.
-
-- Enter the following info:
-  - Command:  `/incident`
-  - Request URL: `https://<public-url>/slack/slash_command`
-  - Short Description: `Trigger an incident`
-  - Usage Hint: `What's the problem?`
-
-### Event Subscriptions
-
-In the Event Subscriptions page we need to configure the following:
-
-- Toggle `Enable Events` to On
-- In the Request URL enter: `https://<public-url>/slack/event`
-- You need to have the server running and available as Slack sends a challenge to this address and expects a specific response.
-
-- Under the Subscribe to Bot Events section, add the following:
-  - `app_mention`
-  - `pin_added`
-  - `pin_removed`
-  - `message.channels`
-
-### Configure interactive components
-
-- In the Interactive Components page, enable and set the URL to `https://<public-url>/slack/action`.
-
-### Bot Users
-
-- In the Bot Users page, configure the Display Name and Default Username to `incident`.
-- Toggle 'Always Show My Bot as Online' to On.
+Head back to the Slack web UI and complete the configuration of your app, as [described here](./docs/slack_app_config.md).
 
 
 ## 5. Test it's working!

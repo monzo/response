@@ -110,7 +110,7 @@ urlpatterns = [
 
 ### Base site address (`SITE_URL`)
 
-Response needs to know where it is running in order to create links to the UI in Slack.  Whilst running locally, you might want this set to something like "http://localhost:8000".
+Response needs to know where it is running in order to create links to the UI in Slack.  Whilst running locally, you might want this set to something like `http://localhost:8000`.
 
 ### OAuth Access Token (`SLACK_TOKEN`)
 
@@ -139,7 +139,7 @@ We want to invite the Bot to all Incident Channels, so need to know its ID.
 
 ## 3. Running the server
 
-Before you can complete the Slack app setup, you need to have the app running somewhere that's accesible to to the internet.  That means either deploying your Django project somewhere (see [here]()https://lmgtfy.com/?q=deploy+django+app&s=) or running it locally and exposing with something like [ngrok](https://ngrok.com/).
+Before you can complete the Slack app setup, you need to have the app running somewhere that's accesible to to the internet.  That means either deploying your Django project somewhere (see [here](https://lmgtfy.com/?q=deploy+django+app&s=) or running it locally and exposing with something like [ngrok](https://ngrok.com/).
 
 For simplicity, we'll assume you're developing using ngrok.
 
@@ -160,45 +160,9 @@ ngrok http 8000
 
 Make note of the ngrok url as you'll need it in the following section as the `public-url`.
 
----
-
 ## 4. Complete the Slack App Setup
 
-Head back to the Slack web UI and complete the configuration of your app.
-
-### Slash Command
-
-- In the Slash commands page click `Create New Command`.
-
-- Enter the following info:
-  - Command:  `/incident`
-  - Request URL: `https://<public-url>/slack/slash_command`
-  - Short Description: `Trigger an incident`
-  - Usage Hint: `What's the problem?`
-
-### Event Subscriptions
-
-In the Event Subscriptions page we need to configure the following:
-
-- Toggle `Enable Events` to On
-- In the Request URL enter: `https://<public-url>/slack/event`
-- You need to have the server running and available as Slack sends a challenge to this address and expects a specific response.
-
-- Under the Subscribe to Bot Events section, add the following:
-  - `app_mention`
-  - `pin_added`
-  - `pin_removed`
-  - `message.channels`
-
-### Configure interactive components
-
-- In the Interactive Components page, enable and set the URL to `https://<public-url>/slack/action`.
-
-### Bot Users
-
-- In the Bot Users page, configure the Display Name and Default Username to `incident`.
-- Toggle 'Always Show My Bot as Online' to On.
-
+Head back to the Slack web UI and complete the configuration of your app, as [described here](./docs/slack_app_config.md).
 
 ## 5. Test it's working!
 
