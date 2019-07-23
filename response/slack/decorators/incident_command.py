@@ -74,6 +74,7 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
         logger.error(f"No handler found for command {command_name}")
         return
 
+    logger.info(f"Handling incident command {command_name} '{message}' in channel {channel_id}")
     command = COMMAND_MAPPINGS[command_name]
 
     try:
@@ -90,27 +91,29 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
 
     except CommsChannel.DoesNotExist:
         logger.error('No matching incident found for this channel')
+    except e:
+        logger.error(f"Error handling incident command {command_name} {message}: {e}")
 
 
 def react_not_ok(channel_id, thread_ts):
     try:
         remove_reaction('white_check_mark', channel_id, thread_ts)
-    except SlackError:
-        pass
+    except SlackError as e:
+        logger.error(f"Couldn't remove existing reaction from {channel_id} - {thread_ts}. Error: {e}")
 
     try:
         add_reaction('question', channel_id, thread_ts)
-    except SlackError:
-        pass
+    except SlackError as e:
+        logger.error(f"Couldn't add 'question' reaction to {channel_id} - {thread_ts}. Error: {e}")
 
 
 def react_ok(channel_id, thread_ts):
     try:
         remove_reaction('question', channel_id, thread_ts)
-    except SlackError:
-        pass
+    except SlackError as e:
+        logger.error(f"Couldn't remove existing reaction from {channel_id} - {thread_ts}. Error: {e}")
 
     try:
         add_reaction('white_check_mark', channel_id, thread_ts)
-    except SlackError:
-        pass
+    except SlackError as e:
+        logger.error(f"Couldn't add 'white_check_mark' reaction to {channel_id} - {thread_ts}. Error: {e}")

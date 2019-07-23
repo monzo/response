@@ -46,8 +46,11 @@ def handle_event(payload):
     event = payload.get('event', '')
     event_type = event.get('type', '')
 
+    logger.info(f"Handling Slack event {event} of type {event_type}")
+
     # ignore bot messages
     if event.get('subtype', None) == 'bot_message':
+        logger.info(f"Ignoring bot message")
         return
 
     # if it doesn't exist, error and return
@@ -73,4 +76,5 @@ def handle_event(payload):
 
     # call the registered handler
     for handler in EVENT_MAPPINGS[event_type]:
+        logger.info(f"Calling handler for event type {event_type} for incident {incident.pk}")
         handler(incident, payload['event'])

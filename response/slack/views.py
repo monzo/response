@@ -46,6 +46,8 @@ def slash_command(request):
         ]
     )
 
+    logger.info(f"Handling Slack slash command for user {user_id}, report {report} - opening dialog")
+
     dialog.send_open_dialog(INCIDENT_REPORT_DIALOG, trigger_id)
     return HttpResponse()
 
@@ -61,6 +63,8 @@ def action(request):
     """
     payload = json.loads(request.POST['payload'])
     action_type = payload['type']
+
+    logger.info(f"Handling Slack action of type '{action_type}'")
 
     if action_type == 'dialog_submission':
         handle_dialog.after_response(payload)
@@ -88,6 +92,8 @@ def event(request):
     """
     payload = json.loads(request.body)
     action_type = payload['type']
+
+    logger.info(f"Handling Slack event of type '{action_type}'")
 
     if action_type == 'event_callback':
         handle_event(payload)

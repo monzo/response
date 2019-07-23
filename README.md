@@ -100,6 +100,7 @@ urlpatterns = [
   - `channels:history`
   - `channels:read`
   - `channels:write`
+  - `reactions:write`
   - `chat:write:bot`
   - `chat:write:user`
   - `users:read`
