@@ -151,7 +151,29 @@ In the Event Subscriptions page we need to configure the following:
 - Toggle 'Always Show My Bot as Online' to On.
 
 
-## 5. Test it's working!
+## 5. (Optional) Configure Statuspage workflow
+Configuring the statuspageio workflow can be accomplished by logging into the django admin panel.
+
+http://localhost:8000/admin/login/?next=/admin/
+
+The default credentials:
+-  Username: admin
+-  Password: admin
+
+They can and should be changed for production use! [startup.sh](../blob/master/startup.sh#L17)
+
+Then navigate to `Slack> Workflows> Statuspage` where you can find the configuration.
+
+<p align="center">
+  <img width="300px" src="./docs/statuspage-workflow-config.png"><br />
+  <em>Fill out the statuspage workflow configuration</em>
+</p>
+
+Make sure to enable the workflow and then fill out the variables. The admin page will automatically encrypt the values
+using the `ENCRYPTED_FIELD_KEY`.
+
+
+## 6. Test it's working!
 
 In Slack, start an incident with `/incident Something's happened`.  You should see a post in your incidents channel!
 
@@ -245,3 +267,4 @@ def handle_close_incident(action_context: ActionContext):
     incident.end_time = datetime.now()
     incident.save()
 ```
+
