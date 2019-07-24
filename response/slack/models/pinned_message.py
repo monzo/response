@@ -1,13 +1,13 @@
 from datetime import datetime
 from django.db import models
+from django.conf import settings
 
-from response.slack.slack_utils import get_user_profile, GetOrCreateSlackExternalUser
-from response.core.models import Incident, ExternalUser
+from response.core.models import Incident, ExternalUser, GetOrCreateSlackExternalUser
 
 
 class PinnedMessageManager(models.Manager):
     def add_pin(self, incident, message_ts, author_id, text):
-        name = get_user_profile(author_id)['name']
+        name = settings.SLACK_CLIENT.get_user_profile(author_id)['name']
         author = GetOrCreateSlackExternalUser(external_id=author_id, display_name=name)
 
         PinnedMessage.objects.get_or_create(

@@ -10,7 +10,7 @@ from response.core.models.incident import Incident
 from response.slack.models.comms_channel import CommsChannel
 
 from response.slack.block_kit import *
-from response.slack.slack_utils import user_reference, channel_reference
+from response.slack.client import user_reference, channel_reference
 
 logger = logging.getLogger(__name__)
 
