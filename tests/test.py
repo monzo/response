@@ -1,13 +1,12 @@
 from datetime import datetime
 import json
 import time
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, ANY
 
 import pytest
 from django.urls import reverse
 
 from response.core.models import Incident, ExternalUser
-
 
 
 def test_slash_command_invalid_signature(client):
@@ -25,20 +24,19 @@ def test_slash_command_invalid_signature(client):
     assert r.status_code == 403
 
 
-
 def test_slash_command_invokes_dialog(post_from_slack_api, mock_slack):
     data = {"user_id": "U123", "trigger_id": "foo"}
     r = post_from_slack_api("slash_command", data)
 
     assert r.status_code == 200
-
-    call = mock_slack.slack_api_calls["dialog.open"]
-    assert call
-    assert call["kwargs"]["trigger_id"] == "foo"
+    mock_slack.dialog_open.assert_called_once_with(dialog=ANY, trigger_id="foo")
 
 
 @pytest.mark.django_db(transaction=True)
 def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
+
+    mock_slack.send_or_update_message_block.return_value = {"ts": "123"}
+    mock_slack.get_user_profile.return_value = { "name": "Opsy McOpsface" }
 
     summary = "testing dialog submission"
     data = {
@@ -47,7 +45,7 @@ def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
                 "type": "dialog_submission",
                 "callback_id": "incident-report-dialog",
                 "user": {"id": "U123"},
-                "channel": {"id": "D123"},
+                "channel": {"id": "channel-posted-from"},
                 "response_url": "https://fake-response-url",
                 "submission": {
                     "report": "",
@@ -64,6 +62,9 @@ def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
 
     assert r.status_code == 200
 
+
+    # Check if incident has been created
+
     start_time = datetime.now()
     timeout_secs = 2
     backoff = 0.1
@@ -79,13 +80,26 @@ def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
         if q.exists():
             break
 
-    assert "chat.postMessage" in mock_slack.slack_api_calls
-    assert "chat.update" in mock_slack.slack_api_calls
-    assert "chat.postEphemeral" in mock_slack.slack_api_calls
+    # Check that headline post got created
+    mock_slack.send_or_update_message_block.assert_called_with(
+        "incident-channel-id",
+        blocks=ANY,
+        fallback_text=ANY,
+        ts="123",
+    )
+
+    # Check that we sent an ephemeral message to the reporting user
+    mock_slack.send_ephemeral_message.assert_called_with("channel-posted-from", "U123", ANY)
 
 
 @pytest.mark.django_db(transaction=True)
 def test_edit_incident(post_from_slack_api, mock_slack):
+
+    mock_slack.send_or_update_message_block.return_value = {"ts": "123"}
+    mock_slack.get_user_profile.return_value = {
+        "ts": "123",
+        "name": "Opsy McOpsface",
+    }
 
     user = ExternalUser.objects.get_or_create(
         app_id="slack", external_id="U123", display_name="Opsy McOpsface"
@@ -139,6 +153,10 @@ def test_edit_incident(post_from_slack_api, mock_slack):
         if i.exists():
             break
 
-    assert "chat.postMessage" in mock_slack.slack_api_calls
-    assert "chat.update" in mock_slack.slack_api_calls
-    assert "users.info" in mock_slack.slack_api_calls
+    # Assert that the headline post gets updated
+    mock_slack.send_or_update_message_block.assert_called_with(
+        "incident-channel-id",
+        blocks=ANY,
+        fallback_text=ANY,
+        ts="123",
+    )
