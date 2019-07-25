@@ -177,16 +177,37 @@ MARKDOWN_FILTER_WHITELIST_STYLES = [
 # Useful Functions for env specific settings
 
 def get_user_id(user_name, token):
+    next_cursor = None
     slack_client = SlackClient(token)
-    response = slack_client.api_call(
-        "users.list"
-    )
-    if not response.get("ok", False):
-        raise ImproperlyConfigured(f"Failed to get user id of \"{user_name}\" : {response['error']}")
-    for user in response['members']:
-        if user['name'] == user_name:
-            return user['id']
 
+    logger.info(f"get_user_id - Searching for {user_name} id...")
+
+    while next_cursor != "":
+        response = slack_client.api_call(
+            "users.list",
+            limit=800,
+            cursor=next_cursor,
+        )
+
+        # see if there's a next_cursor
+        try:
+            next_cursor = response["response_metadata"]["next_cursor"]
+            logger.info(f"get_user_id - next_cursor == [{next_cursor}]")
+        except:
+            logger.error(f"get_user_id - I guess checking next_cursor in response object didn't work.")
+
+        if not response.get("ok", False):
+            raise ImproperlyConfigured(f"get_user_id - API call not OK; failed to get user id for \"{user_name}\" : {response['error']}")
+
+        for user in response['members']:
+            try:
+                if user['name'] == user_name:
+                    logger.info(f"get_user_id - Found user_id={user['id']}")
+                    return user['id']
+            except:
+                logger.error(f"get_user_id - Died trying to see if previous {user} was {user_name}")
+
+    logger.error(f"get_user_id - Did not find {user_name}!")
     raise ImproperlyConfigured(f"Failed to get user id of \"{user_name}\"")
 
 
