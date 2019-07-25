@@ -229,7 +229,7 @@ def update_duration(incident: Incident, user_id: str, message: str):
 
 These decorators allow you to define Notifications which get posted to comms channel as specific intervals.
 
-**Example** if you wanted to remind the engineer to take break every 15 minutes you could define a function similar to the following:
+**Example** if you wanted to remind the engineer to take break every 30 minutes you could define a function similar to the following:
 
 ```
 @recurring_notification(interval_mins=30, max_notifications=10)
