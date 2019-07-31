@@ -57,7 +57,7 @@
             {% for event in events.all %}
             <div class="container">
                 <div class="content">
-                    {{ event.icon|safe }}{{ event.timestamp|date:"H:i:s" }}
+                    {{ event.icon|safe }}{{ event.timestamp|date:"H:i:s e" }}
                     {{ event|stringformat:'s'|unslackify|markdown_filter|safe  }}
                 </div>
             </div>
