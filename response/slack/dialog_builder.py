@@ -1,11 +1,7 @@
 from django.conf import settings
-from slackclient import SlackClient
 
-from response.slack.slack_utils import SlackError
+from response.slack.client import SlackError
 
-
-slack_token = settings.SLACK_TOKEN
-slack_client = SlackClient(slack_token)
 
 
 class Dialog:
@@ -41,16 +37,10 @@ class Dialog:
         """
         Open the dialog
         """
-        response = slack_client.api_call(
-            "dialog.open",
-            trigger_id=trigger_id,
+        return settings.SLACK_CLIENT.dialog_open(
             dialog=self.build_dialog(callback_id),
+            trigger_id=trigger_id,
         )
-
-        if not response.get("ok", False):
-            raise SlackError(
-                'Failed to open dialog : {}'.format(response['error']))
-
 
 class Element:
     def __init__(self, label, name, optional, hint, subtype, value, placeholder):

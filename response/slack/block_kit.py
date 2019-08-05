@@ -1,9 +1,4 @@
 from django.conf import settings
-from slackclient import SlackClient
-
-
-slack_token = settings.SLACK_TOKEN
-slack_client = SlackClient(slack_token)
 
 
 class Message:
@@ -27,18 +22,7 @@ class Message:
         """
         Build and send the message to the required channel
         """
-        api_call = "chat.postMessage" if not ts else "chat.update"
-
-        response = slack_client.api_call(
-            api_call,
-            text=self.fallback_text,
-            channel=channel,
-            ts=ts,
-            blocks=self.serialize(),
-        )
-        if not response['ok']:
-            print(f'Error: {response.get("error", None)}, Need: {response.get("needed", None)}')
-        return response
+        return settings.SLACK_CLIENT.send_or_update_message_block(channel, blocks=self.serialize(), fallback_text=self.fallback_text, ts=ts)
 
 
 class Block:

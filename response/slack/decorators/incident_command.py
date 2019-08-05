@@ -1,8 +1,9 @@
+from django.conf import settings
 import logging
 
 from response.core.models import Incident
 from response.slack.models import CommsChannel
-from response.slack.slack_utils import add_reaction, remove_reaction, send_ephemeral_message, send_message, SlackError
+from response.slack.client import SlackError
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
     @param payload an app mention string of the form @incident summary Something's happened
     """
     if command_name not in COMMAND_MAPPINGS:
-        send_ephemeral_message(
+        settings.SLACK_CLIENT.send_ephemeral_message(
             channel_id,
             user_id,
             "I'm sorry, I don't know how to help with that :grimacing:",
@@ -87,33 +88,34 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
             react_not_ok(channel_id, thread_ts)
 
         if response:
-            send_message(comms_channel.channel_id, response)
+            settings.SLACK_CLIENT.send_message(comms_channel.channel_id, response)
 
     except CommsChannel.DoesNotExist:
         logger.error('No matching incident found for this channel')
-    except e:
+    except Exception as e:
         logger.error(f"Error handling incident command {command_name} {message}: {e}")
+        raise
 
 
 def react_not_ok(channel_id, thread_ts):
     try:
-        remove_reaction('white_check_mark', channel_id, thread_ts)
+        settings.SLACK_CLIENT.remove_reaction('white_check_mark', channel_id, thread_ts)
     except SlackError as e:
         logger.error(f"Couldn't remove existing reaction from {channel_id} - {thread_ts}. Error: {e}")
 
     try:
-        add_reaction('question', channel_id, thread_ts)
+        settings.SLACK_CLIENT.add_reaction('question', channel_id, thread_ts)
     except SlackError as e:
         logger.error(f"Couldn't add 'question' reaction to {channel_id} - {thread_ts}. Error: {e}")
 
 
 def react_ok(channel_id, thread_ts):
     try:
-        remove_reaction('question', channel_id, thread_ts)
+        settings.SLACK_CLIENT.remove_reaction('question', channel_id, thread_ts)
     except SlackError as e:
         logger.error(f"Couldn't remove existing reaction from {channel_id} - {thread_ts}. Error: {e}")
 
     try:
-        add_reaction('white_check_mark', channel_id, thread_ts)
+        settings.SLACK_CLIENT.add_reaction('white_check_mark', channel_id, thread_ts)
     except SlackError as e:
         logger.error(f"Couldn't add 'white_check_mark' reaction to {channel_id} - {thread_ts}. Error: {e}")
