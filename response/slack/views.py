@@ -13,7 +13,7 @@ from response.slack.decorators import handle_action, handle_event, handle_notifi
 from response.slack.authentication import slack_authenticate
 from response.slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers
 from response.slack.settings import INCIDENT_REPORT_DIALOG
-from response.slack.slack_utils import channel_reference
+from response.slack.client import channel_reference
 
 
 logger = logging.getLogger(__name__)

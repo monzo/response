@@ -10,7 +10,7 @@ from response.core.models.incident import Incident
 from response.slack.models.comms_channel import CommsChannel
 
 from response.slack.block_kit import *
-from response.slack.slack_utils import user_reference, channel_reference
+from response.slack.client import user_reference, channel_reference
 
 logger = logging.getLogger(__name__)
 
@@ -84,11 +84,6 @@ class HeadlinePost(models.Model):
         response = msg.send(settings.INCIDENT_CHANNEL_ID, self.message_ts)
         logging.info(f"Got response back from Slack after updating headline post: {response}")
 
-        # TODO: wrap this in a Slack helper library that turns ok=False into an exception we can catch
-        if not response.get("ok", False):
-            err = f"Slack returned an error from updating headline post: {response.get('error', '')}"
-            logging.error(err)
-            raise errors.IncidentUpdateError(f"Could not update headline post: {err}")
 
         # Save the message ts identifier if not already set
         if not self.message_ts:

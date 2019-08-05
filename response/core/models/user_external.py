@@ -13,4 +13,11 @@ class ExternalUser(models.Model):
     display_name = models.CharField(max_length=50, blank=False, null=False)
 
     def __str__(self):
-        return f'{self.display_name or self.external_id} ({self.app_id})'
+        return f"{self.display_name or self.external_id} ({self.app_id})"
+
+
+GetOrCreateSlackExternalUser = lambda *args, **kwargs: ExternalUser.objects.get_or_create(
+    app_id="slack", *args, **kwargs
+)[
+    0
+]
