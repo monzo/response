@@ -3,20 +3,19 @@ import os
 from urllib.parse import urlencode
 
 from django.urls import reverse
+from django.conf import settings
+
 import pytest
 from unittest.mock import MagicMock
 
 from response.slack import dialog_builder, slack_utils, block_kit
 from response.slack.authentication import generate_signature
+from response.slack.client import SlackClient
 
-from .helpers import MockSlack
-
-@pytest.fixture
+@pytest.fixture()
 def mock_slack(monkeypatch):
-    mock_slack = MockSlack()
-    monkeypatch.setattr(dialog_builder, "slack_client", mock_slack.mock)
-    monkeypatch.setattr(slack_utils, "slack_client", mock_slack.mock)
-    monkeypatch.setattr(block_kit, "slack_client", mock_slack.mock)
+    mock_slack = MagicMock(spec=SlackClient(""))
+    monkeypatch.setattr(settings, "SLACK_CLIENT", mock_slack)
     return mock_slack
 
 

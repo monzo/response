@@ -7,7 +7,6 @@ from response.core.models.incident import Incident
 from response.slack.settings import INCIDENT_EDIT_DIALOG
 from response.slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers
 from response.slack.models import HeadlinePost, CommsChannel
-from response.slack.slack_utils import invite_user_to_channel, get_slack_token_owner, leave_channel
 
 from response.slack.decorators import action_handler, ActionContext
 
@@ -29,15 +28,15 @@ def handle_create_comms_channel(ac: ActionContext):
 
     # Invite the bot to the channel
     try:
-        invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
+        settings.SLACK_CLIENT.invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
     except Exception as ex:
         logger.error(ex)
 
     # Un-invite the user who owns the Slack token,
     #   otherwise they'll be added to every incident channel
-    slack_token_owner = get_slack_token_owner()
+    slack_token_owner = settings.SLACK_CLIENT.get_slack_token_owner()
     if ac.incident.reporter != slack_token_owner:
-        leave_channel(comms_channel.channel_id)
+        settings.SLACK_CLIENT.leave_channel(comms_channel.channel_id)
 
     # Update the headline post to link to this
     headline_post = HeadlinePost.objects.get(

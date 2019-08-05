@@ -1,7 +1,9 @@
-from response.core.models import Incident, Action, ExternalUser
+from django.conf import settings
+
+from response.core.models import Incident, Action, ExternalUser, GetOrCreateSlackExternalUser
 from response.slack.models import CommsChannel
 from response.slack.decorators import incident_command, get_help
-from response.slack.slack_utils import reference_to_id, get_user_profile, rename_channel, SlackError, GetOrCreateSlackExternalUser
+from response.slack.client import SlackError, reference_to_id
 from datetime import datetime
 
 @incident_command(['help'], helptext='Display a list of commands and usage')
@@ -26,7 +28,7 @@ def update_impact(incident: Incident, user_id: str, message: str):
 @incident_command(['lead'], helptext='Assign someone as the incident lead')
 def set_incident_lead(incident: Incident, user_id: str, message: str):
     assignee = reference_to_id(message) or user_id
-    name = get_user_profile(assignee)['name']
+    name = settings.SLACK_CLIENT.get_user_profile(assignee)['name']
     user = GetOrCreateSlackExternalUser(external_id=assignee, display_name=name)
     incident.lead = user
     incident.save()
@@ -84,7 +86,7 @@ def close_incident(incident: Incident, user_id: str, message: str):
 @incident_command(['action'], helptext='Log a follow up action')
 def set_action(incident: Incident, user_id: str, message: str):
     comms_channel = CommsChannel.objects.get(incident=incident)
-    name = get_user_profile(user_id)['name']
+    name = settings.SLACK_CLIENT.get_user_profile(user_id)['name']
     action_reporter = GetOrCreateSlackExternalUser(external_id=user_id, display_name=name)
     Action(incident=incident, details=message, user=action_reporter).save()
     return True, None
