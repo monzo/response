@@ -28,10 +28,12 @@ Broadly speaking, this sets things up as below:
   <img width="600px" src="./docs/response.svg">
 </p>
 
-## 1. Create a Slack App
+## 1. Create a Slack App and Bot User
 
 - Navigate to [https://api.slack.com/apps](https://api.slack.com/apps) and click `Create New App`.
 - Give it a name, e.g. 'Response', and select the relevant workspace.
+
+- On the Bot Users page, create a bot user (this will be customised later on).
 
 - In the OAuth and Permissions page, scroll down to scopes.
 
@@ -69,7 +71,7 @@ Response uses the Slack signing secret to restrict access to public endpoints.
 
 ### Incident Channel (`INCIDENT_CHANNEL_NAME`)
 
-When an incident is declared, a 'headline' post is sent to a central channel.
+When an incident is declared, a 'headline' post is sent to a central channel. You will need to create this channel in advance.
 
 - The default channel is `incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else (note: do not include the #).
 
