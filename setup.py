@@ -1,7 +1,7 @@
 import os
 from setuptools import find_packages, setup
 
-VERSION = '0.0.2a1'
+VERSION = '0.0.2'
 
 INSTALL_REQUIRES = [
     'Django>=2.2',
