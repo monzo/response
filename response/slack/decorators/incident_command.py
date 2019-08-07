@@ -2,7 +2,7 @@ from django.conf import settings
 import logging
 
 from response.core.models import Incident
-from response.slack.models import CommsChannel
+from response.slack.models.comms_channel import CommsChannel
 from response.slack.client import SlackError
 
 logger = logging.getLogger(__name__)
