@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 
 from response import errors
 from response.core.models.incident import Incident
+from response.slack.decorators.headline_post_action import SLACK_HEADLINE_POST_ACTION_MAPPINGS, headline_post_action
 from response.slack.models.comms_channel import CommsChannel
 
 from response.slack.block_kit import *
@@ -71,12 +72,13 @@ class HeadlinePost(models.Model):
             msg.add_block(Section(text=Text("Need something else?")))
             actions = Actions(block_id="actions")
 
-            if not self.comms_channel:
-                actions.add_element(Button(":speaking_head_in_silhouette: Create Comms Channel", self.CREATE_COMMS_CHANNEL_BUTTON, value=self.incident.pk))
-
-            actions.add_element(Button(":pencil2: Edit", self.EDIT_INCIDENT_BUTTON, value=self.incident.pk))
-
-            actions.add_element(Button(":white_check_mark: Close", self.CLOSE_INCIDENT_BUTTON, value=self.incident.pk))
+            # Add all actions mapped by @headline_post_action decorators
+            for key in sorted(SLACK_HEADLINE_POST_ACTION_MAPPINGS.keys()):
+                funclist = SLACK_HEADLINE_POST_ACTION_MAPPINGS[key]
+                for f in funclist:
+                    action = f(self)
+                    if action:
+                        actions.add_element(action)
 
             msg.add_block(actions)
 
@@ -89,3 +91,25 @@ class HeadlinePost(models.Model):
         if not self.message_ts:
             self.message_ts = response['ts']
             self.save()
+
+    def post_to_thread(self, message):
+        settings.SLACK_CLIENT.send_message(settings.INCIDENT_CHANNEL_ID, message,
+                           thread_ts=self.message_ts)
+
+# Default/core actions to display on headline post. In order to allow inserting actions between these ones we increment the order by 100
+
+@headline_post_action(order=100)
+def create_comms_channel_action(headline_post):
+    if headline_post.comms_channel:
+        # No need to create an action, channel already exists
+        return None
+    return Button(":speaking_head_in_silhouette: Create Comms Channel", HeadlinePost.CREATE_COMMS_CHANNEL_BUTTON, value=headline_post.incident.pk)
+
+@headline_post_action(order=200)
+def edit_incident_button(headline_post):
+    return Button(":pencil2: Edit", HeadlinePost.EDIT_INCIDENT_BUTTON, value=headline_post.incident.pk)
+
+@headline_post_action(order=300)
+def close_incident_button(headline_post):
+    return Button(":white_check_mark: Close", HeadlinePost.CLOSE_INCIDENT_BUTTON, value=headline_post.incident.pk)
+

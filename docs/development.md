@@ -66,3 +66,31 @@ def handle_close_incident(action_context: ActionContext):
     incident.end_time = datetime.now()
     incident.save()
 ```
+
+### Headline Post Actions
+
+When a new incident is created, we create a "headline post" message in the central incidents channel. We add action buttons here - by default allowing creating an incident channel, editing the incident or closing. There is a decorator that allows you to add custom action buttons here - `@headline_post_action`.
+
+For example:
+```
+from response.slack import block_kit
+from response.slack.decorators import headline_post_action
+
+@headline_post_action(order=150)
+def my_cool_headline_action(headline_post):
+    return block_kit.Button(":sparkles: My cool action", "my-cool-action", value=headline_post.incident.pk)
+```
+
+You should provide a function which takes a `headline_post` parameter, and either returns `None` (a button won't be created) or an action, e.g. `block_kit.Button`. You can also specify an `order` parameter, which will determine the order in which actions appear. The default buttons have orders of 100, 200 and 300, so the above example would appear second:
+
+![](https://www.dropbox.com/s/ummtglal8xmw2rj/Screenshot%202019-08-08%2014.55.20.png?raw=1)
+
+Check the logs to see which actions have been registered, and what order they're registered in.
+
+```
+INFO  - headline_post_a - Registering headline post action create_comms_channel_action with order 100
+INFO  - headline_post_a - Registering headline post action edit_incident_button with order 200
+INFO  - headline_post_a - Registering headline post action close_incident_button with order 300
+INFO  - headline_post_a - Registering headline post action my_cool_headline_action with order 150
+```
+
