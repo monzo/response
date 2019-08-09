@@ -44,6 +44,7 @@ Broadly speaking, this sets things up as below:
   - `chat:write:bot`
   - `chat:write:user`
   - `users:read`
+  - `reactions:write`
 
 - At the top of the page, the `Install App to Workspace` button is now available.  Click it!
 
