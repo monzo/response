@@ -5,7 +5,7 @@ from response.core.views import IncidentViewSet, ActionViewSet, ExternalUserView
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'incidents', IncidentViewSet, base_name='Incidents')
+router.register(r'incidents', IncidentViewSet, base_name='incident')
 router.register(r'actions', ActionViewSet)
 router.register(r'ExternalUser', ExternalUserViewSet)
 

@@ -21,8 +21,6 @@ class ActionViewSet(viewsets.ModelViewSet):
     serializer_class = ActionSerializer
 
 
-# Will return the incidents of the current month
-# Can pass ?start=2019-05-28&end=2019-06-03 to change range
 class IncidentViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
 

@@ -8,31 +8,57 @@ from response.core.models.user_external import ExternalUser
 from django.contrib.auth.models import User
 
 
-class ExternalUserSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
-
+class ExternalUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalUser
-        fields = ('app_id', 'external_id', 'owner', 'display_name')
+        fields = ("app_id", "external_id", "display_name")
 
 
-class ActionSerializer(serializers.HyperlinkedModelSerializer):
+class ActionSerializer(serializers.ModelSerializer):
     # Serializers define the API representation.
-    incident = serializers.PrimaryKeyRelatedField(queryset=Incident.objects.all(), required=False)
-    user = serializers.PrimaryKeyRelatedField(queryset=ExternalUser.objects.all(), required=False)
+    incident = serializers.PrimaryKeyRelatedField(
+        queryset=Incident.objects.all(), required=False
+    )
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=ExternalUser.objects.all(), required=False
+    )
 
     class Meta:
         model = Action
-        fields = ('pk', 'details', 'done', 'incident', 'user')
+        fields = ("pk", "details", "done", "incident", "user")
 
 
-class IncidentSerializer(serializers.HyperlinkedModelSerializer):
-    reporter = ExternalUserSerializer()
+class IncidentSerializer(serializers.ModelSerializer):
+    reporter = ExternalUserSerializer(read_only=True)
     lead = ExternalUserSerializer()
 
     class Meta:
         model = Incident
-        fields = ('pk','report', 'impact', 'summary', 'reporter', 'lead', 'start_time', 'end_time', 'report_time', 'action_set')
+        fields = (
+            "action_set",
+            "end_time",
+            "impact",
+            "lead",
+            "report",
+            "reporter",
+            "report_time",
+            "severity",
+            "start_time",
+            "summary",
+        )
+
+    def update(self, instance, validated_data):
+        instance.end_time = validated_data.get("end_time", instance.end_time)
+        instance.impact = validated_data.get("impact", instance.impact)
+        # instance.lead = validated_data.get("lead", instance.lead)
+        instance.report = validated_data.get("report", instance.report)
+        instance.start_time = validated_data.get("start_time", instance.start_time)
+        instance.summary = validated_data.get("summary", instance.summary)
+        instance.severity = validated_data.get("severity", instance.severity)
+
+        instance.save()
+        return instance
+
 
 #     def __init__(self, *args, **kwargs):
 #         super(IncidentSerializer, self).__init__(*args, **kwargs)

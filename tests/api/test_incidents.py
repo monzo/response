@@ -1,18 +1,22 @@
+from django.urls import reverse
+from faker import Faker
+from rest_framework.test import force_authenticate
 import json
 import pytest
-from rest_framework.test import force_authenticate
-from django.urls import reverse
+import random
 
+from response.models import Incident
 from response.serializers import IncidentSerializer
 from response.core.views import IncidentViewSet
 from tests.factories import IncidentFactory
 
+faker = Faker()
 
-@pytest.mark.django_db
+
 def test_list_incidents(arf, api_user):
-    persisted_incidents = IncidentFactory.create_batch(5)
+    persisted_incidents = IncidentFactory.create_batch(1)
 
-    req = arf.get(reverse("Incidents-list"))
+    req = arf.get(reverse("incident-list"))
     force_authenticate(req, user=api_user)
     response = IncidentViewSet.as_view({"get": "list"})(req)
 
@@ -35,10 +39,57 @@ def test_list_incidents(arf, api_user):
         assert incident["report"]
         assert incident["start_time"]
         assert incident["summary"]
+        assert incident["severity"]
 
         reporter = incident["reporter"]
         assert reporter["display_name"]
         assert reporter["external_id"]
 
+        lead = incident["lead"]
+        assert lead["display_name"]
+        assert lead["external_id"]
+
         # TODO: verify actions are serialised inline
 
+
+@pytest.mark.parametrize(
+    "update_key,update_value",
+    (
+        ("", ""),
+        ("impact", faker.paragraph(nb_sentences=2, variable_nb_sentences=True)),
+        ("report", faker.paragraph(nb_sentences=1, variable_nb_sentences=True)),
+        ("summary", faker.paragraph(nb_sentences=3, variable_nb_sentences=True)),
+        (
+            "start_time",
+            faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None),
+        ),
+        (
+            "end_time",
+            faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None),
+        ),
+        ("severity",str(random.randint(1, 4))),
+    ),
+)
+def test_update_incident(arf, api_user, update_key, update_value):
+    persisted_incidents = IncidentFactory.create_batch(5)
+
+    incident = persisted_incidents[0]
+    serializer = IncidentSerializer(incident)
+    serialized = serializer.data
+
+    updated = serialized
+    if update_key:
+        updated[update_key] = update_value
+
+    req = arf.put(
+        reverse("incident-detail", kwargs={"pk": incident.pk}), updated, format="json"
+    )
+    force_authenticate(req, user=api_user)
+
+    response = IncidentViewSet.as_view({"put": "update"})(req, pk=incident.pk)
+    print(response.rendered_content)
+    assert response.status_code == 200
+
+    if update_key:
+        new_incident = Incident.objects.get(pk=incident.pk)
+        assert getattr(new_incident, update_key) == update_value
