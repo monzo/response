@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import pagination, viewsets
 
 from response.core.models.incident import Incident
 from response.core.models.action import Action
@@ -27,7 +27,7 @@ class IncidentViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
 
     serializer_class = IncidentSerializer
-    pagination_class = None  # Remove pagination
+    pagination_class = pagination.LimitOffsetPagination
 
     def get_queryset(self):
         # Same query is used to get single items so we check if pk is passed

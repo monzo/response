@@ -27,17 +27,17 @@ class ActionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class IncidentSerializer(serializers.HyperlinkedModelSerializer):
-    reporter = serializers.PrimaryKeyRelatedField(queryset=ExternalUser.objects.all(), required=False)
-    lead = serializers.PrimaryKeyRelatedField(queryset=ExternalUser.objects.all(), required=False)
+    reporter = ExternalUserSerializer()
+    lead = ExternalUserSerializer()
 
     class Meta:
         model = Incident
-        fields = ('pk','report', 'reporter', 'lead', 'start_time', 'end_time', 'report_time', 'action_set')
+        fields = ('pk','report', 'impact', 'summary', 'reporter', 'lead', 'start_time', 'end_time', 'report_time', 'action_set')
 
-    def __init__(self, *args, **kwargs):
-        super(IncidentSerializer, self).__init__(*args, **kwargs)
-        request = kwargs['context']['request']
-        expand = request.GET.get('expand', "").split(',')
+#     def __init__(self, *args, **kwargs):
+#         super(IncidentSerializer, self).__init__(*args, **kwargs)
+#         request = kwargs['context']['request']
+#         expand = request.GET.get('expand', "").split(',')
 
-        if 'actions' in expand:
-            self.fields['action_set'] = ActionSerializer(many=True, read_only=True)
+#         if 'actions' in expand:
+#             self.fields['action_set'] = ActionSerializer(many=True, read_only=True)
