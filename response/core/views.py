@@ -3,7 +3,7 @@ from rest_framework import pagination, viewsets
 from response.core.models.incident import Incident
 from response.core.models.action import Action
 from response.core.models.user_external import ExternalUser
-from response.core.serializers import ExternalUserSerializer, ActionSerializer, IncidentSerializer
+from response.core import serializers
 
 from datetime import datetime
 from calendar import monthrange
@@ -12,19 +12,19 @@ from calendar import monthrange
 class ExternalUserViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
     queryset = ExternalUser.objects.all()
-    serializer_class = ExternalUserSerializer
+    serializer_class = serializers.ExternalUserSerializer
 
 
 class ActionViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
     queryset = Action.objects.all()
-    serializer_class = ActionSerializer
+    serializer_class = serializers.ActionSerializer
 
 
 class IncidentViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
 
-    serializer_class = IncidentSerializer
+    serializer_class = serializers.IncidentSerializer
     pagination_class = pagination.LimitOffsetPagination
 
     def get_queryset(self):

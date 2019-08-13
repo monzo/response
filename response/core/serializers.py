@@ -50,7 +50,14 @@ class IncidentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.end_time = validated_data.get("end_time", instance.end_time)
         instance.impact = validated_data.get("impact", instance.impact)
-        # instance.lead = validated_data.get("lead", instance.lead)
+
+        new_lead = validated_data.get("lead", None)
+        if new_lead:
+            instance.lead = ExternalUser.objects.get(
+                display_name=new_lead["display_name"],
+                external_id=new_lead["external_id"],
+            )
+
         instance.report = validated_data.get("report", instance.report)
         instance.start_time = validated_data.get("start_time", instance.start_time)
         instance.summary = validated_data.get("summary", instance.summary)
@@ -58,12 +65,3 @@ class IncidentSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
-#     def __init__(self, *args, **kwargs):
-#         super(IncidentSerializer, self).__init__(*args, **kwargs)
-#         request = kwargs['context']['request']
-#         expand = request.GET.get('expand', "").split(',')
-
-#         if 'actions' in expand:
-#             self.fields['action_set'] = ActionSerializer(many=True, read_only=True)
