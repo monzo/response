@@ -12,9 +12,13 @@ from response.slack import dialog_builder, slack_utils, block_kit
 from response.slack.authentication import generate_signature
 from response.slack.client import SlackClient
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def mock_slack(monkeypatch):
     mock_slack = MagicMock(spec=SlackClient(""))
+    mock_slack.send_or_update_message_block.return_value = {
+        "ok": True,
+        "ts": 1234,
+    }
     monkeypatch.setattr(settings, "SLACK_CLIENT", mock_slack)
     return mock_slack
 
