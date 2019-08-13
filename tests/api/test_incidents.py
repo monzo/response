@@ -13,7 +13,6 @@ from tests.factories import IncidentFactory
 faker = Faker()
 
 
-@pytest.mark.skip
 def test_list_incidents(arf, api_user):
     persisted_incidents = IncidentFactory.create_batch(5)
 
