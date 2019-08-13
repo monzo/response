@@ -22,7 +22,12 @@ class ActionViewSet(viewsets.ModelViewSet):
 
 
 class IncidentViewSet(viewsets.ModelViewSet):
-    # ViewSets define the view behavior.
+    """
+    Allows getting a list of Incidents (sorted by report time from newest to
+    oldest), and updating existing ones.
+
+    Note that Incidents can only be created via the Slack workflow.
+    """
 
     queryset = Incident.objects.order_by("-report_time")
 
