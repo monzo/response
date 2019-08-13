@@ -1,9 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import pagination, viewsets
 
 from response.core.models.incident import Incident
 from response.core.models.action import Action
 from response.core.models.user_external import ExternalUser
-from response.core.serializers import ExternalUserSerializer, ActionSerializer, IncidentSerializer
+from response.core import serializers
 
 from datetime import datetime
 from calendar import monthrange
@@ -12,35 +12,24 @@ from calendar import monthrange
 class ExternalUserViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
     queryset = ExternalUser.objects.all()
-    serializer_class = ExternalUserSerializer
+    serializer_class = serializers.ExternalUserSerializer
 
 
 class ActionViewSet(viewsets.ModelViewSet):
     # ViewSets define the view behavior.
     queryset = Action.objects.all()
-    serializer_class = ActionSerializer
+    serializer_class = serializers.ActionSerializer
 
 
-# Will return the incidents of the current month
-# Can pass ?start=2019-05-28&end=2019-06-03 to change range
 class IncidentViewSet(viewsets.ModelViewSet):
-    # ViewSets define the view behavior.
+    """
+    Allows getting a list of Incidents (sorted by report time from newest to
+    oldest), and updating existing ones.
 
-    serializer_class = IncidentSerializer
-    pagination_class = None  # Remove pagination
+    Note that Incidents can only be created via the Slack workflow.
+    """
 
-    def get_queryset(self):
-        # Same query is used to get single items so we check if pk is passed
-        # incident/2/ if we use the filter below we would have to have correct time range
-        if 'pk' in self.kwargs:
-            return Incident.objects.filter(pk=self.kwargs['pk'])
+    queryset = Incident.objects.order_by("-report_time")
 
-        today = datetime.today()
-        first_day_of_current_month = datetime(today.year, today.month, 1)
-        days_in_month = monthrange(today.year, today.month)[1]
-        last_day_of_current_month = datetime(today.year, today.month, days_in_month)
-
-        start = self.request.GET.get('start', first_day_of_current_month)
-        end = self.request.GET.get('end', last_day_of_current_month)
-
-        return Incident.objects.filter(start_time__gte=start, start_time__lte=end)
+    serializer_class = serializers.IncidentSerializer
+    pagination_class = pagination.LimitOffsetPagination
