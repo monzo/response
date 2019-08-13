@@ -14,27 +14,33 @@ faker = Faker()
 
 
 def test_list_incidents(arf, api_user):
-    persisted_incidents = IncidentFactory.create_batch(1)
+    persisted_incidents = IncidentFactory.create_batch(5)
 
     req = arf.get(reverse("incident-list"))
     force_authenticate(req, user=api_user)
     response = IncidentViewSet.as_view({"get": "list"})(req)
 
-    assert response.status_code == 200
+    assert response.status_code == 200, "Got non-200 response from API"
     content = json.loads(response.rendered_content)
 
-    assert "results" in content
+    assert "results" in content, "Response didn't have results key"
     incidents = content["results"]
-    assert len(incidents) == len(persisted_incidents)
+    assert (
+        len(incidents) == len(persisted_incidents),
+        "Didn't get expected number of incidents back",
+    )
 
     for idx, incident in enumerate(incidents):
         assert incident["report_time"]
 
         # incidents should be in order of newest to oldest
         if idx != len(incidents) - 1:
-            assert incident["report_time"] >= incidents[idx + 1]["report_time"]
+            assert (
+                incident["report_time"] >= incidents[idx + 1]["report_time"],
+                "Incidents are not in order of newest to oldest by report time",
+            )
 
-        assert "end_time" in incident
+        assert "end_time" in incident  # end_time can be null for open incidents
         assert incident["impact"]
         assert incident["report"]
         assert incident["start_time"]
@@ -55,7 +61,7 @@ def test_list_incidents(arf, api_user):
 @pytest.mark.parametrize(
     "update_key,update_value",
     (
-        ("", ""),
+        ("", ""),  # no update
         ("impact", faker.paragraph(nb_sentences=2, variable_nb_sentences=True)),
         ("report", faker.paragraph(nb_sentences=1, variable_nb_sentences=True)),
         ("summary", faker.paragraph(nb_sentences=3, variable_nb_sentences=True)),
@@ -67,10 +73,14 @@ def test_list_incidents(arf, api_user):
             "end_time",
             faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None),
         ),
-        ("severity",str(random.randint(1, 4))),
+        ("severity", str(random.randint(1, 4))),
     ),
 )
 def test_update_incident(arf, api_user, update_key, update_value):
+    """
+    Tests that we can PUT /incidents/<pk> and mutate fields that get saved to
+    the DB.
+    """
     persisted_incidents = IncidentFactory.create_batch(5)
 
     incident = persisted_incidents[0]
@@ -88,8 +98,11 @@ def test_update_incident(arf, api_user, update_key, update_value):
 
     response = IncidentViewSet.as_view({"put": "update"})(req, pk=incident.pk)
     print(response.rendered_content)
-    assert response.status_code == 200
+    assert response.status_code == 200, "Got non-200 response from API"
 
     if update_key:
         new_incident = Incident.objects.get(pk=incident.pk)
-        assert getattr(new_incident, update_key) == update_value
+        assert (
+            getattr(new_incident, update_key) == update_value,
+            "Updated value wasn't persisted to the DB",
+        )
