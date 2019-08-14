@@ -29,6 +29,7 @@ Broadly speaking, this sets things up as below:
   - `chat:write:bot`
   - `chat:write:user`
   - `users:read`
+  - `reactions:write`
 
 - At the top of the page, the `Install App to Workspace` button is now available.  Click it!
 
@@ -98,7 +99,7 @@ response    | Quit the server with CONTROL-C.
 
 ## 4. Complete the Slack App Setup
 
-Head back to the Slack web UI and complete the configuration of your app, as [described here](./docs/slack_app_config.md).
+Head back to the Slack web UI and complete the configuration of your app, as [described here](../docs/slack_app_config.md).
 
 
 ## 5. Test it's working!
