@@ -5,8 +5,13 @@ import factory
 from faker import Factory
 
 from response.core.models import Incident, ExternalUser
+from response.slack.models import CommsChannel
 
 faker = Factory.create()
+
+class CommsChannelFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = CommsChannel
 
 
 @factory.django.mute_signals(post_save)
@@ -40,3 +45,5 @@ class IncidentFactory(factory.DjangoModelFactory):
     summary = factory.LazyFunction(
         lambda: faker.paragraph(nb_sentences=3, variable_nb_sentences=True)
     )
+
+    related_channel = factory.RelatedFactory(CommsChannelFactory, 'incident')
