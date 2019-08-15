@@ -180,7 +180,7 @@ class SlackClient(object):
         if not (new_name.startswith("inc-") or new_name.startswith("#inc-")):
             prefix = "inc-"
 
-        new_name = slugify(f"{prefix}{new_name}", max_length=21)
+        new_name = slugify(f"{prefix}{new_name}", max_length=80)
 
         return self.api_call("channels.rename", channel=channel_id, name=new_name)
 
