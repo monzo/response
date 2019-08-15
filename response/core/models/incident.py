@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.db import models
 from response.core.models.user_external import ExternalUser
+from response import slack
+
 
 class IncidentManager(models.Manager):
     def create_incident(self, report, reporter, report_time, summary=None, impact=None, lead=None, severity=None):
@@ -34,7 +36,6 @@ class Incident(models.Model):
     impact = models.TextField(blank=True, null=True, help_text="What impact is this having?")
     lead = models.ForeignKey(ExternalUser, related_name='lead', on_delete=models.PROTECT, blank=True, null=True, help_text="Who is leading?")
 
-
     # Severity
     SEVERITIES = (
         ('1', 'critical'),
@@ -46,6 +47,12 @@ class Incident(models.Model):
 
     def __str__(self):
         return self.report
+
+    def comms_channel(self):
+        try:
+            return slack.models.CommsChannel.objects.get(incident=self)
+        except slack.models.CommsChannel.DoesNotExist:
+            return None
 
     def duration(self):
         delta = (self.end_time or datetime.now()) - self.start_time
