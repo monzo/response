@@ -1,4 +1,5 @@
 from rest_framework import pagination, viewsets
+from rest_framework.response import Response
 
 from response.core.models.incident import Incident
 from response.core.models.action import Action
@@ -45,3 +46,25 @@ class IncidentActionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         incident_pk = self.kwargs["incident_pk"]
         serializer.save(incident_id=incident_pk)
+
+class IncidentsByMonthViewSet(viewsets.ModelViewSet):
+    """
+    Allows getting a list of Incidents for a given year/month (sorted by
+    report time from newest to oldest), and updating existing ones.
+
+    Note that Incidents can only be created via the Slack workflow.
+    """
+
+    queryset = Incident.objects.order_by("-report_time")
+
+    serializer_class = serializers.IncidentSerializer
+    pagination_class = pagination.LimitOffsetPagination
+
+    def list(self, request, year, month):
+        incidents = self.queryset.filter(
+            report_time__year=year, report_time__month=month
+        )
+        page = self.paginate_queryset(incidents)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)

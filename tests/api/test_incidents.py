@@ -1,3 +1,4 @@
+import datetime
 from django.urls import reverse
 from faker import Faker
 from rest_framework.test import force_authenticate
@@ -7,10 +8,36 @@ import random
 
 from response.models import Incident, ExternalUser
 from response import serializers
-from response.core.views import IncidentViewSet
+from response.core.views import IncidentViewSet, IncidentsByMonthViewSet
 from tests.factories import IncidentFactory
 
 faker = Faker()
+
+
+def assert_incident_response(incident):
+    assert incident["report_time"]
+
+    assert "end_time" in incident  # end_time can be null for open incidents
+    assert incident["impact"]
+    assert incident["report"]
+    assert incident["start_time"]
+    assert incident["summary"]
+    assert incident["severity"]
+    assert incident["comms_channel"]
+
+    reporter = incident["reporter"]
+    assert reporter["display_name"]
+    assert reporter["external_id"]
+
+    lead = incident["lead"]
+    assert lead["display_name"]
+    assert lead["external_id"]
+
+    assert incident["action_items"]
+    for action in incident["action_items"]:
+        assert action["details"]
+        assert "done" in action
+        assert action["user"]
 
 
 def test_list_incidents(arf, api_user):
@@ -38,28 +65,45 @@ def test_list_incidents(arf, api_user):
                 incident["report_time"] >= incidents[idx + 1]["report_time"]
             ), "Incidents are not in order of newest to oldest by report time"
 
-        assert "end_time" in incident  # end_time can be null for open incidents
-        assert incident["impact"]
-        assert incident["report"]
-        assert incident["start_time"]
-        assert incident["summary"]
-        assert incident["severity"]
+        assert_incident_response(incident)
 
-        reporter = incident["reporter"]
-        assert reporter["display_name"]
-        assert reporter["external_id"]
 
-        lead = incident["lead"]
-        assert lead["display_name"]
-        assert lead["external_id"]
+def test_list_incidents_by_month(arf, api_user):
+    persisted_incidents = IncidentFactory.create_batch(5)
 
-        assert incident["comms_channel"]
+    today = datetime.date.today()
+    if today.month == 1:
+        last_month = 12
+        year = today.year - 1
+    else:
+        last_month = today.month - 1
+        year = today.year
 
-        assert incident["action_items"]
-        for action in incident["action_items"]:
-            assert action["details"]
-            assert "done" in action
-            assert action["user"]
+    req = arf.get(
+        reverse(
+            "incidents-bymonth-list",
+            kwargs={"year": str(year), "month": f"{last_month:02d}"},
+        )
+    )
+    print(req)
+    force_authenticate(req, user=api_user)
+    response = IncidentsByMonthViewSet.as_view({"get": "list"})(req, year, last_month)
+
+    assert response.status_code == 200, "Got non-200 response from API"
+    content = json.loads(response.rendered_content)
+
+    print(content)
+    assert "results" in content, "Response didn't have results key"
+
+    for incident in content["results"]:
+        assert incident["report_time"]
+        report_time = datetime.datetime.strptime(
+            incident["report_time"], "%Y-%m-%dT%H:%M:%S"
+        )
+        assert report_time.month == last_month
+        assert report_time.year == year
+
+        assert_incident_response(incident)
 
 
 @pytest.mark.parametrize(
