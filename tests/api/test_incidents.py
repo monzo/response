@@ -55,6 +55,11 @@ def test_list_incidents(arf, api_user):
 
         assert incident["comms_channel"]
 
+        assert incident["action_items"]
+        for action in incident["action_items"]:
+            assert action["details"]
+            assert "done" in action
+            assert action["user"]
         # TODO: verify actions are serialised inline
 
 

@@ -11,17 +11,11 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 
 
 class ActionSerializer(serializers.ModelSerializer):
-    # Serializers define the API representation.
-    incident = serializers.PrimaryKeyRelatedField(
-        queryset=Incident.objects.all(), required=False
-    )
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=ExternalUser.objects.all(), required=False
-    )
+    user = ExternalUserSerializer(read_only=True)
 
     class Meta:
         model = Action
-        fields = ("pk", "details", "done", "incident", "user")
+        fields = ("pk", "details", "done", "user")
 
 
 class CommsChannelSerializer(serializers.ModelSerializer):
@@ -34,11 +28,12 @@ class IncidentSerializer(serializers.ModelSerializer):
     reporter = ExternalUserSerializer(read_only=True)
     lead = ExternalUserSerializer()
     comms_channel = CommsChannelSerializer(read_only=True)
+    action_items = ActionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Incident
         fields = (
-            "action_set",
+            "action_items",
             "comms_channel",
             "end_time",
             "impact",
