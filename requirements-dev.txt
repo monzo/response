@@ -8,7 +8,7 @@ cffi==1.12.3
 chardet==3.0.4
 colorama==0.4.1
 cryptography==2.7
-Django==2.2.3
+Django==2.2.4
 django-after-response==0.2.2
 django-bootstrap4==0.0.8
 -e ./
