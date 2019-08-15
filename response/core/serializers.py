@@ -1,11 +1,7 @@
+from response.core.models import Action
+from response.slack.models import CommsChannel, ExternalUser, Incident
+
 from rest_framework import serializers
-from rest_framework.decorators import action
-
-from response.core.models.incident import Incident
-from response.core.models.action import Action
-from response.core.models.user_external import ExternalUser
-
-from django.contrib.auth.models import User
 
 
 class ExternalUserSerializer(serializers.ModelSerializer):
@@ -28,14 +24,22 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = ("pk", "details", "done", "incident", "user")
 
 
+class CommsChannelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommsChannel
+        fields = ("channel_id",)
+
+
 class IncidentSerializer(serializers.ModelSerializer):
     reporter = ExternalUserSerializer(read_only=True)
     lead = ExternalUserSerializer()
+    comms_channel = CommsChannelSerializer(read_only=True)
 
     class Meta:
         model = Incident
         fields = (
             "action_set",
+            "comms_channel",
             "end_time",
             "impact",
             "lead",
