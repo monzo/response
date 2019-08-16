@@ -1,4 +1,3 @@
-import inspect
 import logging
 
 from django.conf import settings
@@ -29,6 +28,33 @@ def get_commands():
     return COMMAND_MAPPINGS.keys()
 
 
+def __default_incident_command(commands: list, func=None, helptext=""):
+    """
+    @__default_incident_command is a decorator which registers a function as
+    the default handler for a set of command strings
+
+    Arguments:
+        commands: A list of strings to register as commands
+        helptext: Text to be displayed when the "help" command is run
+
+    Example usage:
+
+    @__default_incident_command('lead', helptext='Set the incident lead')
+    def handle_incident_lead(context):
+        do_some_stuff()
+    """
+    def _wrapper(fn):
+        for command in commands:
+            COMMAND_MAPPINGS[command] = fn
+
+        COMMAND_HELP[', '.join(commands)] = helptext
+
+        return fn
+    if func:
+        return _wrapper(func)
+    return _wrapper
+
+
 def incident_command(commands: list, func=None, helptext=""):
     """
     @incident_command is a decorator which registers a function as a handler
@@ -46,13 +72,7 @@ def incident_command(commands: list, func=None, helptext=""):
     """
     def _wrapper(fn):
         for command in commands:
-            func_module = inspect.getmodule(fn)
-            if func_module.__name__ == BUILT_IN_INCIDENT_COMMANDS_MODULE:
-                logger.debug(f"Registering default incident command {fn.__name__}")
-                COMMAND_MAPPINGS[command] = fn
-            else:
-                logger.debug(f"Registering custom incident command {fn.__name__}")
-                COMMAND_MAPPINGS_CUSTOM[command] = fn
+            COMMAND_MAPPINGS_CUSTOM[command] = fn
 
         COMMAND_HELP[', '.join(commands)] = helptext
 
@@ -60,12 +80,6 @@ def incident_command(commands: list, func=None, helptext=""):
     if func:
         return _wrapper(func)
     return _wrapper
-
-
-def remove_incident_command(commands: list):
-    for command in commands:
-        COMMAND_MAPPINGS.pop(command, None)
-        COMMAND_HELP.pop(', '.join(commands), None)
 
 
 def handle_incident_command(command_name, message, thread_ts, channel_id, user_id):
