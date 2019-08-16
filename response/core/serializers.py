@@ -19,6 +19,7 @@ class ActionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = ExternalUser.objects.get(
+            app_id=validated_data["user"]["app_id"],
             display_name=validated_data["user"]["display_name"],
             external_id=validated_data["user"]["external_id"],
         )
@@ -26,6 +27,11 @@ class ActionSerializer(serializers.ModelSerializer):
         return Action.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.user = ExternalUser.objects.get(
+            app_id=validated_data["user"]["app_id"],
+            display_name=validated_data["user"]["display_name"],
+            external_id=validated_data["user"]["external_id"],
+        )
         instance.save()
         return instance
 

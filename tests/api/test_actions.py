@@ -51,3 +51,37 @@ def test_create_action(arf, api_user):
 
     new_action = Action.objects.get(details=action_model.details)
 
+
+def test_update_action_user(arf, api_user):
+    incident = IncidentFactory.create()
+    user = ExternalUserFactory.create()
+
+    action = incident.action_items()[0]
+
+    action_data = serializers.ActionSerializer(action).data
+    print(action_data["user"])
+    action_data["user"] = {
+        "app_id": "slack",
+        "display_name": user.display_name,
+        "external_id": user.external_id,
+    }
+    print(action_data["user"])
+    response = update_action(arf, api_user, incident.pk, action_data)
+    print(response.rendered_content)
+    assert response.status_code == 200, "Got non-201 response from API"
+
+    updated_action = Action.objects.get(pk=action.pk)
+    assert updated_action.user == user
+
+
+def update_action(arf, api_user, incident_id, action_data):
+    req = arf.put(
+        reverse("incident-action-list", kwargs={"incident_pk": incident_id}),
+        action_data,
+        format="json",
+    )
+    force_authenticate(req, user=api_user)
+
+    return IncidentActionViewSet.as_view({"put": "update"})(
+        req, incident_pk=incident_id, pk=action_data["pk"]
+    )
