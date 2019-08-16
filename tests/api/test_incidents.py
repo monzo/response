@@ -60,7 +60,6 @@ def test_list_incidents(arf, api_user):
             assert action["details"]
             assert "done" in action
             assert action["user"]
-        # TODO: verify actions are serialised inline
 
 
 @pytest.mark.parametrize(

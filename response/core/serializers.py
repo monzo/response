@@ -11,11 +11,23 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 
 
 class ActionSerializer(serializers.ModelSerializer):
-    user = ExternalUserSerializer(read_only=True)
+    user = ExternalUserSerializer()
 
     class Meta:
         model = Action
         fields = ("pk", "details", "done", "user")
+
+    def create(self, validated_data):
+        user = ExternalUser.objects.get(
+            display_name=validated_data["user"]["display_name"],
+            external_id=validated_data["user"]["external_id"],
+        )
+        validated_data["user"] = user
+        return Action.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.save()
+        return instance
 
 
 class CommsChannelSerializer(serializers.ModelSerializer):

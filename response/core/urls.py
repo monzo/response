@@ -1,16 +1,22 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from response.core.views import IncidentViewSet, ActionViewSet, ExternalUserViewSet
+from response.core.views import (
+    IncidentViewSet,
+    IncidentActionViewSet,
+    ActionViewSet,
+    ExternalUserViewSet,
+)
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'incidents', IncidentViewSet, basename='incident')
-router.register(r'actions', ActionViewSet)
-router.register(r'ExternalUser', ExternalUserViewSet)
+router.register(r"incidents", IncidentViewSet, basename="incident")
+router.register(
+    r"incidents/(?P<incident_pk>[0-9]+)/actions", IncidentActionViewSet, basename="incident-action"
+)
+router.register(r"actions", ActionViewSet)
+router.register(r"ExternalUser", ExternalUserViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
-urlpatterns = [
-    url(r'^', include(router.urls)),
-]
+urlpatterns = [url(r"^", include(router.urls))]

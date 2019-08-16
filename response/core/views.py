@@ -33,3 +33,16 @@ class IncidentViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.IncidentSerializer
     pagination_class = pagination.LimitOffsetPagination
+
+
+class IncidentActionViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.ActionSerializer
+
+    def get_queryset(self):
+        incident_pk = self.kwargs["incident_pk"]
+        return Action.objects.filter(incident_id=incident_pk)
+
+    def perform_create(self, serializer):
+        incident_pk = self.kwargs["incident_pk"]
+        serializer.save(incident_id=incident_pk)
