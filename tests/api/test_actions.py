@@ -1,6 +1,7 @@
 import json
 import pytest
 from django.urls import reverse
+from faker import Faker
 from rest_framework.test import force_authenticate
 
 from response import serializers
@@ -8,6 +9,8 @@ from response.models import Action
 from response.core.views import IncidentActionViewSet
 
 from tests.factories import ActionFactory, ExternalUserFactory, IncidentFactory
+
+faker = Faker()
 
 
 def test_list_actions_by_incident(arf, api_user):
@@ -59,19 +62,41 @@ def test_update_action_user(arf, api_user):
     action = incident.action_items()[0]
 
     action_data = serializers.ActionSerializer(action).data
-    print(action_data["user"])
     action_data["user"] = {
         "app_id": "slack",
         "display_name": user.display_name,
         "external_id": user.external_id,
     }
-    print(action_data["user"])
     response = update_action(arf, api_user, incident.pk, action_data)
     print(response.rendered_content)
     assert response.status_code == 200, "Got non-201 response from API"
 
     updated_action = Action.objects.get(pk=action.pk)
     assert updated_action.user == user
+
+
+def test_update_action(arf, api_user):
+    incident = IncidentFactory.create()
+
+    action = incident.action_items()[0]
+
+    action_data = serializers.ActionSerializer(action).data
+
+    action_data["details"] = faker.paragraph(nb_sentences=2, variable_nb_sentences=True)
+    response = update_action(arf, api_user, incident.pk, action_data)
+    print(response.rendered_content)
+    assert response.status_code == 200, "Got non-201 response from API"
+
+    updated_action = Action.objects.get(pk=action.pk)
+    assert updated_action.details == action_data["details"]
+
+    action_data["done"] = not action_data["done"]
+    response = update_action(arf, api_user, incident.pk, action_data)
+    print(response.rendered_content)
+    assert response.status_code == 200, "Got non-201 response from API"
+
+    updated_action = Action.objects.get(pk=action.pk)
+    assert updated_action.done == action_data["done"]
 
 
 def update_action(arf, api_user, incident_id, action_data):

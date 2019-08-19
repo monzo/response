@@ -16,6 +16,7 @@ class ActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
         fields = ("pk", "details", "done", "user")
+        read_only_fields = ("pk",)
 
     def create(self, validated_data):
         user = ExternalUser.objects.get(
@@ -27,11 +28,14 @@ class ActionSerializer(serializers.ModelSerializer):
         return Action.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.user = ExternalUser.objects.get(
-            app_id=validated_data["user"]["app_id"],
-            display_name=validated_data["user"]["display_name"],
-            external_id=validated_data["user"]["external_id"],
-        )
+        if "user" in validated_data:
+            instance.user = ExternalUser.objects.get(
+                app_id=validated_data["user"]["app_id"],
+                display_name=validated_data["user"]["display_name"],
+                external_id=validated_data["user"]["external_id"],
+            )
+        instance.details = validated_data.get("details", instance.details)
+        instance.done = validated_data.get("done", instance.done)
         instance.save()
         return instance
 
