@@ -11,17 +11,33 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 
 
 class ActionSerializer(serializers.ModelSerializer):
-    # Serializers define the API representation.
-    incident = serializers.PrimaryKeyRelatedField(
-        queryset=Incident.objects.all(), required=False
-    )
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=ExternalUser.objects.all(), required=False
-    )
+    user = ExternalUserSerializer()
 
     class Meta:
         model = Action
-        fields = ("pk", "details", "done", "incident", "user")
+        fields = ("pk", "details", "done", "user")
+        read_only_fields = ("pk",)
+
+    def create(self, validated_data):
+        user = ExternalUser.objects.get(
+            app_id=validated_data["user"]["app_id"],
+            display_name=validated_data["user"]["display_name"],
+            external_id=validated_data["user"]["external_id"],
+        )
+        validated_data["user"] = user
+        return Action.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        if "user" in validated_data:
+            instance.user = ExternalUser.objects.get(
+                app_id=validated_data["user"]["app_id"],
+                display_name=validated_data["user"]["display_name"],
+                external_id=validated_data["user"]["external_id"],
+            )
+        instance.details = validated_data.get("details", instance.details)
+        instance.done = validated_data.get("done", instance.done)
+        instance.save()
+        return instance
 
 
 class CommsChannelSerializer(serializers.ModelSerializer):
@@ -34,11 +50,12 @@ class IncidentSerializer(serializers.ModelSerializer):
     reporter = ExternalUserSerializer(read_only=True)
     lead = ExternalUserSerializer()
     comms_channel = CommsChannelSerializer(read_only=True)
+    action_items = ActionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Incident
         fields = (
-            "action_set",
+            "action_items",
             "comms_channel",
             "end_time",
             "impact",

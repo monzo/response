@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from response import core
 from response.core.models.user_external import ExternalUser
 from response import slack
 
@@ -103,6 +104,9 @@ class Incident(models.Model):
             return ":droplet:"
         else:
             return ":fire:"
+
+    def action_items(self):
+        return core.models.Action.objects.filter(incident=self)
 
 
 # Used to store external identifiers

@@ -7,7 +7,10 @@ from faker import Factory
 from response.core.models import Incident, ExternalUser
 from response.slack.models import CommsChannel
 
+from .action import ActionFactory
+
 faker = Factory.create()
+
 
 class CommsChannelFactory(factory.DjangoModelFactory):
     class Meta:
@@ -46,4 +49,7 @@ class IncidentFactory(factory.DjangoModelFactory):
         lambda: faker.paragraph(nb_sentences=3, variable_nb_sentences=True)
     )
 
-    related_channel = factory.RelatedFactory(CommsChannelFactory, 'incident')
+    related_channel = factory.RelatedFactory(CommsChannelFactory, "incident")
+    related_action_items = factory.RelatedFactoryList(
+        ActionFactory, "incident", size=lambda: random.randint(1, 5)
+    )
