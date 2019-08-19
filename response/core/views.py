@@ -3,6 +3,7 @@ from rest_framework.response import Response
 
 from response.core.models.incident import Incident
 from response.core.models.action import Action
+from response.core.models.timeline import TimelineEvent
 from response.core.models.user_external import ExternalUser
 from response.core import serializers
 
@@ -36,7 +37,6 @@ class IncidentViewSet(viewsets.ModelViewSet):
 
 
 class IncidentActionViewSet(viewsets.ModelViewSet):
-
     serializer_class = serializers.ActionSerializer
 
     def get_queryset(self):
@@ -68,3 +68,14 @@ class IncidentsByMonthViewSet(viewsets.ModelViewSet):
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+
+class IncidentTimelineEventViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.TimelineEventSerializer
+
+    def get_queryset(self):
+        incident_pk = self.kwargs["incident_pk"]
+        return TimelineEvent.objects.filter(incident_id=incident_pk)
+
+    def perform_create(self, serializer):
+        incident_pk = self.kwargs["incident_pk"]
+        serializer.save(incident_id=incident_pk)

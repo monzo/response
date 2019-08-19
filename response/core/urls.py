@@ -5,6 +5,7 @@ from response.core.views import (
     IncidentViewSet,
     IncidentActionViewSet,
     IncidentsByMonthViewSet,
+    IncidentTimelineEventViewSet,
     ActionViewSet,
     ExternalUserViewSet,
 )
@@ -21,6 +22,11 @@ router.register(
     r"incidents/bymonth/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})",
     IncidentsByMonthViewSet,
     basename="incidents-bymonth",
+)
+router.register(
+    r"incidents/(?P<incident_pk>[0-9]+)/timeline/events",
+    IncidentTimelineEventViewSet,
+    basename="incident-timeline-event",
 )
 router.register(r"actions", ActionViewSet)
 router.register(r"users", ExternalUserViewSet)
