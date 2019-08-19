@@ -1,4 +1,4 @@
-from response.core.models import Action
+from response.core.models import Action, TimelineEvent
 from response.slack.models import CommsChannel, ExternalUser, Incident
 
 from rest_framework import serializers
@@ -8,6 +8,12 @@ class ExternalUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalUser
         fields = ("app_id", "external_id", "display_name")
+
+
+class TimelineEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimelineEvent
+        fields = ("timestamp", "text", "event_type", "metadata")
 
 
 class ActionSerializer(serializers.ModelSerializer):
