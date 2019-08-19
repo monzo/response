@@ -29,14 +29,14 @@ class IncidentFactory(factory.DjangoModelFactory):
         lambda: faker.paragraph(nb_sentences=3, variable_nb_sentences=True)
     )
     report_time = factory.LazyFunction(
-        lambda: faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None)
+        lambda: faker.date_time_between(start_date="-6m", end_date="now", tzinfo=None)
     )
 
     reporter = factory.SubFactory("tests.factories.ExternalUserFactory")
     lead = factory.SubFactory("tests.factories.ExternalUserFactory")
 
     start_time = factory.LazyFunction(
-        lambda: faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None)
+        lambda: faker.date_time_between(start_date="-6m", end_date="now", tzinfo=None)
     )
 
     if random.random() > 0.5:
