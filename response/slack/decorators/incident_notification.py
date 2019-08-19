@@ -82,8 +82,8 @@ def handle_notifications():
                 if mins_since_last_notify >= handler.interval_mins:
                     try:
                         handler.callback(incident)
-                    except:
-                        logger.error(f"Error calling notification handler {handler}")
+                    except Exception as e:
+                        logger.error(f"Error calling notification handler {handler}: {e}")
 
                     notification.time = datetime.now()
                     notification.repeat_count = notification.repeat_count + 1
@@ -96,8 +96,8 @@ def handle_notifications():
                 if mins_since_started >= handler.interval_mins:
                     try:
                         handler.callback(incident)
-                    except:
-                        logger.error(f"Error calling notification handler {handler}")
+                    except Exception as e:
+                        logger.error(f"Error calling notification handler {handler}: {e}")
 
                     notification = Notification(
                         incident=incident,
