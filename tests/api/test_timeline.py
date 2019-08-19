@@ -1,6 +1,8 @@
 import json
 
 from django.urls import reverse
+from faker import Faker
+import pytest
 from rest_framework.test import force_authenticate
 
 from response import serializers
@@ -8,6 +10,8 @@ from response.models import TimelineEvent
 from response.core.views import IncidentTimelineEventViewSet
 
 from tests.factories import IncidentFactory, TimelineEventFactory
+
+faker = Faker()
 
 
 def test_create_timeline_event(arf, api_user):
@@ -53,3 +57,41 @@ def test_list_actions_by_incident(arf, api_user):
         assert event["timestamp"]
         assert event["text"]
         assert event["event_type"]
+
+
+@pytest.mark.parametrize(
+    "update_key,update_value",
+    (
+        ("", ""),  # no update
+        (
+            "timestamp",
+            faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None),
+        ),
+        ("text", faker.paragraph(nb_sentences=5, variable_nb_sentences=True)),
+    ),
+)
+def test_update_timeline_event(arf, api_user, update_key, update_value):
+    incident = IncidentFactory.create()
+
+    event_model = incident.timeline_events()[0]
+    event_data = serializers.TimelineEventSerializer(event_model).data
+
+    if update_key:
+        event_data[update_key] = update_value
+
+    req = arf.put(
+        reverse("incident-timeline-event-list", kwargs={"incident_pk": incident.pk}),
+        event_data,
+        format="json",
+    )
+    force_authenticate(req, user=api_user)
+    response = IncidentTimelineEventViewSet.as_view({"put": "update"})(
+        req, incident_pk=incident.pk, pk=event_model.pk
+    )
+
+    assert response.status_code == 200, "Got non-200 response from API"
+    if update_key:
+        new_event = TimelineEvent.objects.get(pk=event_model.pk)
+        assert (
+            getattr(new_event, update_key) == update_value
+        ), "Updated value wasn't persisted to the DB"
