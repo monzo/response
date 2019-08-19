@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from response.core.models import Incident
 from response.slack.models import CommsChannel
 from response.slack .decorators import recurring_notification, single_notification
@@ -25,13 +27,19 @@ def remind_incident_lead(incident: Incident):
         pass
 
 
-@recurring_notification(interval_mins=1440, max_notifications=6)
+@recurring_notification(interval_mins=1440, max_notifications=5)
 def remind_close_incident(incident: Incident):
+
+    # Only remind on weekdays (weekday returns an ordinal indexed from 0 on Monday)
+    if datetime.now().weekday() in (5, 6):
+        return
+
     try:
         comms_channel = CommsChannel.objects.get(incident=incident)
         if not incident.is_closed():
+            user_to_notify = incident.lead or incident.reporter
             comms_channel.post_in_channel(
-                ":timer_clock: This incident has been running a long time."
-                " Can it be closed now?  Remember to pin important messages in order to create the timeline.")
+                f":timer_clock: <@{user_to_notify.external_id}>, this incident has been running a long time."
+                " Can it be closed now? Remember to pin important messages in order to create the timeline.")
     except CommsChannel.DoesNotExist:
         pass
