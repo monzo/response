@@ -53,3 +53,8 @@ class IncidentFactory(factory.DjangoModelFactory):
     related_action_items = factory.RelatedFactoryList(
         ActionFactory, "incident", size=lambda: random.randint(1, 5)
     )
+    related_timeline_events = factory.RelatedFactoryList(
+        "tests.factories.TimelineEventFactory",
+        "incident",
+        size=lambda: random.randint(1, 20),
+    )

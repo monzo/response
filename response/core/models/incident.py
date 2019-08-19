@@ -108,6 +108,8 @@ class Incident(models.Model):
     def action_items(self):
         return core.models.Action.objects.filter(incident=self)
 
+    def timeline_events(self):
+        return core.models.TimelineEvent.objects.filter(incident=self)
 
 # Used to store external identifiers
 class IncidentExtension(models.Model):
