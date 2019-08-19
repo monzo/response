@@ -9,8 +9,7 @@ from datetime import datetime
 from calendar import monthrange
 
 
-class ExternalUserViewSet(viewsets.ModelViewSet):
-    # ViewSets define the view behavior.
+class ExternalUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExternalUser.objects.all()
     serializer_class = serializers.ExternalUserSerializer
 

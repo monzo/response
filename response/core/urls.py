@@ -14,8 +14,8 @@ router.register(r"incidents", IncidentViewSet, basename="incident")
 router.register(
     r"incidents/(?P<incident_pk>[0-9]+)/actions", IncidentActionViewSet, basename="incident-action"
 )
-router.register(r"actions", ActionViewSet)
-router.register(r"ExternalUser", ExternalUserViewSet)
+router.register(r'actions', ActionViewSet)
+router.register(r'users', ExternalUserViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
