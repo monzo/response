@@ -1,11 +1,8 @@
-import time
-import requests
 import logging
 
 from datetime import datetime
 
 from response.core.models import Incident
-from response.slack.models.comms_channel import CommsChannel
 from response.slack.models.notification import Notification
 
 logger = logging.getLogger(__name__)
@@ -62,7 +59,8 @@ def recurring_notification(interval_mins, max_notifications=1):
 
 
 def handle_notifications():
-    # notifications are only sent to open incidents with comms channels
+
+    # Only notify open incidents with a comms channel
     open_incidents = Incident.objects.filter(
         end_time__isnull=True,
         commschannel__incident__isnull=False
