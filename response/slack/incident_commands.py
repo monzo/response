@@ -6,6 +6,7 @@ from response.slack.decorators import incident_command, get_help
 from response.slack.client import SlackError, reference_to_id
 from datetime import datetime
 
+
 @incident_command(['help'], helptext='Display a list of commands and usage')
 def send_help_text(incident: Incident, user_id: str, message: str):
     return True, get_help()
