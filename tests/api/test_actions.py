@@ -110,3 +110,23 @@ def update_action(arf, api_user, incident_id, action_data):
     return IncidentActionViewSet.as_view({"put": "update"})(
         req, incident_pk=incident_id, pk=action_data["pk"]
     )
+
+
+def test_delete_action(arf, api_user):
+    incident = IncidentFactory.create()
+    user = ExternalUserFactory.create()
+
+    action = ActionFactory.create(user=user, incident=incident)
+
+    req = arf.delete(
+        reverse("incident-action-list", kwargs={"incident_pk": incident.pk}),
+        format="json",
+    )
+    force_authenticate(req, user=api_user)
+    response = IncidentActionViewSet.as_view({"delete": "destroy"})(
+        req, incident_pk=incident.pk, pk=action.pk
+    )
+
+    assert response.status_code == 204, "Got non-204 response from API"
+    with pytest.raises(Action.DoesNotExist):
+        Action.objects.get(pk=action.pk)
