@@ -95,3 +95,21 @@ def test_update_timeline_event(arf, api_user, update_key, update_value):
         assert (
             getattr(new_event, update_key) == update_value
         ), "Updated value wasn't persisted to the DB"
+
+
+def test_delete_timeline_event(arf, api_user):
+    incident = IncidentFactory.create()
+
+    event_model = incident.timeline_events()[0]
+
+    req = arf.delete(
+        reverse("incident-timeline-event-list", kwargs={"incident_pk": incident.pk})
+    )
+    force_authenticate(req, user=api_user)
+    response = IncidentTimelineEventViewSet.as_view({"delete": "destroy"})(
+        req, incident_pk=incident.pk, pk=event_model.pk
+    )
+
+    assert response.status_code == 204, "Got non-204 response from API"
+    with pytest.raises(TimelineEvent.DoesNotExist):
+        TimelineEvent.objects.get(pk=event_model.pk)
