@@ -8,9 +8,9 @@ from django.conf import settings
 import pytest
 from unittest.mock import MagicMock
 
-from response.slack import dialog_builder, slack_utils, block_kit
 from response.slack.authentication import generate_signature
 from response.slack.client import SlackClient
+
 
 @pytest.fixture(autouse=True)
 def mock_slack(monkeypatch):
