@@ -65,6 +65,7 @@ class IncidentSerializer(serializers.ModelSerializer):
             "comms_channel",
             "end_time",
             "impact",
+            "is_closed",
             "lead",
             "pk",
             "report",

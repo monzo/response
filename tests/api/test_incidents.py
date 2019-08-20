@@ -18,6 +18,7 @@ def assert_incident_response(incident):
     assert incident["report_time"]
 
     assert "end_time" in incident  # end_time can be null for open incidents
+    assert "is_closed" in incident # this can be false
     assert incident["impact"]
     assert incident["report"]
     assert incident["start_time"]
