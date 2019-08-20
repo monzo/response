@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
 
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.conf import settings
 from django.urls import reverse
@@ -29,13 +29,19 @@ def update_headline_after_incident_save(sender, instance, **kwargs):
         )
 
 
-@receiver(post_save, sender=Incident)
+@receiver(pre_save, sender=Incident)
 def prompt_incident_report(sender, instance: Incident, **kwargs):
     """
     Prompt incident lead to complete a report when an incident is closed.
     """
 
-    if instance.is_closed():
+    try:
+        prev_state = Incident.objects.get(pk=instance.pk)
+    except Incident.DoesNotExist:
+        # Incident hasn't been saved yet, nothing to do here.
+        return
+
+    if instance.is_closed() and not prev_state.is_closed():
         user_to_notify = instance.lead or instance.reporter
         doc_url = urljoin(
             settings.SITE_URL,
