@@ -1,11 +1,12 @@
-from django.db.models.signals import post_save
-from django.core.signals import request_finished
+from urllib.parse import urljoin
+
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from django.conf import settings
+from django.urls import reverse
 
 from response.core.models import Incident
 from response.slack.models import HeadlinePost
-
-from time import sleep
 
 
 @receiver(post_save, sender=Incident)
@@ -26,6 +27,28 @@ def update_headline_after_incident_save(sender, instance, **kwargs):
         headline_post = HeadlinePost.objects.create_headline_post(
             incident=instance
         )
+
+
+@receiver(pre_save, sender=Incident)
+def prompt_incident_report(sender, instance: Incident, **kwargs):
+    """
+    Prompt incident lead to complete a report when an incident is closed.
+    """
+
+    try:
+        prev_state = Incident.objects.get(pk=instance.pk)
+    except Incident.DoesNotExist:
+        # Incident hasn't been saved yet, nothing to do here.
+        return
+
+    if instance.is_closed() and not prev_state.is_closed():
+        user_to_notify = instance.lead or instance.reporter
+        doc_url = urljoin(
+            settings.SITE_URL,
+            reverse('incident_doc', kwargs={'incident_id': instance.pk})
+        )
+        settings.SLACK_CLIENT.send_message(
+            user_to_notify.external_id, f"👋 Don't forget to fill out an incident report here: {doc_url}")
 
 
 @receiver(post_save, sender=HeadlinePost)
