@@ -15,6 +15,7 @@ from response.slack.client import SlackClient
 @pytest.fixture(autouse=True)
 def mock_slack(monkeypatch):
     mock_slack = MagicMock(spec=SlackClient(""))
+    mock_slack.get_channel_name.return_value = "#inc-test-channel"
     mock_slack.send_or_update_message_block.return_value = {
         "ok": True,
         "ts": 1234,

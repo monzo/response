@@ -49,7 +49,7 @@ class ActionSerializer(serializers.ModelSerializer):
 class CommsChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommsChannel
-        fields = ("channel_id",)
+        fields = ("channel_id", "channel_name")
 
 
 class IncidentSerializer(serializers.ModelSerializer):
