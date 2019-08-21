@@ -51,5 +51,8 @@ class CommsChannel(models.Model):
     def rename(self, new_name):
         settings.SLACK_CLIENT.rename_channel(self.channel_id, new_name)
 
+    def channel_name(self):
+        return settings.SLACK_CLIENT.get_channel_name(self.channel_id)
+
     def __str__(self):
         return self.incident.report
