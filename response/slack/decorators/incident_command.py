@@ -11,8 +11,6 @@ COMMAND_MAPPINGS = {}
 COMMAND_MAPPINGS_CUSTOM = {}
 COMMAND_HELP = {}
 
-BUILT_IN_INCIDENT_COMMANDS_MODULE = "response.slack.incident_commands"
-
 
 def get_help():
     '''
