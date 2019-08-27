@@ -1,14 +1,17 @@
-from django.conf import settings
 import logging
 
-from response.core.models import Incident
-from response.slack.models.comms_channel import CommsChannel
+from django.conf import settings
+
 from response.slack.client import SlackError
+from response.slack.models.comms_channel import CommsChannel
 
 logger = logging.getLogger(__name__)
 
 COMMAND_MAPPINGS = {}
+COMMAND_MAPPINGS_CUSTOM = {}
 COMMAND_HELP = {}
+
+BUILT_IN_INCIDENT_COMMANDS_MODULE = "response.slack.incident_commands"
 
 
 def get_help():
@@ -23,6 +26,33 @@ def get_help():
 
 def get_commands():
     return COMMAND_MAPPINGS.keys()
+
+
+def __default_incident_command(commands: list, func=None, helptext=""):
+    """
+    @__default_incident_command is a decorator which registers a function as
+    the default handler for a set of command strings
+
+    Arguments:
+        commands: A list of strings to register as commands
+        helptext: Text to be displayed when the "help" command is run
+
+    Example usage:
+
+    @__default_incident_command('lead', helptext='Set the incident lead')
+    def handle_incident_lead(context):
+        do_some_stuff()
+    """
+    def _wrapper(fn):
+        for command in commands:
+            COMMAND_MAPPINGS[command] = fn
+
+        COMMAND_HELP[', '.join(commands)] = helptext
+
+        return fn
+    if func:
+        return _wrapper(func)
+    return _wrapper
 
 
 def incident_command(commands: list, func=None, helptext=""):
@@ -42,7 +72,7 @@ def incident_command(commands: list, func=None, helptext=""):
     """
     def _wrapper(fn):
         for command in commands:
-            COMMAND_MAPPINGS[command] = fn
+            COMMAND_MAPPINGS_CUSTOM[command] = fn
 
         COMMAND_HELP[', '.join(commands)] = helptext
 
@@ -51,11 +81,6 @@ def incident_command(commands: list, func=None, helptext=""):
         return _wrapper(func)
     return _wrapper
 
-def remove_incident_command(commands: list):
-    for command in commands:
-        COMMAND_MAPPINGS.pop(command, None)
-        COMMAND_HELP.pop(', '.join(commands), None)
-
 
 def handle_incident_command(command_name, message, thread_ts, channel_id, user_id):
     """
@@ -63,7 +88,7 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
 
     @param payload an app mention string of the form @incident summary Something's happened
     """
-    if command_name not in COMMAND_MAPPINGS:
+    if command_name not in COMMAND_MAPPINGS and command_name not in COMMAND_MAPPINGS_CUSTOM:
         settings.SLACK_CLIENT.send_ephemeral_message(
             channel_id,
             user_id,
@@ -75,8 +100,12 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
         logger.error(f"No handler found for command {command_name}")
         return
 
-    logger.info(f"Handling incident command {command_name} '{message}' in channel {channel_id}")
-    command = COMMAND_MAPPINGS[command_name]
+    if command_name in COMMAND_MAPPINGS_CUSTOM:
+        logger.info(f"Handling incident command {command_name} '{message}' in channel {channel_id} with custom handler")
+        command = COMMAND_MAPPINGS_CUSTOM[command_name]
+    else:
+        logger.info(f"Handling incident command {command_name} '{message}' in channel {channel_id}")
+        command = COMMAND_MAPPINGS[command_name]
 
     try:
         comms_channel = CommsChannel.objects.get(channel_id=channel_id)

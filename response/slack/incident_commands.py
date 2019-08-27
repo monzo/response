@@ -1,32 +1,33 @@
 from django.conf import settings
 
-from response.core.models import Incident, Action, ExternalUser, GetOrCreateSlackExternalUser
+from response.core.models import Incident, Action, GetOrCreateSlackExternalUser
+from response.slack.decorators.incident_command import __default_incident_command
 from response.slack.models import CommsChannel
-from response.slack.decorators import incident_command, get_help
+from response.slack.decorators import get_help
 from response.slack.client import SlackError, reference_to_id
 from datetime import datetime
 
 
-@incident_command(['help'], helptext='Display a list of commands and usage')
+@__default_incident_command(['help'], helptext='Display a list of commands and usage')
 def send_help_text(incident: Incident, user_id: str, message: str):
     return True, get_help()
 
 
-@incident_command(['summary'], helptext='Provide a summary of what\'s going on')
+@__default_incident_command(['summary'], helptext='Provide a summary of what\'s going on')
 def update_summary(incident: Incident, user_id: str, message: str):
     incident.summary = message
     incident.save()
     return True, None
 
 
-@incident_command(['impact'], helptext='Explain the impact of this')
+@__default_incident_command(['impact'], helptext='Explain the impact of this')
 def update_impact(incident: Incident, user_id: str, message: str):
     incident.impact = message
     incident.save()
     return True, None
 
 
-@incident_command(['lead'], helptext='Assign someone as the incident lead')
+@__default_incident_command(['lead'], helptext='Assign someone as the incident lead')
 def set_incident_lead(incident: Incident, user_id: str, message: str):
     assignee = reference_to_id(message) or user_id
     name = settings.SLACK_CLIENT.get_user_profile(assignee)['name']
@@ -36,7 +37,7 @@ def set_incident_lead(incident: Incident, user_id: str, message: str):
     return True, None
 
 
-@incident_command(['severity', 'sev'], helptext='Set the incident severity')
+@__default_incident_command(['severity', 'sev'], helptext='Set the incident severity')
 def set_severity(incident: Incident, user_id: str, message: str):
     for sev_id, sev_name in Incident.SEVERITIES:
         # look for sev name (e.g. critical) or sev id (1)
@@ -48,7 +49,7 @@ def set_severity(incident: Incident, user_id: str, message: str):
     return False, None
 
 
-@incident_command(['rename'], helptext='Rename the incident channel')
+@__default_incident_command(['rename'], helptext='Rename the incident channel')
 def rename_incident(incident: Incident, user_id: str, message: str):
     try:
         comms_channel = CommsChannel.objects.get(incident=incident)
@@ -58,7 +59,7 @@ def rename_incident(incident: Incident, user_id: str, message: str):
     return True, None
 
 
-@incident_command(['duration'], helptext='How long has this incident been running?')
+@__default_incident_command(['duration'], helptext='How long has this incident been running?')
 def set_severity(incident: Incident, user_id: str, message: str):
     duration = incident.duration()
 
@@ -68,7 +69,7 @@ def set_severity(incident: Incident, user_id: str, message: str):
     return True, None
 
 
-@incident_command(['close'], helptext='Close this incident.')
+@__default_incident_command(['close'], helptext='Close this incident.')
 def close_incident(incident: Incident, user_id: str, message: str):
     comms_channel = CommsChannel.objects.get(incident=incident)
 
@@ -84,9 +85,8 @@ def close_incident(incident: Incident, user_id: str, message: str):
     return True, None
 
 
-@incident_command(['action'], helptext='Log a follow up action')
+@__default_incident_command(['action'], helptext='Log a follow up action')
 def set_action(incident: Incident, user_id: str, message: str):
-    comms_channel = CommsChannel.objects.get(incident=incident)
     name = settings.SLACK_CLIENT.get_user_profile(user_id)['name']
     action_reporter = GetOrCreateSlackExternalUser(external_id=user_id, display_name=name)
     Action(incident=incident, details=message, user=action_reporter).save()
