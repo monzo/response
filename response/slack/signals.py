@@ -1,3 +1,4 @@
+import logging
 from urllib.parse import urljoin
 
 from django.db.models.signals import pre_save, post_save
@@ -7,6 +8,8 @@ from django.urls import reverse
 
 from response.core.models import Incident
 from response.slack.models import HeadlinePost
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Incident)
@@ -49,6 +52,8 @@ def prompt_incident_report(sender, instance: Incident, **kwargs):
         )
         settings.SLACK_CLIENT.send_message(
             user_to_notify.external_id, f"👋 Don't forget to fill out an incident report here: {doc_url}")
+
+
 
 
 @receiver(post_save, sender=HeadlinePost)

@@ -50,6 +50,12 @@ class HeadlinePost(models.Model):
         incident_lead_text = user_reference(self.incident.lead.external_id) if self.incident.lead else "-"
         msg.add_block(Section(block_id="lead", text=Text(f"👩‍🚒 Incident Lead: {incident_lead_text}")))
 
+        pd_url = urljoin(
+            settings.PAGER_DUTY_BASE_URL,
+            'services/'+self.incident.pdschedule if self.incident.pdschedule else ""
+        )
+        msg.add_block(Section(block_id="pager", text=Text(f"{self.incident.pd_emoji()} Pagerduty schedule: <{pd_url}|{self.incident.pdschedule}>")))
+
         msg.add_block(Divider())
 
         # Add additional info
@@ -71,7 +77,6 @@ class HeadlinePost(models.Model):
         if not self.incident.is_closed():
             msg.add_block(Section(text=Text("Need something else?")))
             actions = Actions(block_id="actions")
-
             # Add all actions mapped by @headline_post_action decorators
             for key in sorted(SLACK_HEADLINE_POST_ACTION_MAPPINGS.keys()):
                 funclist = SLACK_HEADLINE_POST_ACTION_MAPPINGS[key]
@@ -104,6 +109,10 @@ def create_comms_channel_action(headline_post):
         # No need to create an action, channel already exists
         return None
     return Button(":speaking_head_in_silhouette: Create Comms Channel", HeadlinePost.CREATE_COMMS_CHANNEL_BUTTON, value=headline_post.incident.pk)
+
+# @headline_post_action(order=100)
+# def page_on_call(headline_post):
+    # return Button(":pagerduty: Page schedule", HeadlinePost.PAGE_ON_CALL_BUTTON, value=headline_post.incident.pk)
 
 @headline_post_action(order=200)
 def edit_incident_button(headline_post):

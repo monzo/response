@@ -1,2 +1,3 @@
-Django==2.2.4
+django-incident-response
 psycopg2-binary==2.8.2
+pdpyras

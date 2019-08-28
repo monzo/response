@@ -6,7 +6,7 @@ from response import slack
 
 
 class IncidentManager(models.Manager):
-    def create_incident(self, report, reporter, report_time, summary=None, impact=None, lead=None, severity=None):
+    def create_incident(self, report, reporter, report_time, summary=None, impact=None, lead=None, severity=None, pdschedule=None):
         incident = self.create(
             report=report,
             reporter=reporter,
@@ -16,6 +16,7 @@ class IncidentManager(models.Manager):
             impact=impact,
             lead=lead,
             severity=severity,
+            pdschedule=pdschedule,
         )
         return incident
 
@@ -35,6 +36,7 @@ class Incident(models.Model):
     # Additional info
     summary = models.TextField(blank=True, null=True, help_text="What's the high level summary?")
     impact = models.TextField(blank=True, null=True, help_text="What impact is this having?")
+    pdschedule = models.TextField(blank=True, null=True, help_text="What's the PagerDuty schedule?")
     lead = models.ForeignKey(ExternalUser, related_name='lead', on_delete=models.PROTECT, blank=True, null=True, help_text="Who is leading?")
 
     # Severity
@@ -104,6 +106,9 @@ class Incident(models.Model):
             return ":droplet:"
         else:
             return ":fire:"
+
+    def pd_emoji(self):
+        return ":pagerduty:"
 
     def action_items(self):
         return core.models.Action.objects.filter(incident=self)

@@ -25,8 +25,8 @@ def slash_command(request):
     """
     Handles slash commands from slack
     More details here: https://api.slack.com/slash-commands
-
-    @param request the request from slack containing the slash command
+param request the request from slack containing the slash command
+n
     @return: return a HTTP response to indicate the request was handled
     """
 
@@ -42,6 +42,7 @@ def slash_command(request):
             TextArea(label="Summary", name="summary", optional=True, placeholder="Can you share any more details?"),
             TextArea(label="Impact", name="impact", optional=True, placeholder="Who or what might be affected?", hint="Think about affected people, systems, and processes"),
             SelectFromUsers(label="Lead", name="lead", optional=True),
+            SelectWithOptions([(u['summary'], u['id']) for u in settings.PDSESSION.iter_all('services')], label="PagerDuty Schedule", name="pdschedule", optional=True, placeholder="This action will trigger an alert"),
             SelectWithOptions([(s.capitalize(), i) for i, s in Incident.SEVERITIES], label="Severity", name="severity", optional=True)
         ]
     )

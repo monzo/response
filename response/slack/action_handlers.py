@@ -48,6 +48,11 @@ def handle_create_comms_channel(ac: ActionContext):
 
 @action_handler(HeadlinePost.EDIT_INCIDENT_BUTTON)
 def handle_edit_incident_button(ac: ActionContext):
+    #Fetch the PD schedule list and get the selected schedule label
+    pdoptions = [(u['summary'], u['id']) for u in settings.PDSESSION.iter_all('services')]
+    pd_schedule = list(filter(lambda x: x[1] == ac.incident.pdschedule, pdoptions))
+    pdvalue = pd_schedule[0][1] if pd_schedule else None
+
     dialog = Dialog(
         title=f"Edit Incident {ac.incident.pk}",
         submit_label="Save",
@@ -57,6 +62,7 @@ def handle_edit_incident_button(ac: ActionContext):
             TextArea(label="Summary", name="summary", value=ac.incident.summary, optional=True, placeholder="Can you share any more details?"),
             TextArea(label="Impact", name="impact", value=ac.incident.impact, optional=True, placeholder="Who or what might be affected?", hint="Think about affected people, systems, and processes"),
             SelectFromUsers(label="Lead", name="lead", value=ac.incident.lead.external_id if ac.incident.lead else None, optional=True),
+            SelectWithOptions(pdoptions, value=pdvalue, label="PagerDuty Schedule", name="pdschedule", optional=True),
             SelectWithOptions([(s.capitalize(), i) for i, s in Incident.SEVERITIES], value=ac.incident.severity, label="Severity", name="severity", optional=True)
         ]
     )

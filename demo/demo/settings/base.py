@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import logging
 from response.slack.client import SlackClient
+from pdpyras import APISession
 
 
 
@@ -189,3 +190,7 @@ def get_env_var(setting, warn_only=False):
 
 SLACK_TOKEN = get_env_var("SLACK_TOKEN")
 SLACK_CLIENT = SlackClient(SLACK_TOKEN)
+
+PAGER_DUTY_TOKEN = get_env_var("PAGER_DUTY_TOKEN")
+PAGER_DUTY_BASE_URL = get_env_var("PAGER_DUTY_BASE_URL")
+PDSESSION = APISession(PAGER_DUTY_TOKEN)

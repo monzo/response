@@ -45,6 +45,7 @@ class Migration(migrations.Migration):
                 ('summary', models.TextField(blank=True, help_text="What's the high level summary?", null=True)),
                 ('impact', models.TextField(blank=True, help_text='What impact is this having?', null=True)),
                 ('severity', models.CharField(blank=True, choices=[('1', 'critical'), ('2', 'major'), ('3', 'minor'), ('4', 'trivial')], max_length=10, null=True)),
+                ('pdschedule', models.CharField(max_length=20, blank=True, null=True)),
                 ('lead', models.ForeignKey(blank=True, help_text='Who is leading?', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='lead', to='response.ExternalUser')),
                 ('reporter', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='reporter', to='response.ExternalUser')),
             ],

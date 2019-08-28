@@ -13,6 +13,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - cron
+      - ngrok
     environment:
       POSTGRES: "true"
     env_file: .env
@@ -29,8 +31,6 @@ services:
       dockerfile: Dockerfile.cron
     image: cron
     container_name: cron
-    depends_on:
-      - response
     tty: true
 
   db:
@@ -47,8 +47,6 @@ services:
       TARGET_PORT: 8000
     ports:
       - "4040:4040"
-    depends_on:
-      - response
 
 volumes:
   postgres_data:
