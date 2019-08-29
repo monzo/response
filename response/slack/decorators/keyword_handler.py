@@ -27,4 +27,4 @@ def handle_keywords(payload):
 
     for keyword, handler in KEYWORD_HANDLERS.items():
         if keyword.lower() in text.lower():
-            handler(comms_channel, user, text, ts)
+            handler(comms_channel, user, keyword, text, ts)
