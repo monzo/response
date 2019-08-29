@@ -47,8 +47,18 @@
                     </ul>
                 </li>
             {% endif %}
-
         </ul>
+
+        {% comment %} ----- Actions ----- {% endcomment %}
+        <h2>Actions</h2>
+        {% if incident.action_items %}
+        <ul>
+            {% for action in incident.action_items %}
+            <li><strong>{{action.details}}</strong> ({{action.user}})</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
 
         {% comment %} ----- Timeline ----- {% endcomment %}
         <h2>Timeline</h2>

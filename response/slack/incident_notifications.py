@@ -43,3 +43,16 @@ def remind_close_incident(incident: Incident):
                 " Can it be closed now? Remember to pin important messages in order to create the timeline.")
     except CommsChannel.DoesNotExist:
         pass
+
+@recurring_notification(interval_mins=5, max_notifications=5)
+def remind_update_status(incident: Incident):
+
+    try:
+        comms_channel = CommsChannel.objects.get(incident=incident)
+        if not incident.is_closed():
+            user_to_notify = incident.lead or incident.reporter
+            comms_channel.post_in_channel(
+                f":timer_clock: <@{user_to_notify.external_id}>, this incident has been running a long time."
+                " Have you updated the proper notification channels? Remember to notify status updates in twitter and status page")
+    except CommsChannel.DoesNotExist:
+        pass

@@ -109,3 +109,7 @@
   margin-block-end: 0;
   margin-right: 80px;
 }
+
+.list-group {
+    margin: 20px 0px;
+}
