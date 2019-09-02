@@ -50,7 +50,7 @@ def handle_app_mention(incident: Incident, payload: json):
 
 @slack_event('message')
 def handle_keyword_detection(incident: Incident, payload: json):
-    handle_keywords(payload)
+    handle_keywords(incident, payload)
 
 
 @slack_event('message')
