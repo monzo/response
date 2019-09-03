@@ -13,8 +13,8 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 class TimelineEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimelineEvent
-        fields = ("pk", "timestamp", "text", "event_type", "metadata")
-        read_only_fields = ("pk",)
+        fields = ("id", "timestamp", "text", "event_type", "metadata")
+        read_only_fields = ("id",)
 
 
 class ActionSerializer(serializers.ModelSerializer):
