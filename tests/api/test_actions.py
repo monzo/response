@@ -108,7 +108,7 @@ def update_action(arf, api_user, incident_id, action_data):
     force_authenticate(req, user=api_user)
 
     return IncidentActionViewSet.as_view({"put": "update"})(
-        req, incident_pk=incident_id, pk=action_data["pk"]
+        req, incident_pk=incident_id, pk=action_data["id"]
     )
 
 

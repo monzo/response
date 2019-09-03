@@ -13,7 +13,8 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 class TimelineEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimelineEvent
-        fields = ("timestamp", "text", "event_type", "metadata")
+        fields = ("id", "timestamp", "text", "event_type", "metadata")
+        read_only_fields = ("id",)
 
 
 class ActionSerializer(serializers.ModelSerializer):
@@ -21,8 +22,8 @@ class ActionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Action
-        fields = ("pk", "details", "done", "user")
-        read_only_fields = ("pk",)
+        fields = ("id", "details", "done", "user")
+        read_only_fields = ("id",)
 
     def create(self, validated_data):
         user = ExternalUser.objects.get(
@@ -67,7 +68,7 @@ class IncidentSerializer(serializers.ModelSerializer):
             "impact",
             "is_closed",
             "lead",
-            "pk",
+            "id",
             "report",
             "report_time",
             "reporter",
