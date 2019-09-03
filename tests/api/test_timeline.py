@@ -57,6 +57,7 @@ def test_list_actions_by_incident(arf, api_user):
         assert event["timestamp"]
         assert event["text"]
         assert event["event_type"]
+        assert event["id"]
 
 
 @pytest.mark.parametrize(
