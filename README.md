@@ -121,6 +121,15 @@ Response needs an OAuth access token to use the Slack API.
 
 **Note:** Since some of the APIs commands we use require a _user_ token, we only need the token starting with `xoxp-...`.  If/when Slack allow these actions to be controlled by Bots, we can use the _bot_ token, starting `xoxb-...`.
 
+### Slack Client (`SLACK_CLIENT`)
+
+Response needs a shared global instance of a Slack Client to talk to the Slack API. Typically this does not require any additional configuration.
+
+```python
+from response.slack.client import SlackClient
+SLACK_CLIENT = SlackClient(SLACK_TOKEN)
+```
+
 ### Signing Secret (`SLACK_SIGNING_SECRET`)
 
 Response uses the Slack signing secret to restrict access to public endpoints.
