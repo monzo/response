@@ -3,19 +3,16 @@ from datetime import datetime
 from django.conf import settings
 from django.db import models
 
-from response.core.models import (
-    ExternalUser,
-    GetOrCreateSlackExternalUser,
-    Incident,
-    TimelineEvent,
-)
+from response.core.models import ExternalUser, Incident, TimelineEvent
 from response.core.serializers import ExternalUserSerializer
 
 
 class PinnedMessageManager(models.Manager):
     def add_pin(self, incident, message_ts, author_id, text):
         name = settings.SLACK_CLIENT.get_user_profile(author_id)["name"]
-        author = GetOrCreateSlackExternalUser(external_id=author_id, display_name=name)
+        author, _ = ExternalUser.objects.get_or_create_slack(
+            external_id=author_id, display_name=name
+        )
         timestamp = datetime.fromtimestamp(float(message_ts))
 
         user_data = ExternalUserSerializer(author).data
