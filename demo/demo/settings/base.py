@@ -140,7 +140,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100,
     # Use Django's standard `django.contrib.auth` permissions.
-    # Change to IsAuthenticatedOrReadOnly for read-only unauthenticated access.
+    # Change to IsAuthenticatedOrReadOnly for read-only unauthenticated access
+    # or see the Django Rest Framework docs for more options:
+    # https://www.django-rest-framework.org/api-guide/permissions/#setting-the-permission-policy
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ]
