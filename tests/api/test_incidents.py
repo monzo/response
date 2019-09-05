@@ -187,3 +187,24 @@ def test_update_incident_lead(arf, api_user):
 
     new_incident = Incident.objects.get(pk=incident.pk)
     assert new_incident.lead == new_lead
+
+
+def test_cannot_access_incident_logged_out_if_configured(client, db, settings):
+    settings.RESPONSE_LOGIN_REQUIRED = True
+
+    incident = IncidentFactory()
+
+    response = client.get(reverse("incident_doc", args=(incident.pk,)))
+
+    assert response.status_code == 302
+    assert response['location'].startswith(settings.LOGIN_URL)
+
+
+def test_can_access_incident_logged_out_if_configured(client, db, settings):
+    settings.RESPONSE_LOGIN_REQUIRED = False
+
+    incident = IncidentFactory()
+
+    response = client.get(reverse("incident_doc", args=(incident.pk,)))
+
+    assert response.status_code == 200
