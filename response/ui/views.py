@@ -1,9 +1,9 @@
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse, Http404
 
 from response.core.models import Incident
-from response.slack.models import PinnedMessage, UserStats
 from response.decorators import response_login_required
+from response.slack.models import PinnedMessage, UserStats
 
 
 @response_login_required
@@ -14,11 +14,13 @@ def incident_doc(request: HttpRequest, incident_id: str):
     except Incident.DoesNotExist:
         raise Http404("Incident does not exist")
 
-    events = PinnedMessage.objects.filter(incident=incident).order_by('timestamp')
-    user_stats = UserStats.objects.filter(incident=incident).order_by('-message_count')[:5]
+    events = PinnedMessage.objects.filter(incident=incident).order_by("timestamp")
+    user_stats = UserStats.objects.filter(incident=incident).order_by("-message_count")[
+        :5
+    ]
 
-    return render(request, template_name='incident_doc.html', context={
-        "incident": incident,
-        "events": events,
-        "user_stats": user_stats,
-    })
+    return render(
+        request,
+        template_name="incident_doc.html",
+        context={"incident": incident, "events": events, "user_stats": user_stats},
+    )

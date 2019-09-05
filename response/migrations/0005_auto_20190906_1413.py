@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('response', '0004_auto_20190904_1704'),
-    ]
+    dependencies = [("response", "0004_auto_20190904_1704")]
 
     operations = [
         migrations.AlterField(
-            model_name='timelineevent',
-            name='event_type',
-            field=models.CharField(help_text='Type of event.', max_length=30),
-        ),
+            model_name="timelineevent",
+            name="event_type",
+            field=models.CharField(help_text="Type of event.", max_length=30),
+        )
     ]

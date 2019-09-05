@@ -1,8 +1,8 @@
 from urllib.parse import urljoin
 
-from django.db.models.signals import pre_save, post_save
-from django.dispatch import receiver
 from django.conf import settings
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from django.urls import reverse
 
 from response.core.models import Incident, add_incident_update_event
@@ -82,6 +82,7 @@ def add_timeline_events(sender, instance: Incident, **kwargs):
     if prev_state.severity != instance.severity:
         update_incident_severity_event(prev_state, instance)
 
+
 def update_incident_lead_event(prev_state, instance):
     old_lead = None
     if prev_state.lead:
@@ -152,18 +153,22 @@ def update_incident_impact_event(prev_state, instance):
         new_value=instance.impact,
     )
 
+
 def update_incident_severity_event(prev_state, instance):
     if prev_state.severity:
         text = (
-            f'Incident severity updated from {prev_state.severity_text()} to {instance.severity_text()}',
+            f"Incident severity updated from {prev_state.severity_text()} to {instance.severity_text()}",
         )
     else:
-        text = f'Incident severity set to {instance.severity_text()}'
+        text = f"Incident severity set to {instance.severity_text()}"
 
     add_incident_update_event(
         incident=instance,
         update_type="incident_impact",
         text=text,
-        old_value={"id": prev_state.severity, "text": prev_state.severity_text() if prev_state else ""},
+        old_value={
+            "id": prev_state.severity,
+            "text": prev_state.severity_text() if prev_state else "",
+        },
         new_value={"id": instance.severity, "text": instance.severity_text()},
     )

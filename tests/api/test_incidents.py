@@ -1,14 +1,15 @@
 import datetime
+import json
+import random
+
+import pytest
 from django.urls import reverse
 from faker import Faker
 from rest_framework.test import force_authenticate
-import json
-import pytest
-import random
 
-from response.models import Incident, ExternalUser
 from response import serializers
-from response.core.views import IncidentViewSet, IncidentsByMonthViewSet
+from response.core.views import IncidentsByMonthViewSet, IncidentViewSet
+from response.models import ExternalUser, Incident
 from tests.factories import IncidentFactory
 
 faker = Faker()
@@ -18,7 +19,7 @@ def assert_incident_response(incident):
     assert incident["report_time"]
 
     assert "end_time" in incident  # end_time can be null for open incidents
-    assert "is_closed" in incident # this can be false
+    assert "is_closed" in incident  # this can be false
     assert incident["impact"]
     assert incident["report"]
     assert incident["start_time"]
@@ -197,7 +198,7 @@ def test_cannot_access_incident_logged_out_if_configured(client, db, settings):
     response = client.get(reverse("incident_doc", args=(incident.pk,)))
 
     assert response.status_code == 302
-    assert response['location'].startswith(settings.LOGIN_URL)
+    assert response["location"].startswith(settings.LOGIN_URL)
 
 
 def test_can_access_incident_logged_out_if_configured(client, db, settings):

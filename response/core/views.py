@@ -1,14 +1,14 @@
+from calendar import monthrange
+from datetime import datetime
+
 from rest_framework import pagination, viewsets
 from rest_framework.response import Response
 
-from response.core.models.incident import Incident
+from response.core import serializers
 from response.core.models.action import Action
+from response.core.models.incident import Incident
 from response.core.models.timeline import TimelineEvent
 from response.core.models.user_external import ExternalUser
-from response.core import serializers
-
-from datetime import datetime
-from calendar import monthrange
 
 
 class ExternalUserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -47,6 +47,7 @@ class IncidentActionViewSet(viewsets.ModelViewSet):
         incident_pk = self.kwargs["incident_pk"]
         serializer.save(incident_id=incident_pk)
 
+
 class IncidentsByMonthViewSet(viewsets.ModelViewSet):
     """
     Allows getting a list of Incidents for a given year/month (sorted by
@@ -68,6 +69,7 @@ class IncidentsByMonthViewSet(viewsets.ModelViewSet):
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+
 
 class IncidentTimelineEventViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TimelineEventSerializer

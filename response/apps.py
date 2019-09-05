@@ -3,19 +3,19 @@ from django.conf import settings as site_settings
 
 
 class ResponseConfig(AppConfig):
-    name = 'response'
+    name = "response"
 
     def ready(self):
-        from .slack import (settings,
-                            signals,
-                            action_handlers,
-                            event_handlers,
-                            incident_commands,
-                            incident_notifications,
-                            dialog_handlers)
+        from .slack import (  # noqa: F401
+            settings,
+            signals,
+            action_handlers,
+            event_handlers,
+            incident_commands,
+            incident_notifications,
+            dialog_handlers,
+        )
 
         site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
-            site_settings,
-            'RESPONSE_LOGIN_REQUIRED',
-            True,
+            site_settings, "RESPONSE_LOGIN_REQUIRED", True
         )

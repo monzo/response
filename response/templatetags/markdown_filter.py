@@ -1,8 +1,7 @@
+import bleach
+import markdown2
 from django import template
 from django.conf import settings
-import markdown2
-import bleach
-
 
 register = template.Library()
 

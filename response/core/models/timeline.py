@@ -1,9 +1,9 @@
 from datetime import datetime
+
 from django.db import models
 from jsonfield import JSONField
 
 from response.core.models.incident import Incident
-
 
 EVENT_TYPES = (
     ("text", "Freeform text field"),
@@ -24,8 +24,9 @@ class TimelineEvent(models.Model):
     )
 
 
-def add_incident_update_event(incident, update_type, old_value, new_value,
-                              text, timestamp=None):
+def add_incident_update_event(
+    incident, update_type, old_value, new_value, text, timestamp=None
+):
 
     if not timestamp:
         timestamp = datetime.now()
@@ -42,5 +43,3 @@ def add_incident_update_event(incident, update_type, old_value, new_value,
         },
     )
     timeline_event.save()
-
-

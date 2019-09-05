@@ -1,6 +1,6 @@
+import logging
 import re
 
-import logging
 import emoji_data_python
 from django import template
 from django.conf import settings
@@ -28,4 +28,4 @@ def unslackify(value):
 def slack_id_to_fullname(value):
     profile = settings.SLACK_CLIENT.get_user_profile(value)
     if profile:
-        return profile['fullname']
+        return profile["fullname"]

@@ -1,12 +1,22 @@
 from datetime import datetime
+
 from django.db import models
-from response import core
+
+from response import core, slack
 from response.core.models.user_external import ExternalUser
-from response import slack
 
 
 class IncidentManager(models.Manager):
-    def create_incident(self, report, reporter, report_time, summary=None, impact=None, lead=None, severity=None):
+    def create_incident(
+        self,
+        report,
+        reporter,
+        report_time,
+        summary=None,
+        impact=None,
+        lead=None,
+        severity=None,
+    ):
         incident = self.create(
             report=report,
             reporter=reporter,
@@ -26,25 +36,39 @@ class Incident(models.Model):
 
     # Reporting info
     report = models.CharField(max_length=200)
-    reporter = models.ForeignKey(ExternalUser, related_name='reporter', on_delete=models.PROTECT, blank=False, null=True,)
+    reporter = models.ForeignKey(
+        ExternalUser,
+        related_name="reporter",
+        on_delete=models.PROTECT,
+        blank=False,
+        null=True,
+    )
     report_time = models.DateTimeField()
 
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(blank=True, null=True)
 
     # Additional info
-    summary = models.TextField(blank=True, null=True, help_text="What's the high level summary?")
-    impact = models.TextField(blank=True, null=True, help_text="What impact is this having?")
-    lead = models.ForeignKey(ExternalUser, related_name='lead', on_delete=models.PROTECT, blank=True, null=True, help_text="Who is leading?")
+    summary = models.TextField(
+        blank=True, null=True, help_text="What's the high level summary?"
+    )
+    impact = models.TextField(
+        blank=True, null=True, help_text="What impact is this having?"
+    )
+    lead = models.ForeignKey(
+        ExternalUser,
+        related_name="lead",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        help_text="Who is leading?",
+    )
 
     # Severity
-    SEVERITIES = (
-        ('1', 'critical'),
-        ('2', 'major'),
-        ('3', 'minor'),
-        ('4', 'trivial'),
+    SEVERITIES = (("1", "critical"), ("2", "major"), ("3", "minor"), ("4", "trivial"))
+    severity = models.CharField(
+        max_length=10, blank=True, null=True, choices=SEVERITIES
     )
-    severity = models.CharField(max_length=10, blank=True, null=True, choices=SEVERITIES)
 
     def __str__(self):
         return self.report
@@ -89,15 +113,10 @@ class Incident(models.Model):
         if not self.severity:
             return "☁️"
 
-        return {
-            "1": "⛈️",
-            "2": "🌧️",
-            "3": "🌦️",
-            "4": "🌤️"
-        }[self.severity]
+        return {"1": "⛈️", "2": "🌧️", "3": "🌦️", "4": "🌤️"}[self.severity]
 
     def status_text(self):
-        return 'resolved' if self.is_closed() else 'live'
+        return "resolved" if self.is_closed() else "live"
 
     def status_emoji(self):
         if self.is_closed():
@@ -111,11 +130,12 @@ class Incident(models.Model):
     def timeline_events(self):
         return core.models.TimelineEvent.objects.filter(incident=self)
 
+
 # Used to store external identifiers
 class IncidentExtension(models.Model):
     class Meta:
         unique_together = ("incident", "key")
 
     incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
-    key      = models.CharField(max_length=50, blank=False, null=False)
-    value    = models.CharField(max_length=100, blank=False, null=False)
+    key = models.CharField(max_length=50, blank=False, null=False)
+    value = models.CharField(max_length=100, blank=False, null=False)

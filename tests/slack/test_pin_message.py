@@ -1,9 +1,11 @@
 import datetime
+
 import pytest
 from faker import Faker
-from response.slack.event_handlers import handle_pin_added, handle_pin_removed
-from response.slack.models import PinnedMessage, TimelineEvent
 
+from response.core.models import TimelineEvent
+from response.slack.event_handlers import handle_pin_added, handle_pin_removed
+from response.slack.models import PinnedMessage
 from tests.factories import ExternalUserFactory, IncidentFactory
 
 faker = Faker()

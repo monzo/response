@@ -1,4 +1,2 @@
-
-
 class IncidentUpdateError(Exception):
     pass

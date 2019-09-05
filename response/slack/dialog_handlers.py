@@ -1,32 +1,34 @@
 import json
+import logging
 from datetime import datetime
 
 from django.conf import settings
 
-from response.slack.settings import INCIDENT_EDIT_DIALOG, INCIDENT_REPORT_DIALOG
-from response.core.models.incident import Incident
-from response.slack.models import HeadlinePost, CommsChannel, ExternalUser, GetOrCreateSlackExternalUser
-from response.slack.decorators import dialog_handler
+from response.core.models import GetOrCreateSlackExternalUser, Incident
 from response.slack.client import channel_reference
+from response.slack.decorators import dialog_handler
+from response.slack.models import CommsChannel, HeadlinePost
+from response.slack.settings import INCIDENT_EDIT_DIALOG, INCIDENT_REPORT_DIALOG
 
-import logging
 logger = logging.getLogger(__name__)
 
 
 @dialog_handler(INCIDENT_REPORT_DIALOG)
-def report_incident(user_id: str, channel_id: str, submission: json, response_url: str, state: json):
-    report = submission['report']
-    summary = submission['summary']
-    impact = submission['impact']
-    lead_id = submission['lead']
-    severity = submission['severity']
+def report_incident(
+    user_id: str, channel_id: str, submission: json, response_url: str, state: json
+):
+    report = submission["report"]
+    summary = submission["summary"]
+    impact = submission["impact"]
+    lead_id = submission["lead"]
+    severity = submission["severity"]
 
-    name = settings.SLACK_CLIENT.get_user_profile(user_id)['name']
+    name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
     reporter = GetOrCreateSlackExternalUser(external_id=user_id, display_name=name)
 
     lead = None
     if lead_id:
-        lead_name = settings.SLACK_CLIENT.get_user_profile(lead_id)['name']
+        lead_name = settings.SLACK_CLIENT.get_user_profile(lead_id)["name"]
         lead = GetOrCreateSlackExternalUser(external_id=lead_id, display_name=lead_name)
 
     Incident.objects.create_incident(
@@ -45,16 +47,18 @@ def report_incident(user_id: str, channel_id: str, submission: json, response_ur
 
 
 @dialog_handler(INCIDENT_EDIT_DIALOG)
-def edit_incident(user_id: str, channel_id: str, submission: json, response_url: str, state: json):
-    report = submission['report']
-    summary = submission['summary']
-    impact = submission['impact']
-    lead_id = submission['lead']
-    severity = submission['severity']
+def edit_incident(
+    user_id: str, channel_id: str, submission: json, response_url: str, state: json
+):
+    report = submission["report"]
+    summary = submission["summary"]
+    impact = submission["impact"]
+    lead_id = submission["lead"]
+    severity = submission["severity"]
 
     lead = None
     if lead_id:
-        lead_name = settings.SLACK_CLIENT.get_user_profile(lead_id)['name']
+        lead_name = settings.SLACK_CLIENT.get_user_profile(lead_id)["name"]
         lead = GetOrCreateSlackExternalUser(external_id=lead_id, display_name=lead_name)
 
     try:

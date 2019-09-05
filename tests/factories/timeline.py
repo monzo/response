@@ -7,11 +7,12 @@ from .user import ExternalUserFactory
 
 faker = Factory.create()
 
+
 class TimelineEventFactory(factory.DjangoModelFactory):
     class Meta:
         model = TimelineEvent
 
-    incident = factory.SubFactory('tests.factories.IncidentFactory')
+    incident = factory.SubFactory("tests.factories.IncidentFactory")
 
     timestamp = factory.LazyFunction(
         lambda: faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None)

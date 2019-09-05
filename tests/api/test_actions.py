@@ -1,13 +1,13 @@
 import json
+
 import pytest
 from django.urls import reverse
 from faker import Faker
 from rest_framework.test import force_authenticate
 
 from response import serializers
-from response.models import Action
 from response.core.views import IncidentActionViewSet
-
+from response.models import Action
 from tests.factories import ActionFactory, ExternalUserFactory, IncidentFactory
 
 faker = Faker()

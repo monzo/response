@@ -29,7 +29,9 @@ def headline_post_action(order=0, func=None):
         SLACK_HEADLINE_POST_ACTION_MAPPINGS[
             order
         ] = SLACK_HEADLINE_POST_ACTION_MAPPINGS.get(order, []) + [fn]
-        logger.info(f"Registering headline post action {fn.__name__} with order {order}")
+        logger.info(
+            f"Registering headline post action {fn.__name__} with order {order}"
+        )
         return fn
 
     if func:

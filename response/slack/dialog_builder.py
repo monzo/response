@@ -3,7 +3,6 @@ from django.conf import settings
 from response.slack.client import SlackError
 
 
-
 class Dialog:
     def __init__(self, title, submit_label, elements=None, state=None):
         self.title = title
@@ -38,9 +37,9 @@ class Dialog:
         Open the dialog
         """
         return settings.SLACK_CLIENT.dialog_open(
-            dialog=self.build_dialog(callback_id),
-            trigger_id=trigger_id,
+            dialog=self.build_dialog(callback_id), trigger_id=trigger_id
         )
+
 
 class Element:
     def __init__(self, label, name, optional, hint, subtype, value, placeholder):
@@ -57,26 +56,63 @@ class Element:
 
 
 class Text(Element):
-    def __init__(self, label=None, name=None, optional=False, hint=None, subtype=None, value=None, placeholder=None):
+    def __init__(
+        self,
+        label=None,
+        name=None,
+        optional=False,
+        hint=None,
+        subtype=None,
+        value=None,
+        placeholder=None,
+    ):
         super().__init__(label, name, optional, hint, subtype, value, placeholder)
         self.type = "text"
 
 
 class TextArea(Element):
-    def __init__(self, label=None, name=None, optional=False, hint=None, subtype=None, value=None, placeholder=None):
+    def __init__(
+        self,
+        label=None,
+        name=None,
+        optional=False,
+        hint=None,
+        subtype=None,
+        value=None,
+        placeholder=None,
+    ):
         super().__init__(label, name, optional, hint, subtype, value, placeholder)
         self.type = "textarea"
 
 
 class SelectWithOptions(Element):
-    def __init__(self, options, label=None, name=None, optional=False, hint=None, subtype=None, value=None, placeholder=None):
+    def __init__(
+        self,
+        options,
+        label=None,
+        name=None,
+        optional=False,
+        hint=None,
+        subtype=None,
+        value=None,
+        placeholder=None,
+    ):
         super().__init__(label, name, optional, hint, subtype, value, placeholder)
         self.type = "select"
         self.options = [{"label": l, "value": v} for l, v in options]
 
 
 class SelectFromUsers(Element):
-    def __init__(self, label=None, name=None, optional=False, hint=None, subtype=None, value=None, placeholder=None):
+    def __init__(
+        self,
+        label=None,
+        name=None,
+        optional=False,
+        hint=None,
+        subtype=None,
+        value=None,
+        placeholder=None,
+    ):
         super().__init__(label, name, optional, hint, subtype, value, placeholder)
         self.type = "select"
         self.data_source = "users"

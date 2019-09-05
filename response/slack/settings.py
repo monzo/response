@@ -1,14 +1,14 @@
 from django.conf import settings
 
-
 INCIDENT_REPORT_DIALOG = "incident-report-dialog"
 INCIDENT_EDIT_DIALOG = "incident-edit-dialog"
 
-SLACK_API_MOCK = getattr(settings, 'SLACK_API_MOCK', None)
+SLACK_API_MOCK = getattr(settings, "SLACK_API_MOCK", None)
 
 if SLACK_API_MOCK:
     from urllib.parse import urlparse
     from slackclient.slackrequest import requests
+
     old_post = requests.post
 
     import logging

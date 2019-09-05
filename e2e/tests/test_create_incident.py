@@ -1,5 +1,5 @@
-from datetime import datetime
 import json
+from datetime import datetime
 
 
 def test_raise_incident_opens_dialog(slack_client, slack_httpserver):
