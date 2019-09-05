@@ -13,3 +13,5 @@ virtual-env
 dist/
 
 *.egg-info/
+
+.mypy_cache/
