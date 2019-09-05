@@ -1,4 +1,2 @@
-from django.contrib import admin
-
-from .core import admin
-from .slack import admin
+import response.core.admin  # noqa: F401
+import response.slack.admin  # noqa: F401

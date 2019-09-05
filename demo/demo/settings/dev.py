@@ -1,4 +1,7 @@
-from .base import *
+import os
+
+from .base import *  # noqa: F401, F403
+from .base import SLACK_CLIENT, get_env_var
 
 SITE_URL = "http://localhost:8000"
 

@@ -1,15 +1,11 @@
 import json
 import logging
-from datetime import datetime
 
-import after_response
-from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from response.core.models.incident import Incident
 from response.slack.authentication import slack_authenticate
-from response.slack.client import channel_reference
 from response.slack.decorators import (
     handle_action,
     handle_dialog,

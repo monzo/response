@@ -1,11 +1,11 @@
 import logging
 from urllib.parse import urljoin
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
 from response.core.models.incident import Incident
-from response.slack.block_kit import *
 from response.slack.client import SlackError
 
 logger = logging.getLogger(__name__)

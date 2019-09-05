@@ -4,7 +4,7 @@ import factory
 from django.db.models.signals import post_save
 from faker import Factory
 
-from response.core.models import ExternalUser, Incident
+from response.core.models import Incident
 from response.slack.models import CommsChannel
 
 from .action import ActionFactory

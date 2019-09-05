@@ -1,5 +1,4 @@
 import logging
-import re
 
 import emoji_data_python
 from django import template

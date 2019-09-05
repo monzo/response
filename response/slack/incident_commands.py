@@ -4,7 +4,6 @@ from django.conf import settings
 
 from response.core.models import Action, GetOrCreateSlackExternalUser, Incident
 from response.slack.client import SlackError, reference_to_id
-from response.slack.decorators import get_help
 from response.slack.decorators.incident_command import __default_incident_command
 from response.slack.models import CommsChannel
 
