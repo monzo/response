@@ -1,6 +1,6 @@
-import json
 import logging
 from datetime import datetime
+from typing import Any
 
 from django.conf import settings
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @dialog_handler(INCIDENT_REPORT_DIALOG)
 def report_incident(
-    user_id: str, channel_id: str, submission: json, response_url: str, state: json
+    user_id: str, channel_id: str, submission: Any, response_url: str, state: Any
 ):
     report = submission["report"]
     summary = submission["summary"]
@@ -51,7 +51,7 @@ def report_incident(
 
 @dialog_handler(INCIDENT_EDIT_DIALOG)
 def edit_incident(
-    user_id: str, channel_id: str, submission: json, response_url: str, state: json
+    user_id: str, channel_id: str, submission: Any, response_url: str, state: Any
 ):
     report = submission["report"]
     summary = submission["summary"]
