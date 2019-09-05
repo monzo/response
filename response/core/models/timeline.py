@@ -23,3 +23,24 @@ class TimelineEvent(models.Model):
         help_text="Additional fields that can be added by other event types", null=True
     )
 
+
+def add_incident_update_event(incident, update_type, old_value, new_value,
+                              text, timestamp=None):
+
+    if not timestamp:
+        timestamp = datetime.now()
+
+    timeline_event = TimelineEvent(
+        incident=incident,
+        timestamp=timestamp,
+        text=text,
+        event_type="incident_update",
+        metadata={
+            "update_type": update_type,
+            "old_value": old_value,
+            "new_value": new_value,
+        },
+    )
+    timeline_event.save()
+
+
