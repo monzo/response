@@ -68,7 +68,7 @@ class SlackClient(object):
             try:
                 next_cursor = response["response_metadata"]["next_cursor"]
                 logger.info(f"get_channel_id - next_cursor == [{next_cursor}]")
-            except:
+            except LookupError:
                 logger.error(
                     f"get_channel_id - I guess checking next_cursor in response object didn't work."
                 )
