@@ -10,25 +10,23 @@ logger = logging.getLogger(__name__)
 
 def update_user_cache():
     cursor = None
-    while True:
+    while cursor != "":
         response = settings.SLACK_CLIENT.get_paginated_users(limit=200, cursor=cursor)
 
-        users = response['members']
+        users = response["members"]
 
         logger.info(f"Updating {len(users)} users in the cache")
         with transaction.atomic():
             for user in users:
                 GetOrCreateSlackExternalUser(
-                    external_id=user['id'],
+                    external_id=user["id"],
                     defaults={
-                        'display_name': user['profile']['display_name_normalized'] or user['name'],
-                        'full_name': user["profile"]["real_name"] or user['name'],
+                        "display_name": user["profile"]["display_name_normalized"]
+                        or user["name"],
+                        "full_name": user["profile"]["real_name"] or user["name"],
                     },
                 )
-        cursor = response['response_metadata'].get('next_cursor')
-
-        if not cursor:
-            break
+        cursor = response["response_metadata"].get("next_cursor")
 
 
 def get_user_profile(external_id):
@@ -42,7 +40,7 @@ def get_user_profile(external_id):
 
     try:
         external_user = ExternalUser.objects.get(external_id=external_id)
-        logger.info(f'Got user {external_id} from DB cache')
+        logger.info(f"Got user {external_id} from DB cache")
 
         return {
             "id": external_user.external_id,
@@ -54,15 +52,15 @@ def get_user_profile(external_id):
         try:
             user_profile = settings.SLACK_CLIENT.get_user_profile(external_id)
         except SlackError:
-            logger.error(f'Failed to get user {external_id} from DB cache or Slack')
+            logger.error(f"Failed to get user {external_id} from DB cache or Slack")
             raise
 
         # store it in the DB
         GetOrCreateSlackExternalUser(
-            external_id=user_profile['id'],
-            display_name=user_profile['name'],
-            full_name=user_profile['fullname'],
+            external_id=user_profile["id"],
+            display_name=user_profile["name"],
+            full_name=user_profile["fullname"],
         )
 
-        logger.info(f'Got user {external_id} from Slack and cached in DB')
+        logger.info(f"Got user {external_id} from Slack and cached in DB")
         return user_profile
