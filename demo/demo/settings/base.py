@@ -139,8 +139,8 @@ STATIC_ROOT = 'static'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100,
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+    # Use Django's standard `django.contrib.auth` permissions.
+    # Change to IsAuthenticatedOrReadOnly for read-only unauthenticated access.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ]
