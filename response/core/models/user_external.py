@@ -15,6 +15,7 @@ class ExternalUser(models.Model):
     app_id = models.CharField(max_length=50, blank=False, null=False)
     external_id = models.CharField(max_length=50, blank=False, null=False)
     display_name = models.CharField(max_length=50, blank=False, null=False)
+    full_name = models.CharField(max_length=50, blank=True, null=True)
 
     objects = ExternalUserManager()
 
