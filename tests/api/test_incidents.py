@@ -71,7 +71,7 @@ def test_list_incidents(arf, api_user):
 
 
 def test_list_incidents_by_month(arf, api_user):
-    persisted_incidents = IncidentFactory.create_batch(5)
+    IncidentFactory.create_batch(5)
 
     today = datetime.date.today()
     if today.month == 1:
