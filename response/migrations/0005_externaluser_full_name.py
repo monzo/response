@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('response', '0002_timelineevent'),
-    ]
+    dependencies = [("response", "0004_auto_20190904_1704")]
 
     operations = [
         migrations.AddField(
-            model_name='externaluser',
-            name='full_name',
+            model_name="externaluser",
+            name="full_name",
             field=models.CharField(blank=True, max_length=50, null=True),
-        ),
+        )
     ]
