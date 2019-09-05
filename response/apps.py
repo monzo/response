@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.conf import settings as site_settings
 
 
 class ResponseConfig(AppConfig):
@@ -12,3 +13,9 @@ class ResponseConfig(AppConfig):
                             incident_commands,
                             incident_notifications,
                             dialog_handlers)
+
+        site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
+            site_settings,
+            'RESPONSE_LOGIN_REQUIRED',
+            True,
+        )

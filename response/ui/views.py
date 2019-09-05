@@ -3,8 +3,10 @@ from django.http import HttpRequest, HttpResponse, Http404
 
 from response.core.models import Incident
 from response.slack.models import PinnedMessage, UserStats
+from response.decorators import response_login_required
 
 
+@response_login_required
 def incident_doc(request: HttpRequest, incident_id: str):
 
     try:

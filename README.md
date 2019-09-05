@@ -76,6 +76,8 @@ MARKDOWN_FILTER_WHITELIST_STYLES = [
     "vertical-align", "text-align", "border-style", "border-width", "float",
     "margin", "margin-bottom", "margin-left", "margin-right", "margin-top",
 ]
+
+RESPONSE_LOGIN_REQUIRED = True
 ```
 
 In `urls.py`, add the following to `urlpatterns` (you may also need to import `include`):
