@@ -7,7 +7,7 @@ from response.slack.models import CommsChannel
 class ExternalUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalUser
-        fields = ("app_id", "external_id", "display_name")
+        fields = ("app_id", "external_id", "display_name", "full_name")
 
 
 class TimelineEventSerializer(serializers.ModelSerializer):
@@ -31,6 +31,7 @@ class ActionSerializer(serializers.ModelSerializer):
             app_id=validated_data["user"]["app_id"],
             display_name=validated_data["user"]["display_name"],
             external_id=validated_data["user"]["external_id"],
+            full_name=validated_data["user"]["full_name"],
         )
         validated_data["user"] = user
         return Action.objects.create(**validated_data)
@@ -41,6 +42,7 @@ class ActionSerializer(serializers.ModelSerializer):
                 app_id=validated_data["user"]["app_id"],
                 display_name=validated_data["user"]["display_name"],
                 external_id=validated_data["user"]["external_id"],
+                full_name=validated_data["user"]["full_name"],
             )
         instance.details = validated_data.get("details", instance.details)
         instance.done = validated_data.get("done", instance.done)
@@ -87,6 +89,7 @@ class IncidentSerializer(serializers.ModelSerializer):
             instance.lead = ExternalUser.objects.get(
                 display_name=new_lead["display_name"],
                 external_id=new_lead["external_id"],
+                full_name=new_lead["full_name"],
             )
 
         instance.report = validated_data.get("report", instance.report)
