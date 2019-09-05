@@ -38,5 +38,5 @@ def test_add_and_remove_pin(mock_slack):
     with pytest.raises(PinnedMessage.DoesNotExist):
         PinnedMessage.objects.get(incident=incident, message_ts=123)
         TimelineEvent.objects.get(
-            incident=incident, timestamp=datetime.fromtimestamp(float(message_ts))
+            incident=incident, timestamp=datetime.fromtimestamp(123)
         )

@@ -51,8 +51,7 @@ def test_create_action(arf, api_user):
     )
 
     assert response.status_code == 201, "Got non-201 response from API"
-
-    new_action = Action.objects.get(details=action_model.details)
+    assert Action.objects.filter(details=action_model.details).exists()
 
 
 def test_update_action_user(arf, api_user):

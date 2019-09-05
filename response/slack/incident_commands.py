@@ -4,7 +4,10 @@ from django.conf import settings
 
 from response.core.models import Action, ExternalUser, Incident
 from response.slack.client import SlackError, reference_to_id
-from response.slack.decorators.incident_command import __default_incident_command
+from response.slack.decorators.incident_command import (
+    __default_incident_command,
+    get_help,
+)
 from response.slack.models import CommsChannel
 
 
@@ -69,7 +72,7 @@ def rename_incident(incident: Incident, user_id: str, message: str):
 @__default_incident_command(
     ["duration"], helptext="How long has this incident been running?"
 )
-def set_severity(incident: Incident, user_id: str, message: str):
+def set_duration(incident: Incident, user_id: str, message: str):
     duration = incident.duration()
 
     comms_channel = CommsChannel.objects.get(incident=incident)

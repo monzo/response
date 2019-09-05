@@ -31,9 +31,9 @@ def test_create_timeline_event(arf, api_user):
 
     assert response.status_code == 201, "Got non-201 response from API"
 
-    new_action = TimelineEvent.objects.get(
+    assert TimelineEvent.objects.filter(
         incident=incident, timestamp=event_model.timestamp
-    )
+    ).exists()
 
 
 def test_list_actions_by_incident(arf, api_user):
