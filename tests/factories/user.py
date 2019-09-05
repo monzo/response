@@ -12,7 +12,7 @@ class UserFactory(factory.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.LazyFunction(faker.user_name)
+    username = factory.Sequence(lambda i: faker.user_name() + str(i))
     password = factory.LazyFunction(faker.password)
 
 
@@ -22,5 +22,5 @@ class ExternalUserFactory(factory.DjangoModelFactory):
 
     app_id = "slack"
     display_name = factory.LazyFunction(faker.name)
-    external_id = factory.LazyFunction(lambda: "U" + faker.word())
+    external_id = factory.Sequence(lambda i: "U" + str(i).zfill(5))
     owner = factory.SubFactory("tests.factories.UserFactory")
