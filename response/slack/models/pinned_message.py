@@ -24,7 +24,11 @@ class PinnedMessageManager(models.Manager):
             timestamp=timestamp,
             text=text,
             event_type="slack_pin",
-            metadata={"author": user_data, "message_ts": message_ts},
+            metadata={
+                "author": user_data,
+                "message_ts": message_ts,
+                "channel_id": incident.comms_channel().channel_id,
+            },
         )
         timeline_event.save()
 
