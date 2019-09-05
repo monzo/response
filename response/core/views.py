@@ -1,8 +1,4 @@
-from calendar import monthrange
-from datetime import datetime
-
 from rest_framework import pagination, viewsets
-from rest_framework.response import Response
 
 from response.core import serializers
 from response.core.models.action import Action

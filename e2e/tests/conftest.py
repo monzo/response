@@ -1,12 +1,10 @@
 import hashlib
 import hmac
-import json
 import os
 from datetime import datetime
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urljoin
 
 import pytest
-import requests
 from requests import Request, Session
 
 

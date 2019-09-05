@@ -7,7 +7,7 @@ from response.slack.decorators import (
     handle_keywords,
     slack_event,
 )
-from response.slack.models import CommsChannel, HeadlinePost, PinnedMessage, UserStats
+from response.slack.models import PinnedMessage, UserStats
 
 
 def decode_app_mention(payload):

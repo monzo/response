@@ -5,9 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
-from response import errors
 from response.core.models.incident import Incident
-from response.slack.block_kit import *
+from response.slack.block_kit import Actions, Button, Divider, Message, Section, Text
 from response.slack.client import channel_reference, user_reference
 from response.slack.decorators.headline_post_action import (
     SLACK_HEADLINE_POST_ACTION_MAPPINGS,

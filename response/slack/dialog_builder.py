@@ -1,7 +1,5 @@
 from django.conf import settings
 
-from response.slack.client import SlackError
-
 
 class Dialog:
     def __init__(self, title, submit_label, elements=None, state=None):

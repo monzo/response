@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.db import models
 
 from response.core.models.incident import Incident

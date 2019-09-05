@@ -3,8 +3,6 @@ from faker import Factory
 
 from response.core.models import TimelineEvent
 
-from .user import ExternalUserFactory
-
 faker = Factory.create()
 
 

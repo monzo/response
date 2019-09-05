@@ -1,7 +1,6 @@
 import hashlib
 import hmac
 import logging
-import os
 from functools import wraps
 from time import time
 
