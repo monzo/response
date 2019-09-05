@@ -50,7 +50,7 @@ def wait_for_server(client):
             r = client.get("core/")
             r.raise_for_status()
             return
-        except:
+        except Exception:
             time_elapsed = datetime.now() - start_time
             if time_elapsed.total_seconds() >= 60:
                 print(f"time elapsed: {time_elapsed.total_seconds()}s")
