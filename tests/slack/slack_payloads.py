@@ -41,7 +41,7 @@ users_list_response = {
         {
             "id": "U12345678",
             "team_id": "T0G9PQBBK",
-            "name": "chrisevans",
+            "name": "glinda",
             "deleted": "False",
             "color": "9f69e7",
             "real_name": "Glinda Southgood",
