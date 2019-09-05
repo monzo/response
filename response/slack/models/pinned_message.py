@@ -44,6 +44,8 @@ class PinnedMessageManager(models.Manager):
         )
 
     def remove_pin(self, incident, message_ts):
+        timestamp = datetime.fromtimestamp(float(message_ts))
+        TimelineEvent.objects.filter(incident=incident, timestamp=timestamp).delete()
         PinnedMessage.objects.filter(incident=incident, message_ts=message_ts).delete()
 
 
