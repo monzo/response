@@ -19,20 +19,25 @@ env:
   - SLACK_SIGNING_SECRET:shhdonttellanyone
 jobs:
   include:
+
   - stage: Unit tests
     install: pip install -r requirements-dev.txt
     script: pytest
+
   - stage: E2E tests
     script:
     - bash ./e2e/run.sh
-  - stage: Deploy
 
+  - stage: Linting
+    install: pip install -r requirements-dev.txt
+    script: flake8
+
+  - stage: Deploy
     before_deploy:
       # The E2E tests install response from a docker container using the root user,
       # which creates a django_incident_response.egg-info directory owned by root.
       # This messes up the PyPI deployment
       - sudo rm -rf *.egg-info
-
     install: skip
     script: skip
     deploy:
