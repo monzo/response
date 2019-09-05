@@ -14,5 +14,5 @@ class Notification(models.Model):
         unique_together = ("incident", "key")
 
     def __str__(self):
-        nice_date = self.time.strftime('%Y-%m-%d %H:%M:%S')
+        nice_date = self.time.strftime("%Y-%m-%d %H:%M:%S")
         return f"{nice_date} - {self.incident} - {self.key}"

@@ -1,14 +1,15 @@
 from datetime import datetime
-from django.db import models
-from django.conf import settings
 
-from response.core.serializers import ExternalUserSerializer
+from django.conf import settings
+from django.db import models
+
 from response.core.models import (
-    Incident,
     ExternalUser,
     GetOrCreateSlackExternalUser,
+    Incident,
     TimelineEvent,
 )
+from response.core.serializers import ExternalUserSerializer
 
 
 class PinnedMessageManager(models.Manager):

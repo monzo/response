@@ -1,12 +1,18 @@
 from datetime import datetime
-from django.db import models
-from django.conf import settings
 
-from response.core.models import Incident, ExternalUser, GetOrCreateSlackExternalUser
+from django.conf import settings
+from django.db import models
+
+from response.core.models import ExternalUser, GetOrCreateSlackExternalUser, Incident
+
 
 class UserStats(models.Model):
-    user = models.ForeignKey(ExternalUser, on_delete=models.CASCADE, blank=False, null=False)
-    incident = models.ForeignKey(Incident, on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey(
+        ExternalUser, on_delete=models.CASCADE, blank=False, null=False
+    )
+    incident = models.ForeignKey(
+        Incident, on_delete=models.CASCADE, blank=False, null=False
+    )
 
     join_time = models.DateTimeField(null=True)
     message_count = models.IntegerField(default=0)
@@ -16,10 +22,12 @@ class UserStats(models.Model):
 
     @staticmethod
     def increment_message_count(incident, user_id):
-        name = settings.SLACK_CLIENT.get_user_profile(user_id)['name']
+        name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
         user = GetOrCreateSlackExternalUser(external_id=user_id, display_name=name)
 
-        user_stats, created = UserStats.objects.get_or_create(incident=incident, user=user)
+        user_stats, created = UserStats.objects.get_or_create(
+            incident=incident, user=user
+        )
 
         if created:
             user_stats.join_time = datetime.now()

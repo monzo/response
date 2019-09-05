@@ -1,12 +1,12 @@
-from datetime import datetime
 import json
 import time
-from unittest.mock import MagicMock, ANY
+from datetime import datetime
+from unittest.mock import ANY, MagicMock
 
 import pytest
 from django.urls import reverse
 
-from response.core.models import Incident, ExternalUser
+from response.core.models import ExternalUser, Incident
 
 
 def test_slash_command_invalid_signature(client):
@@ -36,7 +36,7 @@ def test_slash_command_invokes_dialog(post_from_slack_api, mock_slack):
 def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
 
     mock_slack.send_or_update_message_block.return_value = {"ts": "123"}
-    mock_slack.get_user_profile.return_value = { "name": "Opsy McOpsface" }
+    mock_slack.get_user_profile.return_value = {"name": "Opsy McOpsface"}
 
     summary = "testing dialog submission"
     data = {
@@ -62,7 +62,6 @@ def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
 
     assert r.status_code == 200
 
-
     # Check if incident has been created
 
     start_time = datetime.now()
@@ -82,24 +81,20 @@ def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
 
     # Check that headline post got created
     mock_slack.send_or_update_message_block.assert_called_with(
-        "incident-channel-id",
-        blocks=ANY,
-        fallback_text=ANY,
-        ts="123",
+        "incident-channel-id", blocks=ANY, fallback_text=ANY, ts="123"
     )
 
     # Check that we sent an ephemeral message to the reporting user
-    mock_slack.send_ephemeral_message.assert_called_with("channel-posted-from", "U123", ANY)
+    mock_slack.send_ephemeral_message.assert_called_with(
+        "channel-posted-from", "U123", ANY
+    )
 
 
 @pytest.mark.django_db(transaction=True)
 def test_edit_incident(post_from_slack_api, mock_slack):
 
     mock_slack.send_or_update_message_block.return_value = {"ts": "123"}
-    mock_slack.get_user_profile.return_value = {
-        "ts": "123",
-        "name": "Opsy McOpsface",
-    }
+    mock_slack.get_user_profile.return_value = {"ts": "123", "name": "Opsy McOpsface"}
 
     user = ExternalUser.objects.get_or_create(
         app_id="slack", external_id="U123", display_name="Opsy McOpsface"
@@ -155,8 +150,5 @@ def test_edit_incident(post_from_slack_api, mock_slack):
 
     # Assert that the headline post gets updated
     mock_slack.send_or_update_message_block.assert_called_with(
-        "incident-channel-id",
-        blocks=ANY,
-        fallback_text=ANY,
-        ts="123",
+        "incident-channel-id", blocks=ANY, fallback_text=ANY, ts="123"
     )

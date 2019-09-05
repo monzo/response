@@ -22,7 +22,9 @@ class Message:
         """
         Build and send the message to the required channel
         """
-        return settings.SLACK_CLIENT.send_or_update_message_block(channel, blocks=self.serialize(), fallback_text=self.fallback_text, ts=ts)
+        return settings.SLACK_CLIENT.send_or_update_message_block(
+            channel, blocks=self.serialize(), fallback_text=self.fallback_text, ts=ts
+        )
 
 
 class Block:
@@ -46,25 +48,23 @@ class Section(Block):
         self.fields.append(field)
 
     def serialize(self):
-        block = {
-            "type": "section",
-        }
+        block = {"type": "section"}
 
         if not (self.fields or self.text or self.accessory):
             raise ValueError
 
         if self.block_id:
-            block['block_id'] = self.block_id
+            block["block_id"] = self.block_id
 
         if self.fields:
-            block['fields'] = [t.serialize() for t in self.fields]
+            block["fields"] = [t.serialize() for t in self.fields]
             return block
 
         if self.text:
-            block['text'] = self.text.serialize()
+            block["text"] = self.text.serialize()
 
         if self.accessory:
-            block['accessory'] = self.accessory.serialize()
+            block["accessory"] = self.accessory.serialize()
 
         return block
 
@@ -81,21 +81,16 @@ class Actions(Block):
         self.elements.append(element)
 
     def serialize(self):
-        block = {
-            "type": "actions",
-            "block_id": self.block_id
-        }
+        block = {"type": "actions", "block_id": self.block_id}
 
-        block['elements'] = [e.serialize() for e in self.elements]
+        block["elements"] = [e.serialize() for e in self.elements]
 
         return block
 
 
 class Divider(Block):
     def serialize(self):
-        return {
-            "type": "divider"
-        }
+        return {"type": "divider"}
 
 
 class Confirm(Block):
@@ -107,22 +102,10 @@ class Confirm(Block):
 
     def serialize(self):
         return {
-            "title": {
-                "type": "plain_text",
-                "text": self.title
-            },
-            "text": {
-                "type": "mrkdwn",
-                "text": self.text
-            },
-            "confirm": {
-                "type": "plain_text",
-                "text": self.confirm
-            },
-            "deny": {
-                "type": "plain_text",
-                "text": self.deny
-            }
+            "title": {"type": "plain_text", "text": self.title},
+            "text": {"type": "mrkdwn", "text": self.text},
+            "confirm": {"type": "plain_text", "text": self.confirm},
+            "deny": {"type": "plain_text", "text": self.deny},
         }
 
 
@@ -141,10 +124,10 @@ class Button:
         }
 
         if self.confirm:
-            button['confirm'] = self.confirm.serialize()
+            button["confirm"] = self.confirm.serialize()
 
         if self.value:
-            button['value'] = str(self.value)
+            button["value"] = str(self.value)
 
         return button
 
@@ -161,5 +144,5 @@ class Text:
 
         return {
             "type": self.text_type,
-            "text": self.text if not self.title else f"*{self.title}*\n{text}"
+            "text": self.text if not self.title else f"*{self.title}*\n{text}",
         }

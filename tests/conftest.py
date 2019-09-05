@@ -1,12 +1,11 @@
-from datetime import datetime
 import os
+from datetime import datetime
+from unittest.mock import MagicMock
 from urllib.parse import urlencode
 
-from django.urls import reverse
-from django.conf import settings
-
 import pytest
-from unittest.mock import MagicMock
+from django.conf import settings
+from django.urls import reverse
 
 from response.slack.authentication import generate_signature
 from response.slack.client import SlackClient
@@ -16,10 +15,7 @@ from response.slack.client import SlackClient
 def mock_slack(monkeypatch):
     mock_slack = MagicMock(spec=SlackClient(""))
     mock_slack.get_channel_name.return_value = "#inc-test-channel"
-    mock_slack.send_or_update_message_block.return_value = {
-        "ok": True,
-        "ts": 1234,
-    }
+    mock_slack.send_or_update_message_block.return_value = {"ok": True, "ts": 1234}
     monkeypatch.setattr(settings, "SLACK_CLIENT", mock_slack)
     return mock_slack
 
@@ -45,4 +41,3 @@ def post_from_slack_api(client, slack_signing_secret):
         )
 
     return _post
-

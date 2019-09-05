@@ -1,13 +1,13 @@
-from django.db import models
-from django.urls import reverse
+import logging
 from urllib.parse import urljoin
 
+from django.db import models
+from django.urls import reverse
+
 from response.core.models.incident import Incident
-
-from response.slack.client import SlackError
 from response.slack.block_kit import *
+from response.slack.client import SlackError
 
-import logging
 logger = logging.getLogger(__name__)
 
 
@@ -18,24 +18,25 @@ class CommsChannelManager(models.Manager):
         """
         try:
             name = f"inc-{100+incident.pk}"
-            channel_id = settings.SLACK_CLIENT.get_or_create_channel(name, auto_unarchive=True)
+            channel_id = settings.SLACK_CLIENT.get_or_create_channel(
+                name, auto_unarchive=True
+            )
         except SlackError as e:
             logger.error(f"Failed to create comms channel {e}")
 
         try:
             doc_url = urljoin(
                 settings.SITE_URL,
-                reverse('incident_doc', kwargs={'incident_id': incident.pk})
+                reverse("incident_doc", kwargs={"incident_id": incident.pk}),
             )
 
-            settings.SLACK_CLIENT.set_channel_topic(channel_id, f"{incident.report} - {doc_url}")
+            settings.SLACK_CLIENT.set_channel_topic(
+                channel_id, f"{incident.report} - {doc_url}"
+            )
         except SlackError as e:
             logger.error(f"Failed to set channel topic {e}")
 
-        comms_channel = self.create(
-            incident=incident,
-            channel_id=channel_id,
-        )
+        comms_channel = self.create(incident=incident, channel_id=channel_id)
         return comms_channel
 
 

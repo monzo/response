@@ -1,10 +1,9 @@
-from django.conf import settings
 import logging
 import re
 
 import slackclient
+from django.conf import settings
 from slugify import slugify
-
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +44,7 @@ class SlackClient(object):
 
     def get_channel_name(self, id):
         try:
-            response = self.api_call(
-                "conversations.info",
-                channel=id,
-            )
+            response = self.api_call("conversations.info", channel=id)
             return response["channel"]["name"]
         except SlackError as e:
             if e.slack_error == "channel_not_found":
@@ -86,20 +82,24 @@ class SlackClient(object):
     def get_usergroup_id(self, group_name):
         response = self.api_call("usergroups.list")
         if not response.get("ok", False):
-            raise SlackError(f"Failed to get usergroup with group name {group_name} : {response['error']}")
-        for group in response['usergroups']:
-            if group['name'] == group_name:
-                return group['id']
+            raise SlackError(
+                f"Failed to get usergroup with group name {group_name} : {response['error']}"
+            )
+        for group in response["usergroups"]:
+            if group["name"] == group_name:
+                return group["id"]
         return None
 
     def get_usergroup_users(self, group_id):
         response = self.api_call("usergroups.list", include_users=True)
 
         if not response.get("ok", False):
-            raise SlackError(f"Failed to get users from usergroup with id {group_id} : {response['error']}")
-        for group in response['usergroups']:
-            if group['id'] == group_id:
-                return group['users']
+            raise SlackError(
+                f"Failed to get users from usergroup with id {group_id} : {response['error']}"
+            )
+        for group in response["usergroups"]:
+            if group["id"] == group_id:
+                return group["users"]
         return None
 
     def create_channel(self, name):

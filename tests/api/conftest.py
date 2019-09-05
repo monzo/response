@@ -1,7 +1,8 @@
 import pytest
 from rest_framework.test import APIRequestFactory
 
-from tests.factories import UserFactory, ExternalUserFactory
+from tests.factories import ExternalUserFactory, UserFactory
+
 
 @pytest.fixture
 def arf():

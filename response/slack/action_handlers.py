@@ -1,17 +1,23 @@
 import json
+import logging
 from datetime import datetime
 
 from django.conf import settings
+
 from response.core.models.incident import Incident
-
+from response.slack.decorators import ActionContext, action_handler
+from response.slack.dialog_builder import (
+    Dialog,
+    SelectFromUsers,
+    SelectWithOptions,
+    Text,
+    TextArea,
+)
+from response.slack.models import CommsChannel, HeadlinePost
 from response.slack.settings import INCIDENT_EDIT_DIALOG
-from response.slack.dialog_builder import Dialog, Text, TextArea, SelectWithOptions, SelectFromUsers
-from response.slack.models import HeadlinePost, CommsChannel
 
-from response.slack.decorators import action_handler, ActionContext
-
-import logging
 logger = logging.getLogger(__name__)
+
 
 @action_handler(HeadlinePost.CLOSE_INCIDENT_BUTTON)
 def handle_close_incident(ac: ActionContext):
@@ -28,7 +34,9 @@ def handle_create_comms_channel(ac: ActionContext):
 
     # Invite the bot to the channel
     try:
-        settings.SLACK_CLIENT.invite_user_to_channel(settings.INCIDENT_BOT_ID, comms_channel.channel_id)
+        settings.SLACK_CLIENT.invite_user_to_channel(
+            settings.INCIDENT_BOT_ID, comms_channel.channel_id
+        )
     except Exception as ex:
         logger.error(ex)
 
@@ -39,9 +47,7 @@ def handle_create_comms_channel(ac: ActionContext):
         settings.SLACK_CLIENT.leave_channel(comms_channel.channel_id)
 
     # Update the headline post to link to this
-    headline_post = HeadlinePost.objects.get(
-        incident=ac.incident
-    )
+    headline_post = HeadlinePost.objects.get(incident=ac.incident)
     headline_post.comms_channel = comms_channel
     headline_post.save()
 
@@ -54,11 +60,35 @@ def handle_edit_incident_button(ac: ActionContext):
         state=ac.incident.pk,
         elements=[
             Text(label="Report", name="report", value=ac.incident.report),
-            TextArea(label="Summary", name="summary", value=ac.incident.summary, optional=True, placeholder="Can you share any more details?"),
-            TextArea(label="Impact", name="impact", value=ac.incident.impact, optional=True, placeholder="Who or what might be affected?", hint="Think about affected people, systems, and processes"),
-            SelectFromUsers(label="Lead", name="lead", value=ac.incident.lead.external_id if ac.incident.lead else None, optional=True),
-            SelectWithOptions([(s.capitalize(), i) for i, s in Incident.SEVERITIES], value=ac.incident.severity, label="Severity", name="severity", optional=True)
-        ]
+            TextArea(
+                label="Summary",
+                name="summary",
+                value=ac.incident.summary,
+                optional=True,
+                placeholder="Can you share any more details?",
+            ),
+            TextArea(
+                label="Impact",
+                name="impact",
+                value=ac.incident.impact,
+                optional=True,
+                placeholder="Who or what might be affected?",
+                hint="Think about affected people, systems, and processes",
+            ),
+            SelectFromUsers(
+                label="Lead",
+                name="lead",
+                value=ac.incident.lead.external_id if ac.incident.lead else None,
+                optional=True,
+            ),
+            SelectWithOptions(
+                [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
+                value=ac.incident.severity,
+                label="Severity",
+                name="severity",
+                optional=True,
+            ),
+        ],
     )
 
     dialog.send_open_dialog(INCIDENT_EDIT_DIALOG, ac.trigger_id)
