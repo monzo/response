@@ -18,7 +18,8 @@ def update_user_cache():
         logger.info(f"Updating {len(users)} users in the cache")
         with transaction.atomic():
             for user in users:
-                GetOrCreateSlackExternalUser(
+                ExternalUser.objects.update_or_create(
+                    app_id="slack",
                     external_id=user["id"],
                     defaults={
                         "display_name": user["profile"]["display_name_normalized"]
