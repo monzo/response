@@ -89,7 +89,6 @@ def update_incident_lead_event(prev_state, instance):
 
     new_lead = None
     if instance.lead:
-
         new_lead = ExternalUserSerializer(instance.lead).data
 
     if prev_state.lead:
