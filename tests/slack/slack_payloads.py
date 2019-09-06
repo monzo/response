@@ -26,7 +26,7 @@ users_list_response = {
                 "image_72": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
                 "image_192": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
                 "image_512": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
-                "team": "T012AB3C4"
+                "team": "T012AB3C4",
             },
             "is_admin": "True",
             "is_owner": "False",
@@ -36,7 +36,7 @@ users_list_response = {
             "is_bot": "False",
             "updated": 1502138686,
             "is_app_user": "False",
-            "has_2fa": "False"
+            "has_2fa": "False",
         },
         {
             "id": "U12345678",
@@ -67,7 +67,7 @@ users_list_response = {
                 "real_name_normalized": "Glinda Southgood",
                 "display_name": "Glinda the Fairly Good",
                 "display_name_normalized": "Glinda the Fairly Good",
-                "email": "glenda@south.oz.coven"
+                "email": "glenda@south.oz.coven",
             },
             "is_admin": "True",
             "is_owner": "False",
@@ -76,12 +76,11 @@ users_list_response = {
             "is_ultra_restricted": "False",
             "is_bot": "False",
             "updated": 1480527098,
-            "has_2fa": "False"
-        }
+            "has_2fa": "False",
+        },
     ],
     "cache_ts": 1498777272,
-    "response_metadata": {
-    }
+    "response_metadata": {"next_cursor": ""},
 }
 
 
@@ -113,7 +112,7 @@ users_list_new = {
                 "image_72": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
                 "image_192": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
                 "image_512": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
-                "team": "T012AB3C4"
+                "team": "T012AB3C4",
             },
             "is_admin": "True",
             "is_owner": "False",
@@ -123,12 +122,11 @@ users_list_new = {
             "is_bot": "False",
             "updated": 1502138686,
             "is_app_user": "False",
-            "has_2fa": "False"
+            "has_2fa": "False",
         }
     ],
     "cache_ts": 1498777272,
-    "response_metadata": {
-    }
+    "response_metadata": {"next_cursor": ""},
 }
 
 users_list_page_1 = {
@@ -159,7 +157,7 @@ users_list_page_1 = {
                 "image_72": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
                 "image_192": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
                 "image_512": "https://.../avatar/e3b51ca72dee4ef87916ae2b9240df50.jpg",
-                "team": "T012AB3C4"
+                "team": "T012AB3C4",
             },
             "is_admin": True,
             "is_owner": False,
@@ -169,13 +167,11 @@ users_list_page_1 = {
             "is_bot": False,
             "updated": 1502138686,
             "is_app_user": False,
-            "has_2fa": False
-        },
+            "has_2fa": False,
+        }
     ],
     "cache_ts": 1498777272,
-    "response_metadata": {
-        "next_cursor": "page2"
-    }
+    "response_metadata": {"next_cursor": "page2"},
 }
 
 users_list_page_2 = {
@@ -210,7 +206,7 @@ users_list_page_2 = {
                 "real_name_normalized": "Glinda Southgood",
                 "display_name": "Glinda the Fairly Good",
                 "display_name_normalized": "Glinda the Fairly Good",
-                "email": "glenda@south.oz.coven"
+                "email": "glenda@south.oz.coven",
             },
             "is_admin": True,
             "is_owner": False,
@@ -219,11 +215,9 @@ users_list_page_2 = {
             "is_ultra_restricted": False,
             "is_bot": False,
             "updated": 1480527098,
-            "has_2fa": False
+            "has_2fa": False,
         }
     ],
     "cache_ts": 1498777272,
-    "response_metadata": {
-        "next_cursor": ""
-    }
+    "response_metadata": {"next_cursor": ""},
 }
