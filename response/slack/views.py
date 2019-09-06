@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from response.core.models.incident import Incident
+from response.slack.cache import update_user_cache
 from response.slack.authentication import slack_authenticate
 from response.slack.decorators import (
     handle_action,
@@ -20,6 +21,7 @@ from response.slack.dialog_builder import (
     TextArea,
 )
 from response.slack.settings import INCIDENT_REPORT_DIALOG
+
 
 logger = logging.getLogger(__name__)
 
@@ -138,4 +140,11 @@ def event(request):
 def cron_minute(request):
     "Handles actions that need to take place every minute"
     handle_notifications()
+    return HttpResponse()
+
+
+@csrf_exempt
+def cron_daily(request):
+    "Handles actions that need to take place every day"
+    update_user_cache()
     return HttpResponse()
