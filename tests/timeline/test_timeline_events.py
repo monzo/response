@@ -17,7 +17,9 @@ def test_update_incident_lead():
     incident.lead = new_lead
     incident.save()
 
-    event = TimelineEvent.objects.get(incident=incident, event_type="incident_update")
+    event = TimelineEvent.objects.filter(
+        incident=incident, event_type="incident_update"
+    ).last()
     assert event.metadata["new_value"]["display_name"] == new_lead.display_name
 
 
@@ -29,7 +31,9 @@ def test_update_incident_report():
     incident.report = new_report
     incident.save()
 
-    event = TimelineEvent.objects.get(incident=incident, event_type="incident_update")
+    event = TimelineEvent.objects.filter(
+        incident=incident, event_type="incident_update"
+    ).last()
     assert event.metadata["new_value"] == new_report
 
 
@@ -41,7 +45,9 @@ def test_update_incident_summary():
     incident.summary = new_summary
     incident.save()
 
-    event = TimelineEvent.objects.get(incident=incident, event_type="incident_update")
+    event = TimelineEvent.objects.filter(
+        incident=incident, event_type="incident_update"
+    ).last()
     assert event.metadata["new_value"] == new_summary
 
 
@@ -53,7 +59,9 @@ def test_update_incident_impact():
     incident.impact = new_impact
     incident.save()
 
-    event = TimelineEvent.objects.get(incident=incident, event_type="incident_update")
+    event = TimelineEvent.objects.filter(
+        incident=incident, event_type="incident_update"
+    ).last()
     assert event.metadata["new_value"] == new_impact
 
 
@@ -65,7 +73,9 @@ def test_update_incident_severity():
     incident.severity = new_severity
     incident.save()
 
-    event = TimelineEvent.objects.get(incident=incident, event_type="incident_update")
+    event = TimelineEvent.objects.filter(
+        incident=incident, event_type="incident_update"
+    ).last()
     assert event.metadata["new_value"] == {
         "id": new_severity,
         "text": incident.severity_text(),
