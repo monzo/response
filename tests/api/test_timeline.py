@@ -37,7 +37,7 @@ def test_create_timeline_event(arf, api_user):
     )
 
 
-def test_list_actions_by_incident(arf, api_user):
+def test_list_timeline_events_by_incident(arf, api_user):
     incident = IncidentFactory.create()
 
     req = arf.get(
@@ -58,6 +58,9 @@ def test_list_actions_by_incident(arf, api_user):
         assert event["text"]
         assert event["event_type"]
         assert event["id"]
+        if event["event_type"] != "text":
+            assert event["metadata"]
+            assert type(event["metadata"]) == dict
 
 
 @pytest.mark.parametrize(
