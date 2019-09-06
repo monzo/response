@@ -2,7 +2,7 @@ import logging
 from django.conf import settings
 from django.db import transaction
 
-from response.core.models import ExternalUser, GetOrCreateSlackExternalUser
+from response.core.models import ExternalUser
 from response.slack.client import SlackError
 
 logger = logging.getLogger(__name__)
@@ -18,8 +18,7 @@ def update_user_cache():
         logger.info(f"Updating {len(users)} users in the cache")
         with transaction.atomic():
             for user in users:
-                ExternalUser.objects.update_or_create(
-                    app_id="slack",
+                ExternalUser.objects.update_or_create_slack(
                     external_id=user["id"],
                     defaults={
                         "display_name": user["profile"]["display_name_normalized"]
@@ -57,7 +56,7 @@ def get_user_profile(external_id):
             raise
 
         # store it in the DB
-        GetOrCreateSlackExternalUser(
+        ExternalUser.objects.get_or_create_slack(
             external_id=user_profile["id"],
             display_name=user_profile["name"],
             full_name=user_profile["fullname"],

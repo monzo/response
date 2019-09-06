@@ -6,6 +6,9 @@ class ExternalUserManager(models.Manager):
     def get_or_create_slack(self, *args, **kwargs):
         return self.get_or_create(app_id="slack", *args, **kwargs)
 
+    def update_or_create_slack(self, *args, **kwargs):
+        return self.update_or_create(app_id="slack", *args, **kwargs)
+
 
 class ExternalUser(models.Model):
     class Meta:
