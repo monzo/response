@@ -18,7 +18,7 @@ class TimelineEvent(models.Model):
         null=False, default=datetime.now, help_text="Time of when this event occurred."
     )
     text = models.TextField(help_text="Freeform text describing this event")
-    event_type = models.CharField(max_length=10, help_text="Type of event.")
+    event_type = models.CharField(max_length=30, help_text="Type of event.")
     metadata = JSONField(
         help_text="Additional fields that can be added by other event types", null=True
     )
