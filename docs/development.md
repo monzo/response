@@ -93,4 +93,7 @@ INFO  - headline_post_a - Registering headline post action edit_incident_button 
 INFO  - headline_post_a - Registering headline post action close_incident_button with order 300
 INFO  - headline_post_a - Registering headline post action my_cool_headline_action with order 150
 ```
-
+
+## Release Process
+
+See [release.md](release.md) for how to release an update.
