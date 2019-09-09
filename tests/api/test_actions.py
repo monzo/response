@@ -65,6 +65,7 @@ def test_update_action_user(arf, api_user):
         "app_id": "slack",
         "display_name": user.display_name,
         "external_id": user.external_id,
+        "full_name": user.full_name,
     }
     response = update_action(arf, api_user, incident.pk, action_data)
     print(response.rendered_content)

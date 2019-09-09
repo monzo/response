@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from response.core.models.incident import Incident
 from response.slack.authentication import slack_authenticate
+from response.slack.cache import update_user_cache
 from response.slack.decorators import (
     handle_action,
     handle_dialog,
@@ -138,4 +139,11 @@ def event(request):
 def cron_minute(request):
     "Handles actions that need to take place every minute"
     handle_notifications()
+    return HttpResponse()
+
+
+@csrf_exempt
+def cron_daily(request):
+    "Handles actions that need to take place every day"
+    update_user_cache()
     return HttpResponse()

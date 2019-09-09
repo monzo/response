@@ -6,6 +6,9 @@ class ExternalUserManager(models.Manager):
     def get_or_create_slack(self, *args, **kwargs):
         return self.get_or_create(app_id="slack", *args, **kwargs)
 
+    def update_or_create_slack(self, *args, **kwargs):
+        return self.update_or_create(app_id="slack", *args, **kwargs)
+
 
 class ExternalUser(models.Model):
     class Meta:
@@ -15,6 +18,7 @@ class ExternalUser(models.Model):
     app_id = models.CharField(max_length=50, blank=False, null=False)
     external_id = models.CharField(max_length=50, blank=False, null=False)
     display_name = models.CharField(max_length=50, blank=False, null=False)
+    full_name = models.CharField(max_length=50, blank=True, null=True)
 
     objects = ExternalUserManager()
 
