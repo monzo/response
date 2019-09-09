@@ -12,6 +12,7 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 
 class TimelineEventSerializer(serializers.ModelSerializer):
     metadata = serializers.JSONField(allow_null=True)
+
     class Meta:
         model = TimelineEvent
         fields = ("id", "timestamp", "text", "event_type", "metadata")
