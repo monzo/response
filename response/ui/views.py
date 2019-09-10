@@ -26,7 +26,7 @@ def incident_doc(request: HttpRequest, incident_id: str):
     ]
     return render(
         request,
-        template_name="incident_doc.html",
+        template_name="response/incident_doc.html",
         context={
             "incident": incident,
             "events": events,
