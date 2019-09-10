@@ -164,7 +164,7 @@ def update_incident_severity_event(prev_state, instance):
 
     add_incident_update_event(
         incident=instance,
-        update_type="incident_impact",
+        update_type="incident_severity",
         text=text,
         old_value={
             "id": prev_state.severity,
