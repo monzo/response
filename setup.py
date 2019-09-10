@@ -3,7 +3,7 @@ from os import path
 
 from setuptools import find_packages, setup
 
-VERSION = "0.1.6"
+VERSION = "0.1.7"
 
 INSTALL_REQUIRES = [
     "Django>=2.2",
