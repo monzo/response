@@ -89,7 +89,7 @@ class SlackClient(object):
                 return None
             raise
 
-    def get_channel_id(self, name):
+    def get_channel_id(self, name, auto_unarchive=False):
         logger.info(f"Getting channel ID for {name}")
         next_cursor = None
 
@@ -113,9 +113,19 @@ class SlackClient(object):
 
             for channel in response["channels"]:
                 if channel["name"] == name:
+                    if channel['is_archived'] and auto_unarchive:
+                        self.unarchive_channel(channel['id'])
                     return channel["id"]
 
         raise SlackError(f"Channel '{name}' not found")
+
+    def unarchive_channel(self, channel_id):
+        response = self.api_call(
+            "channels.unarchive",
+            channel=channel_id,
+        )
+        if not response.get("ok", False):
+            raise SlackError(f"Couldn't unarchive channel {channel_id}")
 
     def get_usergroup_id(self, group_name):
         response = self.api_call("usergroups.list")
@@ -157,7 +167,7 @@ class SlackClient(object):
                 # some other error, let's propagate it upwards
                 raise
 
-            return self.get_channel_id(channel_name)
+            return self.get_channel_id(channel_name, auto_unarchive)
 
     def set_channel_topic(self, channel_id, channel_topic):
         return self.api_call(
