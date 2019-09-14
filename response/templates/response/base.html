@@ -45,9 +45,9 @@
     </div>
   </nav>
 
-  <!-- Django Messages -->
-  {% block messages %}
-    <div class="container">
+  <div class="container mt-4 mb-4">
+    <!-- Django Messages -->
+    {% block messages %}
       <div id="alerts" class="mt-4">
         {% for message in messages %}
           <div class="alert {{ message|bootstrap4_alert_class }}">
@@ -55,11 +55,9 @@
           </div>
         {% endfor %}
       </div>
-    </div>
-  {% endblock %}
+    {% endblock %}
 
-  <!-- Page Content -->
-  <div class="container mt-4 mb-4">
+    <!-- Page Content -->
     {% block content %}{% endblock %}
   </div>
 
