@@ -7,7 +7,7 @@
 
 <head>
   <title>{% response_setting "RESPONSE_APP_NAME" %}</title>
-  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+  <link rel="shortcut icon" href="{% response_setting 'RESPONSE_FAVICON' %}">
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -31,7 +31,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
       <div class="{% block navbar_container_class %}container{% endblock %}">
         <a class="navbar-brand" href="/">
-          <img  id="logo" src="{% static 'images/response.png' %}" />
+          <img  id="logo" src="{% response_setting 'RESPONSE_LOGO' %}" />
           <strong>{% response_setting "RESPONSE_APP_NAME" %}</strong>
         </a>
 

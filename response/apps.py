@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.conf import settings as site_settings
+from django.templatetags.static import static
 
 
 class ResponseConfig(AppConfig):
@@ -18,9 +19,10 @@ class ResponseConfig(AppConfig):
 
         from .core import signals as core_signals  # noqa: F401
 
-        site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
-            site_settings, "RESPONSE_LOGIN_REQUIRED", True
-        )
-        site_settings.RESPONSE_APP_NAME = getattr(
-            site_settings, "RESPONSE_APP_NAME", "Response"
-        )
+        self.configure_setting("RESPONSE_LOGIN_REQUIRED", True)
+        self.configure_setting("RESPONSE_APP_NAME", "Response")
+        self.configure_setting("RESPONSE_FAVICON", static("images/favicon.png"))
+        self.configure_setting("RESPONSE_LOGO", static("images/response.png"))
+
+    def configure_setting(self, name, default):
+        setattr(site_settings, name, getattr(site_settings, name, default))
