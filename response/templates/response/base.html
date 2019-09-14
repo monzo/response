@@ -6,7 +6,7 @@
 
 <head>
   <title>Response</title>
-  <link rel="shortcut icon" href="{% static "images/favicon.png" %}">
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,10 +14,10 @@
   <meta name="author" content="Monzo">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="{% static "manifest.json" %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
 
-  <link href="{% static "bootstrap/css/bootstrap.css" %}" rel="stylesheet">
-  <link href="{% static "common.css" %}" rel="stylesheet">
+  <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+  <link href="{% static 'common.css' %}" rel="stylesheet">
 
   {% block head %}{% endblock %}
 
@@ -27,27 +27,36 @@
 
   <!-- Navigation -->
   {% block navigation %}
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-    <div class="{% block navbar_container_class %}container{% endblock %}">
-      <a class="navbar-brand" href="/">
-        <img  id="logo" src="{% static "images/response.png" %}" />
-        <strong>Response</strong>
-      </a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+      <div class="{% block navbar_container_class %}container{% endblock %}">
+        <a class="navbar-brand" href="/">
+          <img  id="logo" src="{% static 'images/response.png' %}" />
+          <strong>Response</strong>
+        </a>
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          {% block navbar %}{% endblock %}
-        </ul>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            {% block navbar %}{% endblock %}
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
   {% endblock %}
 
   <div class="{% block container_class %}container{% endblock %} mt-4 mb-4">
+
     <!-- Django Messages -->
     {% block messages %}
       <div id="alerts" class="mt-4">
@@ -61,10 +70,11 @@
 
     <!-- Page Content -->
     {% block content %}{% endblock %}
+
   </div>
 
   <!-- Bootstrap core JavaScript -->
-  <script src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   {% block javascript %}{% endblock %}
 
 </body>
