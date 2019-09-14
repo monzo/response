@@ -1,2 +1,2 @@
 *.sh text eol=lf
-static/bootstrap/* linguist-vendored=true
+response/static/bootstrap/* linguist-vendored=true
