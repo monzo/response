@@ -1,4 +1,5 @@
 {% load static %}
+{% load bootstrap4_alerts %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +44,19 @@
       </div>
     </div>
   </nav>
+
+  <!-- Django Messages -->
+  {% block messages %}
+    <div class="container">
+      <div id="alerts" class="mt-4">
+        {% for message in messages %}
+          <div class="alert {{ message|bootstrap4_alert_class }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endblock %}
 
   <!-- Page Content -->
   <div class="container bg-white mt-4 mb-4">
