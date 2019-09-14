@@ -1,16 +1,17 @@
 {% load static %}
+{% load response_settings %}
 {% load bootstrap4_alerts %}
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>Response</title>
+  <title>{% response_setting "RESPONSE_APP_NAME" %}</title>
   <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Response">
+  <meta name="description" content="{% response_setting "RESPONSE_APP_NAME" %}">
   <meta name="author" content="Monzo">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,7 +32,7 @@
       <div class="{% block navbar_container_class %}container{% endblock %}">
         <a class="navbar-brand" href="/">
           <img  id="logo" src="{% static 'images/response.png' %}" />
-          <strong>Response</strong>
+          <strong>{% response_setting "RESPONSE_APP_NAME" %}</strong>
         </a>
 
         <button

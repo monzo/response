@@ -21,3 +21,6 @@ class ResponseConfig(AppConfig):
         site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
             site_settings, "RESPONSE_LOGIN_REQUIRED", True
         )
+        site_settings.RESPONSE_APP_NAME = getattr(
+            site_settings, "RESPONSE_APP_NAME", "Response"
+        )
