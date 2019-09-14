@@ -26,6 +26,7 @@
 <body>
 
   <!-- Navigation -->
+  {% block navigation %}
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
     <div class="{% block navbar_container_class %}container{% endblock %}">
       <a class="navbar-brand" href="/">
@@ -44,6 +45,7 @@
       </div>
     </div>
   </nav>
+  {% endblock %}
 
   <div class="{% block container_class %}container{% endblock %} mt-4 mb-4">
     <!-- Django Messages -->
