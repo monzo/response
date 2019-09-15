@@ -156,9 +156,7 @@ def update_incident_impact_event(prev_state, instance):
 
 def update_incident_severity_event(prev_state, instance):
     if prev_state.severity:
-        text = (
-            f"Incident severity updated from {prev_state.severity_text()} to {instance.severity_text()}",
-        )
+        text = f"Incident severity updated from {prev_state.severity_text()} to {instance.severity_text()}"
     else:
         text = f"Incident severity set to {instance.severity_text()}"
 
