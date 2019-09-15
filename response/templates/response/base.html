@@ -6,7 +6,11 @@
 <html lang="en">
 
 <head>
-  <title>{% response_setting "RESPONSE_APP_NAME" %}</title>
+  <title>
+    {% block title %}
+      {% response_setting "RESPONSE_APP_NAME" %}
+    {% endblock %}
+  </title>
   <link rel="shortcut icon" href="{% response_setting 'RESPONSE_FAVICON' %}">
 
   <meta charset="utf-8">

@@ -4,6 +4,10 @@
 {% load unslackify %}
 {% load markdown_filter %}
 
+{% block title %}
+  Inc #{{ incident.pk }} – {{ block.super }}
+{% endblock %}
+
 {% block head %}
   <link rel="stylesheet" href="{% static 'incident_doc.css' %}">
 {% endblock %}
