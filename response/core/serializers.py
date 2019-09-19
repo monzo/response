@@ -7,7 +7,7 @@ from response.slack.models import CommsChannel
 class ExternalUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalUser
-        fields = ("app_id", "external_id", "display_name", "full_name")
+        fields = ("app_id", "external_id", "display_name", "full_name", "email")
 
 
 class TimelineEventSerializer(serializers.ModelSerializer):
