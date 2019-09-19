@@ -21,7 +21,7 @@ def update_user_cache():
             for user in users:
                 ExternalUser.objects.update_or_create_slack(
                     external_id=user["id"],
-                    email=user["profile"]["email"],
+                    email=user["profile"].get("email", None),
                     defaults={
                         "display_name": user["profile"]["display_name_normalized"]
                         or user["name"],
