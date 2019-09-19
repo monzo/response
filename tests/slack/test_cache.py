@@ -63,6 +63,7 @@ def test_get_user_profile_not_in_cache(mock_slack):
         "id": "U12345678",
         "name": "spengler",
         "fullname": "Egon Spengler",
+        "email": "spengler@ghostbusters.example.com",
     }
 
     # check cache is empty at start
@@ -82,6 +83,7 @@ def test_get_user_profile_not_in_cache(mock_slack):
     cache_user = ExternalUser.objects.get(external_id="U12345678")
     assert cache_user.display_name == "spengler"
     assert cache_user.full_name == "Egon Spengler"
+    assert cache_user.email == "spengler@ghostbusters.example.com"
 
 
 @pytest.mark.django_db
@@ -89,7 +91,10 @@ def test_get_user_profile_in_cache(mock_slack):
 
     # create cache entry for user
     slack_user = ExternalUser(
-        external_id="U12345678", display_name="spengler", full_name="Egon Spengler"
+        external_id="U12345678",
+        display_name="spengler",
+        full_name="Egon Spengler",
+        email="spengler@ghostbusters.example.com",
     )
     slack_user.save()
     assert len(ExternalUser.objects.all()) == 1
@@ -102,6 +107,7 @@ def test_get_user_profile_in_cache(mock_slack):
     assert user["id"] == "U12345678"
     assert user["name"] == "spengler"
     assert user["fullname"] == "Egon Spengler"
+    assert user["email"] == "spengler@ghostbusters.example.com"
 
     # check cache is unchanged
     assert len(ExternalUser.objects.all()) == 1

@@ -21,6 +21,7 @@ def update_user_cache():
             for user in users:
                 ExternalUser.objects.update_or_create_slack(
                     external_id=user["id"],
+                    email=user["profile"]["email"],
                     defaults={
                         "display_name": user["profile"]["display_name_normalized"]
                         or user["name"],
@@ -47,6 +48,7 @@ def get_user_profile(external_id):
             "id": external_user.external_id,
             "name": external_user.display_name,
             "fullname": external_user.full_name,
+            "email": external_user.email,
         }
     except ExternalUser.DoesNotExist:
         # profile from slack
@@ -61,6 +63,7 @@ def get_user_profile(external_id):
             external_id=user_profile["id"],
             display_name=user_profile["name"],
             full_name=user_profile["fullname"],
+            email=user_profile["email"],
         )
 
         logger.info(f"Got user {external_id} from Slack and cached in DB")
