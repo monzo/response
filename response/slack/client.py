@@ -208,6 +208,7 @@ class SlackClient(object):
             "id": user_id,
             "name": response["user"]["name"],
             "fullname": response["user"]["profile"]["real_name"],
+            "email": response["user"]["profile"].get("email", None),
         }
 
     def rename_channel(self, channel_id, new_name):

@@ -19,6 +19,7 @@ class ExternalUser(models.Model):
     external_id = models.CharField(max_length=50, blank=False, null=False)
     display_name = models.CharField(max_length=50, blank=False, null=False)
     full_name = models.CharField(max_length=50, blank=True, null=True)
+    email = models.CharField(max_length=100, blank=True, null=True)
 
     objects = ExternalUserManager()
 
