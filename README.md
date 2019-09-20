@@ -108,6 +108,7 @@ urlpatterns = [
   - `chat:write:bot`
   - `chat:write:user`
   - `users:read`
+  - `users:read.email`
 
 - At the top of the page, the `Install App to Workspace` button is now available.  Click it!
 
