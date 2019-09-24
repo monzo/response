@@ -1,5 +1,6 @@
 import logging
 import re
+import time
 
 import slackclient
 from django.conf import settings
@@ -15,15 +16,48 @@ class SlackError(Exception):
 
 
 class SlackClient(object):
-    def __init__(self, api_token):
+    def __init__(
+        self,
+        api_token,
+        max_retry_attempts=10,
+        retry_base_backoff_seconds=0.2,
+        retryable_errors=["ratelimited"],
+    ):
         self.api_token = api_token
         self.client = slackclient.SlackClient(self.api_token)
+        self.max_retry_attempts = max_retry_attempts
+        self.retry_base_backoff_seconds = retry_base_backoff_seconds
+        self.retryable_errors = retryable_errors
 
     def api_call(self, api_endpoint, *args, **kwargs):
         logger.info(f"Calling Slack API {api_endpoint}")
         response = self.client.api_call(api_endpoint, *args, **kwargs)
         if not response.get("ok", False):
             error = response.get("error", "<no error given>")
+
+            # Check if we want to back off and retry (but only if this isn't a
+            # retry attempt itself)
+            if error in self.retryable_errors and not kwargs.get("is_retrying", False):
+                # Iterate over retry attempts. We could implement this
+                # recursively, but there's a danger of overflowing the stack
+
+                # Start index at 1 so we have a multiplier for backoff
+                for i in range(1, self.max_retry_attempts + 1):
+                    try:
+                        # Increase backoff with every attempt
+                        backoff_seconds = self.retry_base_backoff_seconds * i
+                        logging.warn(
+                            f"Retrying request to {api_endpoint} after error {error}. Backing off {backoff_seconds:.2f}s (attempt {i} of {self.max_retry_attempts})"
+                        )
+
+                        time.sleep(backoff_seconds)
+                        return self.api_call(
+                            api_endpoint, is_retrying=True, *args, **kwargs
+                        )
+                    except SlackError as exc:
+                        if exc.slack_error not in self.retryable_errors:
+                            raise exc
+
             raise SlackError(
                 f"Error calling Slack API endpoint '{api_endpoint}': {error}",
                 slack_error=error,
