@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 
 from response.core.models.incident import Incident
@@ -7,7 +8,9 @@ from response.slack.decorators import (
     handle_keywords,
     slack_event,
 )
-from response.slack.models import PinnedMessage, UserStats
+from response.slack.models import PinnedMessage, UserStats, CommsChannel
+
+logger = logging.getLogger(__name__)
 
 
 def decode_app_mention(payload):
@@ -93,3 +96,12 @@ def handle_pin_removed(incident, payload):
     message_ts = pinned_message["ts"]
 
     PinnedMessage.objects.remove_pin(incident, message_ts)
+
+
+@slack_event("channel_rename")
+def handle_channel_rename(incident, payload):
+    new_name = payload["channel"]["name"]
+    logger.info(f"Renaming channel: {id} to {new_name}")
+    comms_channel = CommsChannel.objects.get(incident=incident)
+    comms_channel.channel_name = new_name
+    comms_channel.save()

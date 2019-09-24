@@ -60,7 +60,12 @@ def handle_event(payload):
     if "channel_id" in event:
         channel_id = event["channel_id"]
     elif "channel" in event:
-        channel_id = event["channel"]
+        # even better, on channel_rename events "channel" is actually a dict
+        # with an "id" key 😠
+        if isinstance(event["channel"], dict) and "id" in event["channel"]:
+            channel_id = event["channel"]["id"]
+        else:
+            channel_id = event["channel"]
     else:
         channel_id = None
 
