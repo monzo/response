@@ -25,6 +25,7 @@ In the Event Subscriptions page we need to configure the following:
   - `pin_added`
   - `pin_removed`
   - `message.channels`
+  - `channel_rename`
 
 ## Configure interactive components
 
