@@ -44,6 +44,7 @@ class Incident(models.Model):
         null=True,
     )
     report_time = models.DateTimeField()
+    report_only = models.BooleanField(default=False)
 
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(blank=True, null=True)
