@@ -23,6 +23,7 @@ class CommsChannelManager(models.Manager):
             )
         except SlackError as e:
             logger.error(f"Failed to create comms channel {e}")
+            raise
 
         try:
             doc_url = urljoin(
@@ -35,8 +36,11 @@ class CommsChannelManager(models.Manager):
             )
         except SlackError as e:
             logger.error(f"Failed to set channel topic {e}")
+            raise
 
-        comms_channel = self.create(incident=incident, channel_id=channel_id)
+        comms_channel = self.create(
+            incident=incident, channel_id=channel_id, channel_name=name
+        )
         return comms_channel
 
 
