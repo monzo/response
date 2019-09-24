@@ -64,6 +64,9 @@ def slash_command(request):
                 hint="Think about affected people, systems, and processes",
             ),
             SelectFromUsers(label="Lead", name="lead", optional=True),
+            SelectWithOptions([("Yes - this is a live incident happening right now", "live"),
+                               ("No - this is just a report of something that happened", "report")],
+                              label="Is this a live incident?", name="incident_type", optional=False),
             SelectWithOptions(
                 [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
                 label="Severity",
