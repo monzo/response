@@ -13,12 +13,7 @@ from tests.factories import IncidentFactory, TimelineEventFactory
 faker = Faker()
 
 
-def test_create_timeline_event(arf, api_user):
-    incident = IncidentFactory.create()
-
-    event_model = TimelineEventFactory.build(incident=incident)
-    event_data = serializers.TimelineEventSerializer(event_model).data
-
+def assert_create_timeline_event(arf, api_user, incident, event_data):
     req = arf.post(
         reverse("incident-timeline-event-list", kwargs={"incident_pk": incident.pk}),
         event_data,
@@ -32,8 +27,27 @@ def test_create_timeline_event(arf, api_user):
     assert response.status_code == 201, "Got non-201 response from API"
 
     assert TimelineEvent.objects.filter(
-        incident=incident, timestamp=event_model.timestamp
+        incident=incident, timestamp=event_data["timestamp"]
     ).exists()
+
+
+def test_create_timeline_event(arf, api_user):
+    incident = IncidentFactory.create()
+
+    event_model = TimelineEventFactory.build(incident=incident)
+    event_data = serializers.TimelineEventSerializer(event_model).data
+
+    assert_create_timeline_event(arf, api_user, incident, event_data)
+
+
+def test_create_timeline_event_no_metadata(arf, api_user):
+    incident = IncidentFactory.create()
+
+    event_model = TimelineEventFactory.build(incident=incident)
+    event_data = serializers.TimelineEventSerializer(event_model).data
+    del event_data["metadata"]
+
+    assert_create_timeline_event(arf, api_user, incident, event_data)
 
 
 def test_list_timeline_events_by_incident(arf, api_user):
