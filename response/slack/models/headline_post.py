@@ -107,18 +107,19 @@ class HeadlinePost(models.Model):
             )
         )
 
-        channel_ref = (
-            channel_reference(self.comms_channel.channel_id)
-            if self.comms_channel
-            else None
-        )
-        if channel_ref:
-            msg.add_block(
-                Section(
-                    block_id="comms_channel",
-                    text=Text(f"🗣 Comms Channel: {channel_ref or '-'}"),
-                )
+        if not self.incident.report_only:
+            channel_ref = (
+                channel_reference(self.comms_channel.channel_id)
+                if self.comms_channel
+                else None
             )
+            if channel_ref:
+                msg.add_block(
+                    Section(
+                        block_id="comms_channel",
+                        text=Text(f"🗣 Comms Channel: {channel_ref or '-'}"),
+                    )
+                )
 
         # Add buttons (if the incident is open)
         if not self.incident.is_closed():
@@ -136,7 +137,12 @@ class HeadlinePost(models.Model):
             msg.add_block(actions)
 
         # Post / update the slack message
-        response = msg.send(settings.INCIDENT_CHANNEL_ID, self.message_ts)
+        if self.incident.report_only and hasattr(settings, "INCIDENT_REPORT_CHANNEL_ID"):
+            channel_id = settings.INCIDENT_REPORT_CHANNEL_ID
+        else:
+            channel_id = settings.INCIDENT_CHANNEL_ID
+
+        response = msg.send(channel_id, self.message_ts)
         logging.info(
             f"Got response back from Slack after updating headline post: {response}"
         )
@@ -157,6 +163,9 @@ class HeadlinePost(models.Model):
 
 @headline_post_action(order=100)
 def create_comms_channel_action(headline_post):
+    if headline_post.incident.report_only:
+        # Reports don't have a comms channel
+        return None
     if headline_post.comms_channel:
         # No need to create an action, channel already exists
         return None
