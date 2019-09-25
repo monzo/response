@@ -158,6 +158,61 @@ def test_update_incident(arf, api_user, update_key, update_value):
         ), "Updated value wasn't persisted to the DB"
 
 
+@pytest.mark.parametrize(
+    "update_key,update_value,expected_value",
+    (
+        (
+            "impact",
+            "<iframe>this should be escaped</iframe>",
+            "&lt;iframe&gt;this should be escaped&lt;/iframe&gt;",
+        ),
+        (
+            "report",
+            "<script>alert('certainly shouldnt let this happen')</script>",
+            "&lt;script&gt;alert('certainly shouldnt let this happen')&lt;/script&gt;",
+        ),
+        (
+            "summary",
+            '<meta http-equiv="refresh content=0;">',
+            '&lt;meta http-equiv="refresh content=0;"&gt;',
+        ),
+    ),
+)
+def test_update_incident_sanitize_fields(
+    arf, api_user, update_key, update_value, expected_value
+):
+    """
+    Tests that we can't inject potentially dangerous HTML/JS into incident
+    fields
+    """
+    persisted_incidents = IncidentFactory.create_batch(5)
+
+    incident = persisted_incidents[0]
+    serializer = serializers.IncidentSerializer(incident)
+    serialized = serializer.data
+
+    updated = serialized
+    del updated["reporter"]  # can't update reporter
+    if update_key:
+        updated[update_key] = update_value
+
+    req = arf.put(
+        reverse("incident-detail", kwargs={"pk": incident.pk}), updated, format="json"
+    )
+    force_authenticate(req, user=api_user)
+
+    response = IncidentViewSet.as_view({"put": "update"})(req, pk=incident.pk)
+    print(response.rendered_content)
+    assert response.status_code == 200, "Got non-200 response from API"
+
+    if update_key:
+        new_incident = Incident.objects.get(pk=incident.pk)
+        print(getattr(new_incident, update_key))
+        assert (
+            getattr(new_incident, update_key) == expected_value
+        ), "Updated value wasn't persisted to the DB"
+
+
 def test_update_incident_lead(arf, api_user):
     """
     Tests that we can update the incident lead by name
