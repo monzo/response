@@ -8,7 +8,7 @@ from response.slack.decorators import (
     handle_keywords,
     slack_event,
 )
-from response.slack.models import PinnedMessage, UserStats, CommsChannel
+from response.slack.models import CommsChannel, PinnedMessage, UserStats
 
 logger = logging.getLogger(__name__)
 

@@ -13,8 +13,7 @@ so that a value is required.
 """
 
 from django.conf import settings
-from django.db import migrations, models, OperationalError
-
+from django.db import OperationalError, migrations, models
 
 from response.slack.client import SlackError
 
@@ -23,7 +22,9 @@ def set_comms_channel_names(apps, schema_editor):
     CommsChannel = apps.get_model("response", "CommsChannel")
     for comms_channel in CommsChannel.objects.all().iterator():
         try:
-            channel_name = settings.SLACK_CLIENT.get_channel_name(comms_channel.channel_id)
+            channel_name = settings.SLACK_CLIENT.get_channel_name(
+                comms_channel.channel_id
+            )
         except SlackError as e:
             raise OperationalError(
                 f"""Error connecting to the Slack API: {str(e)}

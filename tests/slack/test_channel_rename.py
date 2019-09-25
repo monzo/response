@@ -1,7 +1,6 @@
 import pytest
 
 from response.slack.event_handlers import handle_channel_rename
-
 from tests.factories import IncidentFactory
 
 
