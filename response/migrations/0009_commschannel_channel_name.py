@@ -25,6 +25,8 @@ def set_comms_channel_names(apps, schema_editor):
             channel_name = settings.SLACK_CLIENT.get_channel_name(
                 comms_channel.channel_id
             )
+            if not channel_name:
+                channel_name = "<channel not found>"
         except SlackError as e:
             raise OperationalError(
                 f"""Error connecting to the Slack API: {str(e)}
