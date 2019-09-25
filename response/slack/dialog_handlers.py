@@ -21,6 +21,7 @@ def report_incident(
     impact = submission["impact"]
     lead_id = submission["lead"]
     severity = submission["severity"]
+    report_only = submission["incident_type"] == "report"
 
     name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
     reporter, _ = ExternalUser.objects.get_or_create_slack(
@@ -38,14 +39,20 @@ def report_incident(
         report=report,
         reporter=reporter,
         report_time=datetime.now(),
+        report_only=report_only,
         summary=summary,
         impact=impact,
         lead=lead,
         severity=severity,
     )
 
-    incidents_channel_ref = channel_reference(settings.INCIDENT_CHANNEL_ID)
-    text = f"Thanks for raising the incident 🙏\n\nHead over to {incidents_channel_ref} to complete the report and/or help deal with the issue"
+    if report_only and hasattr(settings, "INCIDENT_REPORT_CHANNEL_ID"):
+        incidents_channel_ref = channel_reference(settings.INCIDENT_REPORT_CHANNEL_ID)
+    else:
+        incidents_channel_ref = channel_reference(settings.INCIDENT_CHANNEL_ID)
+
+    text = f"Thanks for raising the incident 🙏\n\nHead over to {incidents_channel_ref} " \
+           f"to complete the report and/or help deal with the issue"
     settings.SLACK_CLIENT.send_ephemeral_message(channel_id, user_id, text)
 
 
