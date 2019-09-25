@@ -1,8 +1,8 @@
 from unittest import mock
 
-from django.conf import settings
 import pytest
 import slackclient
+from django.conf import settings
 
 from response.slack import client
 
@@ -59,8 +59,6 @@ def test_slack_backoff_rate_limit_succeeded(slack_client, slack_api_mock):
 
 
 def test_slack_backoff_rate_limit_max_retry_attempts(slack_client, slack_api_mock):
-    expected_resp = {"ok": True, "response": "bar"}
-
     slack_api_mock.api_call.return_value = {"ok": False, "error": "ratelimited"}
 
     with pytest.raises(client.SlackError) as e:
