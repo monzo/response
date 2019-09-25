@@ -21,13 +21,13 @@ class SlackClient(object):
         api_token,
         max_retry_attempts=10,
         retry_base_backoff_seconds=0.2,
-        retryable_errors=["ratelimited"],
+        retryable_errors=None,
     ):
         self.api_token = api_token
         self.client = slackclient.SlackClient(self.api_token)
         self.max_retry_attempts = max_retry_attempts
         self.retry_base_backoff_seconds = retry_base_backoff_seconds
-        self.retryable_errors = retryable_errors
+        self.retryable_errors = retryable_errors or ["ratelimited"]
 
     def api_call(self, api_endpoint, *args, **kwargs):
         logger.info(f"Calling Slack API {api_endpoint}")
