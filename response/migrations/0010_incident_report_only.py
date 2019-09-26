@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('response', '0009_commschannel_channel_name'),
-    ]
+    dependencies = [("response", "0009_commschannel_channel_name")]
 
     operations = [
         migrations.AddField(
-            model_name='incident',
-            name='report_only',
+            model_name="incident",
+            name="report_only",
             field=models.BooleanField(default=False),
-        ),
+        )
     ]

@@ -137,7 +137,9 @@ class HeadlinePost(models.Model):
             msg.add_block(actions)
 
         # Post / update the slack message
-        if self.incident.report_only and hasattr(settings, "INCIDENT_REPORT_CHANNEL_ID"):
+        if self.incident.report_only and hasattr(
+            settings, "INCIDENT_REPORT_CHANNEL_ID"
+        ):
             channel_id = settings.INCIDENT_REPORT_CHANNEL_ID
         else:
             channel_id = settings.INCIDENT_CHANNEL_ID

@@ -71,9 +71,14 @@ def slash_command(request):
                 optional=True,
             ),
             SelectWithOptions(
-                [("Yes - this is a live incident happening right now", "live"),
-                    ("No - this is just a report of something that happened", "report")],
-                label="Is this a live incident?", name="incident_type", optional=False),
+                [
+                    ("Yes - this is a live incident happening right now", "live"),
+                    ("No - this is just a report of something that happened", "report"),
+                ],
+                label="Is this a live incident?",
+                name="incident_type",
+                optional=False,
+            ),
         ],
     )
 
