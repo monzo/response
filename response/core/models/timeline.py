@@ -25,7 +25,6 @@ class TimelineEvent(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        print(type(self.text))
         self.text = sanitize(self.text)
         super(TimelineEvent, self).save(*args, **kwargs)
 
