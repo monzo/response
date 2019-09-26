@@ -2,6 +2,7 @@ from django.db import models
 
 from response.core.models.incident import Incident
 from response.core.models.user_external import ExternalUser
+from response.core.util import sanitize
 
 
 class Action(models.Model):
@@ -17,3 +18,7 @@ class Action(models.Model):
 
     def __str__(self):
         return f"{self.details}"
+
+    def save(self, *args, **kwargs):
+        self.details = sanitize(self.details)
+        super(Action, self).save(*args, **kwargs)
