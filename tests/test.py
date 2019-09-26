@@ -53,6 +53,7 @@ def test_submit_dialog_creates_incident(post_from_slack_api, mock_slack):
                     "impact": "",
                     "lead": "U123",
                     "severity": "",
+                    "incident_type": "live",
                 },
                 "state": "foo",
             }
@@ -104,6 +105,7 @@ def test_edit_incident(post_from_slack_api, mock_slack):
         report="Something happened",
         reporter=user,
         report_time=datetime.now(),
+        report_only=False,
         summary="Testing editing incidents - before",
         impact="Lots",
         lead=user,
@@ -125,6 +127,7 @@ def test_edit_incident(post_from_slack_api, mock_slack):
                     "impact": "",
                     "lead": "U123",
                     "severity": "",
+                    "incident_type": "",
                 },
                 "state": incident.id,
             }
