@@ -21,7 +21,11 @@ def report_incident(
     impact = submission["impact"]
     lead_id = submission["lead"]
     severity = submission["severity"]
-    report_only = submission["incident_type"] == "report"
+
+    if "incident_type" in submission:
+        report_only = submission["incident_type"] == "report"
+    else:
+        report_only = False
 
     name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
     reporter, _ = ExternalUser.objects.get_or_create_slack(
