@@ -63,6 +63,9 @@ class IncidentSerializer(serializers.ModelSerializer):
     comms_channel = CommsChannelSerializer(read_only=True)
     action_items = ActionSerializer(read_only=True, many=True)
 
+    # Weirdly, this ensures we can't unset severity
+    severity = serializers.CharField(required=False)
+
     class Meta:
         model = Incident
         fields = (
