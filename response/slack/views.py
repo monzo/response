@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -72,6 +73,19 @@ def slash_command(request):
             ),
         ],
     )
+
+    if hasattr(settings, "INCIDENT_REPORT_CHANNEL_ID"):
+        dialog.add_element(
+            SelectWithOptions(
+                [
+                    ("Yes - this is a live incident happening right now", "live"),
+                    ("No - this is just a report of something that happened", "report"),
+                ],
+                label="Is this a live incident?",
+                name="incident_type",
+                optional=False,
+            )
+        )
 
     logger.info(
         f"Handling Slack slash command for user {user_id}, report {report} - opening dialog"

@@ -31,6 +31,7 @@ class IncidentFactory(factory.DjangoModelFactory):
     report_time = factory.LazyFunction(
         lambda: faker.date_time_between(start_date="-6m", end_date="now", tzinfo=None)
     )
+    report_only = random.choice([True, False])
 
     reporter = factory.SubFactory("tests.factories.ExternalUserFactory")
     lead = factory.SubFactory("tests.factories.ExternalUserFactory")

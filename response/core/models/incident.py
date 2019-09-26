@@ -12,6 +12,7 @@ class IncidentManager(models.Manager):
         report,
         reporter,
         report_time,
+        report_only,
         summary=None,
         impact=None,
         lead=None,
@@ -21,6 +22,7 @@ class IncidentManager(models.Manager):
             report=report,
             reporter=reporter,
             report_time=report_time,
+            report_only=report_only,
             start_time=report_time,
             summary=summary,
             impact=impact,
@@ -44,6 +46,7 @@ class Incident(models.Model):
         null=True,
     )
     report_time = models.DateTimeField()
+    report_only = models.BooleanField(default=False)
 
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(blank=True, null=True)
