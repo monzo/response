@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('response', '0008_externaluser_email'),
+        ('response', '0009_commschannel_channel_name'),
     ]
 
     operations = [
