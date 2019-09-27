@@ -63,7 +63,11 @@ class IncidentSerializer(serializers.ModelSerializer):
     comms_channel = CommsChannelSerializer(read_only=True)
     action_items = ActionSerializer(read_only=True, many=True)
 
-    # Weirdly, this ensures we can't unset severity
+    # This ensures we can't unset severity
+    # https://www.django-rest-framework.org/api-guide/fields/#required
+    # `required = False` means the field doesn't have to be included when the json request is
+    # deserialised (including creation), and so it remains unchanged (if None, it remains None).
+    # `allow_null` is set to False by default so we still demand a value is given _if_ it's sent in the json.
     severity = serializers.CharField(required=False)
 
     class Meta:
