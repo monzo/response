@@ -8,7 +8,7 @@
   Inc #{{ incident.pk }} – {{ block.super }}
 {% endblock %}
 
-{% block head %}
+{% block head_extra %}
   <link rel="stylesheet" href="{% static 'incident_doc.css' %}">
 {% endblock %}
 
@@ -39,53 +39,60 @@
       <div class="bg-white p-4">
 
         {% comment %} ----- Summary ----- {% endcomment %}
-        <h2>Summary</h2>
-        <p>
-          {% if incident.summary %}
-            {{ incident.summary|unslackify|markdown_filter|safe  }}
-          {% endif %}
-        </p>
+        {% block incident_summary %}
+          <h2>Summary</h2>
+          <p>
+            {% if incident.summary %}
+              {{ incident.summary|unslackify|markdown_filter|safe  }}
+            {% endif %}
+          </p>
+        {% endblock %}
+        
+        {% block incident_data %}
+          <ul class="summary-data">
+            {% if incident.impact %}
+              <li>
+                <span>Impact:</span>{{ incident.impact|unslackify|markdown_filter|safe }}
+              </li>
+            {% endif %}
 
-        <ul class="summary-data">
-          {% if incident.impact %}
+            <li><span>Reporter:</span>{{ incident.reporter.display_name }}</li>
+
+            {% if incident.lead %}
+              <li><span>Lead:</span>{{ incident.lead.display_name }}</li>
+            {% endif %}
+
             <li>
-              <span>Impact:</span>{{ incident.impact|unslackify|markdown_filter|safe }}
+              <span>Start Time:</span>
+              {% if incident.start_time %}{{ incident.start_time }}{% endif %}
             </li>
-          {% endif %}
-
-          <li><span>Reporter:</span>{{ incident.reporter.display_name }}</li>
-
-          {% if incident.lead %}
-            <li><span>Lead:</span>{{ incident.lead.display_name }}</li>
-          {% endif %}
-
-          <li>
-            <span>Start Time:</span>
-            {% if incident.start_time %}{{ incident.start_time }}{% endif %}
-          </li>
-          <li>
-            <span>Report Time:</span>
-            {% if incident.report_time %}{{ incident.report_time }}{% endif %}
-          </li>
-
-          {% if incident.is_closed %}
-            <li><span>End Time:</span>{{ incident.end_time }}</li>
-            <li><span>Duration:</span>{{ incident.duration}}</li>
-          {% endif %}
-
-          {% if user_stats %}
             <li>
-              <span>Participants:</span>
-              <ul id="participant">
-                {% for stats in user_stats %}
-                  <li>
-                    {{ stats.user.display_name }} ({{stats.message_count}} messages)
-                  </li>
-                {% endfor %}
-              </ul>
+              <span>Report Time:</span>
+              {% if incident.report_time %}{{ incident.report_time }}{% endif %}
             </li>
-          {% endif %}
-        </ul>
+
+            {% if incident.is_closed %}
+              <li><span>End Time:</span>{{ incident.end_time }}</li>
+              <li><span>Duration:</span>{{ incident.duration}}</li>
+            {% endif %}
+
+            {% if user_stats %}
+              <li>
+                <span>Participants:</span>
+                <ul id="participant">
+                  {% for stats in user_stats %}
+                    <li>
+                      {{ stats.user.display_name }} ({{stats.message_count}} messages)
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endif %}
+
+            {% block incident_data_extra %}
+            {% endblock %}
+          </ul>
+        {% endblock %}
 
         {% comment %} ----- Actions ----- {% endcomment %}
         <h2>Actions</h2>
@@ -98,21 +105,23 @@
         {% endif %}
 
         {% comment %} ----- Timeline ----- {% endcomment %}
-        <h2>Timeline</h2>
-        {% if events %}
-          <div class="timeline">
-            {% for event in events.all %}
-              <div class="container">
-                <div class="content">
-                  <strong>
-                    {{ event.icon|safe }}{{ event.timestamp|date:"H:i:s" }}
-                  </strong>
-                  {{ event|stringformat:'s'|unslackify|markdown_filter|safe  }}
+        {% block incident_timeline %}
+          <h2>Timeline</h2>
+          {% if events %}
+            <div class="timeline">
+              {% for event in events.all %}
+                <div class="container">
+                  <div class="content">
+                    <strong>
+                      {{ event.icon|safe }}{{ event.timestamp|date:"H:i:s" }}
+                    </strong>
+                    {{ event|stringformat:'s'|unslackify|markdown_filter|safe  }}
+                  </div>
                 </div>
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endblock %}
 
       </div>
     </div>
