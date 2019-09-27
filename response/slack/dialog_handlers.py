@@ -5,6 +5,7 @@ from typing import Any
 from django.conf import settings
 
 from response.core.models import ExternalUser, Incident
+from response.slack.cache import get_user_profile
 from response.slack.client import channel_reference
 from response.slack.decorators import dialog_handler
 from response.slack.settings import INCIDENT_EDIT_DIALOG, INCIDENT_REPORT_DIALOG
@@ -27,14 +28,14 @@ def report_incident(
     else:
         report_only = False
 
-    name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
+    name = get_user_profile(user_id)["name"]
     reporter, _ = ExternalUser.objects.get_or_create_slack(
         external_id=user_id, display_name=name
     )
 
     lead = None
     if lead_id:
-        lead_name = settings.SLACK_CLIENT.get_user_profile(lead_id)["name"]
+        lead_name = get_user_profile(lead_id)["name"]
         lead, _ = ExternalUser.objects.get_or_create_slack(
             external_id=lead_id, display_name=lead_name
         )
@@ -74,7 +75,7 @@ def edit_incident(
 
     lead = None
     if lead_id:
-        lead_name = settings.SLACK_CLIENT.get_user_profile(lead_id)["name"]
+        lead_name = get_user_profile(lead_id)["name"]
         lead, _ = ExternalUser.objects.get_or_create_slack(
             external_id=lead_id, display_name=lead_name
         )

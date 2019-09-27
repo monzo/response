@@ -3,6 +3,7 @@ from datetime import datetime
 from django.conf import settings
 
 from response.core.models import Action, ExternalUser, Incident
+from response.slack.cache import get_user_profile
 from response.slack.client import SlackError, reference_to_id
 from response.slack.decorators.incident_command import (
     __default_incident_command,
@@ -35,7 +36,7 @@ def update_impact(incident: Incident, user_id: str, message: str):
 @__default_incident_command(["lead"], helptext="Assign someone as the incident lead")
 def set_incident_lead(incident: Incident, user_id: str, message: str):
     assignee = reference_to_id(message) or user_id
-    name = settings.SLACK_CLIENT.get_user_profile(assignee)["name"]
+    name = get_user_profile(assignee)["name"]
     user, _ = ExternalUser.objects.get_or_create_slack(
         external_id=assignee, display_name=name
     )
@@ -101,7 +102,7 @@ def close_incident(incident: Incident, user_id: str, message: str):
 
 @__default_incident_command(["action"], helptext="Log a follow up action")
 def set_action(incident: Incident, user_id: str, message: str):
-    name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
+    name = get_user_profile(user_id)["name"]
     action_reporter, _ = ExternalUser.objects.get_or_create_slack(
         external_id=user_id, display_name=name
     )
