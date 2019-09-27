@@ -184,7 +184,7 @@ def test_edit_incident(post_from_slack_api, mock_slack):
                     "summary": newsummary,
                     "impact": "",
                     "lead": "U123",
-                    "severity": "",
+                    "severity": "1",
                     "incident_type": "",
                 },
                 "state": incident.id,
