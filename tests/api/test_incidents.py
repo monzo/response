@@ -190,6 +190,29 @@ def test_update_incident_lead(arf, api_user):
     assert new_incident.lead == new_lead
 
 
+def test_cannot_unset_severity(arf, api_user):
+    """
+    Tests that we cannot unset the incident severity
+    """
+
+    incident = IncidentFactory.create()
+    serializer = serializers.IncidentSerializer(incident)
+    updated = serializer.data
+
+    updated["severity"] = None  # unset severity
+
+    req = arf.put(
+        reverse("incident-detail", kwargs={"pk": incident.pk}), updated, format="json"
+    )
+    force_authenticate(req, user=api_user)
+
+    response = IncidentViewSet.as_view({"put": "update"})(req, pk=incident.pk)
+    print(response.rendered_content)
+    assert (
+        response.status_code != 200
+    ), "Got 200 response from API when we expected an error"
+
+
 def test_cannot_access_incident_logged_out_if_configured(client, db, settings):
     settings.RESPONSE_LOGIN_REQUIRED = True
 

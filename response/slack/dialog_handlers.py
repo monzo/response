@@ -82,6 +82,9 @@ def edit_incident(
     try:
         incident = Incident.objects.get(pk=state)
 
+        if not severity and incident.severity:
+            raise Exception("Cannot unset severity")
+
         # deliberately update in this way the post_save signal gets sent
         # (required for the headline post to auto update)
         incident.report = report
