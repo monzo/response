@@ -45,7 +45,7 @@ These decorators allow functions to called when a specific keyword or phrase app
 
 ```
 @keyword_handler(['runbook', 'run book'])
-def runbook_notification(comms_channel: CommsChannel, user: str, text: str, ts: str):
+def runbook_notification(comms_channel: CommsChannel, user: str, keyword: str, text: str, ts: str):
     comms_channel.post_in_channel("📗 If you're looking for our runbooks they can be found here https://...")
 ```
 
