@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from django.conf import settings
 from django.db import models
 
 from response.core.models import ExternalUser, Incident
+from response.slack.cache import get_user_profile
 
 
 class UserStats(models.Model):
@@ -22,7 +22,7 @@ class UserStats(models.Model):
 
     @staticmethod
     def increment_message_count(incident, user_id):
-        name = settings.SLACK_CLIENT.get_user_profile(user_id)["name"]
+        name = get_user_profile(user_id)["name"]
         user, _ = ExternalUser.objects.get_or_create_slack(
             external_id=user_id, display_name=name
         )
