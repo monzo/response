@@ -3,8 +3,8 @@ from datetime import datetime
 from django.db import models
 
 from response import core, slack
-from response.core.util import sanitize
 from response.core.models.user_external import ExternalUser
+from response.core.util import sanitize
 
 
 class IncidentManager(models.Manager):
