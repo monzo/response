@@ -245,6 +245,19 @@ class SlackClient(object):
             "email": response["user"]["profile"].get("email", None),
         }
 
+    def get_user_profile_by_email(self, email):
+        if not email:
+            return None
+
+        response = self.api_call("users.lookupByEmail", email=email)
+
+        return {
+            "id": response["user"]["id"],
+            "name": response["user"]["name"],
+            "fullname": response["user"]["profile"]["real_name"],
+            "email": email,
+        }
+
     def rename_channel(self, channel_id, new_name):
         prefix = ""
         if not (new_name.startswith("inc-") or new_name.startswith("#inc-")):

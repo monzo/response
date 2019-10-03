@@ -1,7 +1,11 @@
 import pytest
 
 from response.core.models import ExternalUser
-from response.slack.cache import get_user_profile, update_user_cache
+from response.slack.cache import (
+    get_user_profile,
+    update_user_cache,
+    get_user_profile_by_email,
+)
 from tests.slack.slack_payloads import (
     users_list_new,
     users_list_page_1,
@@ -104,6 +108,61 @@ def test_get_user_profile_in_cache(mock_slack):
 
     # check we get back the user from cache (i.e. not call to Slack API)
     mock_slack.get_user_profile.assert_not_called()
+    assert user["id"] == "U12345678"
+    assert user["name"] == "spengler"
+    assert user["fullname"] == "Egon Spengler"
+    assert user["email"] == "spengler@ghostbusters.example.com"
+
+    # check cache is unchanged
+    assert len(ExternalUser.objects.all()) == 1
+
+
+@pytest.mark.django_db
+def test_get_user_profile_by_email_not_in_cache(mock_slack):
+    mock_slack.get_user_profile_by_email.return_value = {
+        "id": "U12345678",
+        "name": "spengler",
+        "fullname": "Egon Spengler",
+        "email": "spengler@ghostbusters.example.com",
+    }
+
+    # check cache is empty at start
+    assert len(ExternalUser.objects.all()) == 0
+
+    # request a user from cache
+    user = get_user_profile_by_email("spengler@ghostbusters.example.com")
+
+    # check we get back the user from slack
+    mock_slack.get_user_profile_by_email.assert_called()
+    assert user["id"] == "U12345678"
+
+    # check user is now in cache
+    assert len(ExternalUser.objects.all()) == 1
+
+    # and that it has the right details populated
+    cache_user = ExternalUser.objects.get(email="spengler@ghostbusters.example.com")
+    assert cache_user.display_name == "spengler"
+    assert cache_user.full_name == "Egon Spengler"
+    assert cache_user.email == "spengler@ghostbusters.example.com"
+
+
+@pytest.mark.django_db
+def test_get_user_profile_by_email_in_cache(mock_slack):
+    # create cache entry for user
+    slack_user = ExternalUser(
+        external_id="U12345678",
+        display_name="spengler",
+        full_name="Egon Spengler",
+        email="spengler@ghostbusters.example.com",
+    )
+    slack_user.save()
+    assert len(ExternalUser.objects.all()) == 1
+
+    # request a user from cache
+    user = get_user_profile_by_email("spengler@ghostbusters.example.com")
+
+    # check we get back the user from cache (i.e. not call to Slack API)
+    mock_slack.get_user_profile_by_email.assert_not_called()
     assert user["id"] == "U12345678"
     assert user["name"] == "spengler"
     assert user["fullname"] == "Egon Spengler"
