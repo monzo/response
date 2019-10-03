@@ -5,6 +5,7 @@ import slackclient
 from django.conf import settings
 
 from response.slack import client
+from tests.slack.slack_payloads import user_by_email
 
 
 @pytest.fixture
@@ -64,3 +65,20 @@ def test_slack_backoff_rate_limit_max_retry_attempts(slack_client, slack_api_moc
     with pytest.raises(client.SlackError) as e:
         slack_client.api_call("test_endpoint", "arg1", kwarg2="foo")
         assert e.slack_error == "test_error"
+
+
+def test_get_user_profile_by_email(slack_client, slack_api_mock):
+    slack_api_mock.api_call.return_value = user_by_email
+
+    # request a user by email
+    user = slack_client.get_user_profile_by_email("spengler@ghostbusters.example.com")
+
+    slack_api_mock.api_call.assert_called_with(
+        "users.lookupByEmail", email="spengler@ghostbusters.example.com"
+    )
+
+    # check we get back the expected user profile
+    assert user["id"] == "W012A3CDE"
+    assert user["name"] == "spengler"
+    assert user["fullname"] == "Egon Spengler"
+    assert user["email"] == "spengler@ghostbusters.example.com"
