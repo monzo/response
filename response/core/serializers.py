@@ -82,6 +82,7 @@ class IncidentSerializer(serializers.ModelSerializer):
             "id",
             "report",
             "report_time",
+            "report_only",
             "reporter",
             "severity",
             "start_time",
