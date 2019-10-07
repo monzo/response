@@ -77,17 +77,23 @@ def test_list_timeline_events_by_incident(arf, api_user):
 
 
 @pytest.mark.parametrize(
-    "update_key,update_value",
+    "update_key,update_value,expected_value",
     (
-        ("", ""),  # no update
+        ("", "", None),  # no update
         (
             "timestamp",
             faker.date_time_between(start_date="-3d", end_date="now", tzinfo=None),
+            None,
         ),
-        ("text", faker.paragraph(nb_sentences=5, variable_nb_sentences=True)),
+        ("text", faker.paragraph(nb_sentences=5, variable_nb_sentences=True), None),
+        (
+            "text",
+            "<script>alert('certainly shouldnt let this happen')</script>",
+            "&lt;script&gt;alert('certainly shouldnt let this happen')&lt;/script&gt;",
+        ),
     ),
 )
-def test_update_timeline_event(arf, api_user, update_key, update_value):
+def test_update_timeline_event(arf, api_user, update_key, update_value, expected_value):
     incident = IncidentFactory.create()
 
     event_model = incident.timeline_events()[0]
@@ -109,8 +115,10 @@ def test_update_timeline_event(arf, api_user, update_key, update_value):
     assert response.status_code == 200, "Got non-200 response from API"
     if update_key:
         new_event = TimelineEvent.objects.get(pk=event_model.pk)
+
+        expected = expected_value or update_value
         assert (
-            getattr(new_event, update_key) == update_value
+            getattr(new_event, update_key) == expected
         ), "Updated value wasn't persisted to the DB"
 
 

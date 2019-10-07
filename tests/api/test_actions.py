@@ -99,6 +99,21 @@ def test_update_action(arf, api_user):
     assert updated_action.done == action_data["done"]
 
 
+def test_update_action_sanitized(arf, api_user):
+    incident = IncidentFactory.create()
+    action = incident.action_items()[0]
+    action_data = serializers.ActionSerializer(action).data
+
+    action_data["details"] = "<iframe>this should be escaped</iframe>"
+    response = update_action(arf, api_user, incident.pk, action_data)
+    assert response.status_code == 200, "Got non-201 response from API"
+
+    updated_action = Action.objects.get(pk=action.pk)
+    assert (
+        updated_action.details == "&lt;iframe&gt;this should be escaped&lt;/iframe&gt;"
+    )
+
+
 def update_action(arf, api_user, incident_id, action_data):
     req = arf.put(
         reverse("incident-action-list", kwargs={"incident_pk": incident_id}),

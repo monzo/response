@@ -122,9 +122,7 @@ def update_incident_report_event(prev_state, instance):
 
 def update_incident_summary_event(prev_state, instance):
     if prev_state.summary:
-        text = (
-            f'Incident summary updated from "{prev_state.summary}" to "{instance.summary}"',
-        )
+        text = f'Incident summary updated from "{prev_state.summary}" to "{instance.summary}"'
     else:
         text = f'Incident summary added: "{instance.summary}"'
 
@@ -140,7 +138,7 @@ def update_incident_summary_event(prev_state, instance):
 def update_incident_impact_event(prev_state, instance):
     if prev_state.impact:
         text = (
-            f'Incident impact updated from "{prev_state.impact}" to "{instance.impact}"',
+            f'Incident impact updated from "{prev_state.impact}" to "{instance.impact}"'
         )
     else:
         text = f'Incident impact added: "{instance.impact}"'

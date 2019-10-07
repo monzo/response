@@ -4,6 +4,7 @@ from django.db import models
 from jsonfield import JSONField
 
 from response.core.models.incident import Incident
+from response.core.util import sanitize
 
 EVENT_TYPES = (
     ("text", "Freeform text field"),
@@ -22,6 +23,10 @@ class TimelineEvent(models.Model):
     metadata = JSONField(
         help_text="Additional fields that can be added by other event types", null=True
     )
+
+    def save(self, *args, **kwargs):
+        self.text = sanitize(self.text)
+        super(TimelineEvent, self).save(*args, **kwargs)
 
 
 def add_incident_update_event(

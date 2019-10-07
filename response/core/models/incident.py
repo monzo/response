@@ -4,6 +4,7 @@ from django.db import models
 
 from response import core, slack
 from response.core.models.user_external import ExternalUser
+from response.core.util import sanitize
 
 
 class IncidentManager(models.Manager):
@@ -132,3 +133,9 @@ class Incident(models.Model):
 
     def timeline_events(self):
         return core.models.TimelineEvent.objects.filter(incident=self)
+
+    def save(self, *args, **kwargs):
+        self.impact = sanitize(self.impact)
+        self.report = sanitize(self.report)
+        self.summary = sanitize(self.summary)
+        super(Incident, self).save(*args, **kwargs)
