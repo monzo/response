@@ -113,19 +113,11 @@ class SlackClient(object):
 
             for channel in response["channels"]:
                 if channel["name"] == name:
-                    if channel['is_archived'] and auto_unarchive:
-                        self.unarchive_channel(channel['id'])
+                    if channel["is_archived"] and auto_unarchive:
+                        self.unarchive_channel(channel["id"])
                     return channel["id"]
 
         raise SlackError(f"Channel '{name}' not found")
-
-    def unarchive_channel(self, channel_id):
-        response = self.api_call(
-            "channels.unarchive",
-            channel=channel_id,
-        )
-        if not response.get("ok", False):
-            raise SlackError(f"Couldn't unarchive channel {channel_id}")
 
     def get_usergroup_id(self, group_name):
         response = self.api_call("usergroups.list")
@@ -175,7 +167,9 @@ class SlackClient(object):
         )
 
     def unarchive_channel(self, channel_id):
-        return self.api_call("channels.unarchive", channel=channel_id)
+        response = self.api_call("channels.unarchive", channel=channel_id)
+        if not response.get("ok", False):
+            raise SlackError(f"Couldn't unarchive channel {channel_id}")
 
     def send_message(self, channel_id, text, attachments=None, thread_ts=None):
         return self.api_call(
