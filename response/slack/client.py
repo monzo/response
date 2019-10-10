@@ -233,6 +233,9 @@ class SlackClient(object):
     def invite_user_to_channel(self, user_id, channel_id):
         return self.api_call("channels.invite", user=user_id, channel=channel_id)
 
+    def join_channel(self, channel_id):
+        return self.api_call("channels.join", name=channel_id)
+
     def leave_channel(self, channel_id):
         return self.api_call("channels.leave", channel=channel_id)
 
