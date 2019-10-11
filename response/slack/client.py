@@ -96,7 +96,7 @@ class SlackClient(object):
         while next_cursor != "":
             response = self.api_call(
                 "channels.list",
-                exclude_archived=True,
+                exclude_archived=not auto_unarchive,
                 exclude_members=True,
                 limit=800,
                 cursor=next_cursor,
