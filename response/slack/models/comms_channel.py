@@ -16,13 +16,23 @@ class CommsChannelManager(models.Manager):
         """
         Creates a comms channel in slack, and saves a reference to it in the DB
         """
+        name = f"inc-{100 + incident.pk}"
+
         try:
-            name = f"inc-{100+incident.pk}"
             channel_id = settings.SLACK_CLIENT.get_or_create_channel(
                 name, auto_unarchive=True
             )
         except SlackError as e:
             logger.error(f"Failed to create comms channel {e}")
+            raise
+
+        # If the channel already existed we will need to join it
+        # If we are already in the channel as we created it, then this is a No-Op
+        try:
+            logger.info(f"Joining channel {name}")
+            settings.SLACK_CLIENT.join_channel(name)
+        except SlackError as e:
+            logger.error(f"Failed to join comms channel {e}")
             raise
 
         try:
