@@ -32,6 +32,8 @@ def slash_command(request):
     """
     Handles slash commands from slack
     More details here: https://api.slack.com/slash-commands
+    Note: The order the elements are specified is the order they
+    appear in the slack dialog
 
     @param request the request from slack containing the slash command
     @return: return a HTTP response to indicate the request was handled
@@ -50,27 +52,7 @@ def slash_command(request):
                 name="report",
                 placeholder="What's the tl;dr?",
                 value=report,
-            ),
-            TextArea(
-                label="Summary",
-                name="summary",
-                optional=True,
-                placeholder="Can you share any more details?",
-            ),
-            TextArea(
-                label="Impact",
-                name="impact",
-                optional=True,
-                placeholder="Who or what might be affected?",
-                hint="Think about affected people, systems, and processes",
-            ),
-            SelectFromUsers(label="Lead", name="lead", optional=True),
-            SelectWithOptions(
-                [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
-                label="Severity",
-                name="severity",
-                optional=True,
-            ),
+            )
         ],
     )
 
@@ -86,6 +68,36 @@ def slash_command(request):
                 optional=False,
             )
         )
+
+    dialog.add_element(
+        TextArea(
+            label="Summary",
+            name="summary",
+            optional=True,
+            placeholder="Can you share any more details?",
+        )
+    )
+
+    dialog.add_element(
+        TextArea(
+            label="Impact",
+            name="impact",
+            optional=True,
+            placeholder="Who or what might be affected?",
+            hint="Think about affected people, systems, and processes",
+        )
+    )
+
+    dialog.add_element(SelectFromUsers(label="Lead", name="lead", optional=True))
+
+    dialog.add_element(
+        SelectWithOptions(
+            [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
+            label="Severity",
+            name="severity",
+            optional=True,
+        )
+    )
 
     logger.info(
         f"Handling Slack slash command for user {user_id}, report {report} - opening dialog"
