@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from response.core.models.incident import Incident
 from response.slack.block_kit import Actions, Button, Divider, Message, Section, Text
-from response.slack.client import channel_reference, user_reference
+from response.slack.client import channel_reference, user_reference, SlackError
 from response.slack.decorators.headline_post_action import (
     SLACK_HEADLINE_POST_ACTION_MAPPINGS,
     headline_post_action,
@@ -144,15 +144,20 @@ class HeadlinePost(models.Model):
         else:
             channel_id = settings.INCIDENT_CHANNEL_ID
 
-        response = msg.send(channel_id, self.message_ts)
-        logging.info(
-            f"Got response back from Slack after updating headline post: {response}"
-        )
+        try:
+            response = msg.send(channel_id, self.message_ts)
+            logger.info(
+                f"Got response back from Slack after updating headline post: {response}"
+            )
 
-        # Save the message ts identifier if not already set
-        if not self.message_ts:
-            self.message_ts = response["ts"]
-            self.save()
+            # Save the message ts identifier if not already set
+            if not self.message_ts:
+                self.message_ts = response["ts"]
+                self.save()
+        except SlackError as e:
+            logger.error(
+                f"Failed to update headline post in {channel_id} with ts {self.message_ts}. Error: {e}"
+            )
 
     def post_to_thread(self, message):
         settings.SLACK_CLIENT.send_message(
