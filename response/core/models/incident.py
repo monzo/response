@@ -120,7 +120,12 @@ class Incident(models.Model):
         return {"1": "⛈️", "2": "🌧️", "3": "🌦️", "4": "🌤️"}[self.severity]
 
     def status_text(self):
-        return "resolved" if self.is_closed() else "live"
+        if self.report_only:
+            return "reported"
+        elif self.is_closed():
+            return "resolved"
+        else:
+            return "live"
 
     def status_emoji(self):
         if self.report_only:
