@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from response.core.models import Action, ExternalUser, Incident
@@ -8,6 +9,8 @@ from response.slack.decorators.incident_command import (
     get_help,
 )
 from response.slack.models import CommsChannel
+
+logger = logging.getLogger(__name__)
 
 
 @__default_incident_command(["help"], helptext="Display a list of commands and usage")
@@ -59,6 +62,7 @@ def set_severity(incident: Incident, user_id: str, message: str):
 def rename_incident(incident: Incident, user_id: str, message: str):
     try:
         comms_channel = CommsChannel.objects.get(incident=incident)
+        logger.info(f"Renaming channel to {message}")
         comms_channel.rename(message)
     except SlackError:
         return (
