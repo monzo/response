@@ -2,9 +2,9 @@ import json
 
 import pytest
 from django.urls import reverse
-from faker import Faker
 from rest_framework.test import force_authenticate
 
+from faker import Faker
 from response import serializers
 from response.core.views import IncidentTimelineEventViewSet
 from response.models import TimelineEvent

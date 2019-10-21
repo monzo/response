@@ -1,8 +1,8 @@
 import random
 
 import pytest
-from faker import Factory
 
+from faker import Factory
 from response.core.models import Incident, TimelineEvent
 from tests.factories import ExternalUserFactory, IncidentFactory
 

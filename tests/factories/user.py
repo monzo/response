@@ -1,7 +1,7 @@
-import factory
 from django.contrib.auth.models import User
-from faker import Factory
 
+import factory
+from faker import Factory
 from response.core.models import ExternalUser
 
 faker = Factory.create()

@@ -2,7 +2,6 @@ import random
 
 import factory
 from faker import Factory
-
 from response.core.models import TimelineEvent
 
 faker = Factory.create()

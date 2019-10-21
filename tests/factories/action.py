@@ -1,6 +1,5 @@
 import factory
 from faker import Factory
-
 from response.core.models import Action
 
 faker = Factory.create()
