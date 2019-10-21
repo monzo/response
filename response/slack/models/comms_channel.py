@@ -65,7 +65,12 @@ class CommsChannel(models.Model):
         settings.SLACK_CLIENT.send_message(self.channel_id, message)
 
     def rename(self, new_name):
-        settings.SLACK_CLIENT.rename_channel(self.channel_id, new_name)
+        try:
+            settings.SLACK_CLIENT.rename_channel(self.channel_id, new_name)
+            self.channel_name = new_name
+            self.save()
+        except SlackError as e:
+            logger.error(f"Failed to rename channel {self.channel_id} to {new_name}. Error: {e}")
 
     def __str__(self):
         return self.incident.report
