@@ -3,8 +3,8 @@ import unittest
 from unittest.mock import patch
 
 import pytest
-
 from faker import Faker
+
 from response.core.models import TimelineEvent
 from response.slack.event_handlers import handle_pin_added, handle_pin_removed
 from response.slack.models import PinnedMessage
