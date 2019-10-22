@@ -78,6 +78,9 @@ class CommsChannel(models.Model):
                 logger.error(
                     f"Failed to rename channel {self.channel_id} to {new_name}. Error: {e}"
                 )
+                raise e
+        else:
+            logger.info(f"Attempted to rename channel to nothing. No action take.")
 
     def __str__(self):
         return self.incident.report

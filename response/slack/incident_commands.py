@@ -67,7 +67,7 @@ def rename_incident(incident: Incident, user_id: str, message: str):
     except SlackError:
         return (
             True,
-            "👋 Sorry, the channel couldn't be renamed. Make sure that name isn't taken already.",
+            "👋 Sorry, the channel couldn't be renamed. Make sure that name isn't taken already and it's not too long.",
         )
     return True, None
 
