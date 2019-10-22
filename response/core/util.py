@@ -1,7 +1,6 @@
-from django.conf import settings
-
 import bleach
 import bleach_whitelist
+from django.conf import settings
 
 
 def sanitize(string):
