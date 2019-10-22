@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from response.core.models import Action, ExternalUser, Incident, TimelineEvent
+from response.slack.client import slack_to_human_readable
 from response.slack.models import CommsChannel
 
 
@@ -17,6 +18,11 @@ class TimelineEventSerializer(serializers.ModelSerializer):
         model = TimelineEvent
         fields = ("id", "timestamp", "text", "event_type", "metadata")
         read_only_fields = ("id",)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["text"] = slack_to_human_readable(rep["text"])
+        return rep
 
 
 class ActionSerializer(serializers.ModelSerializer):
@@ -49,6 +55,11 @@ class ActionSerializer(serializers.ModelSerializer):
         instance.done = validated_data.get("done", instance.done)
         instance.save()
         return instance
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["details"] = slack_to_human_readable(rep["details"])
+        return rep
 
 
 class CommsChannelSerializer(serializers.ModelSerializer):
