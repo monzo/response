@@ -1,6 +1,6 @@
 import re
 
-from django.conf import settings
+from response.slack import cache
 
 
 def channel_reference(channel_id):
@@ -23,7 +23,7 @@ def user_ref_to_username(value):
     """takes a <@U123ABCD> style ref and returns an @username"""
     # strip the '<@' and '>'
     user_id = reference_to_id(value.group())
-    user_profile = settings.SLACK_CLIENT.get_user_profile(user_id)
+    user_profile = cache.get_user_profile(user_id)
     return "@" + user_profile["name"] or user_id
 
 

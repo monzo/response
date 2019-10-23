@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from response.core.models import Action, ExternalUser, Incident, TimelineEvent
-from response.slack.reference_utils import slack_to_human_readable
 from response.slack.models import CommsChannel
+from response.slack.reference_utils import slack_to_human_readable
 
 
 class ExternalUserSerializer(serializers.ModelSerializer):

@@ -274,5 +274,3 @@ class SlackClient(object):
 
     def dialog_open(self, dialog, trigger_id):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
-
-

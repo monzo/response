@@ -8,12 +8,12 @@ from django.urls import reverse
 from response.core.models.incident import Incident
 from response.slack.block_kit import Actions, Button, Divider, Message, Section, Text
 from response.slack.client import SlackError
-from response.slack.reference_utils import channel_reference, user_reference
 from response.slack.decorators.headline_post_action import (
     SLACK_HEADLINE_POST_ACTION_MAPPINGS,
     headline_post_action,
 )
 from response.slack.models.comms_channel import CommsChannel
+from response.slack.reference_utils import channel_reference, user_reference
 
 logger = logging.getLogger(__name__)
 
