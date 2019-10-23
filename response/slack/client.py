@@ -278,12 +278,6 @@ class SlackClient(object):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
 
 
-def channel_reference(channel_id):
-    if channel_id is None:
-        return None
-    return f"<#{channel_id}>"
-
-
 def user_reference(user_id):
     return f"<@{user_id}>"
 
