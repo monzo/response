@@ -6,6 +6,8 @@ import slackclient
 from django.conf import settings
 from slugify import slugify
 
+from response.slack.reference_utils import reference_to_id
+
 logger = logging.getLogger(__name__)
 
 
@@ -276,12 +278,6 @@ class SlackClient(object):
 
     def dialog_open(self, dialog, trigger_id):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
-
-
-def reference_to_id(value):
-    """take a string containing <@U123ABCD> refs and extract first match"""
-    m = re.search(r"<@(U[A-Z0-9]+)>", value)
-    return m.group(1) if m else None
 
 
 def user_ref_to_username(value):
