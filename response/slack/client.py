@@ -3,10 +3,9 @@ import re
 import time
 
 import slackclient
-from django.conf import settings
 from slugify import slugify
 
-from response.slack.reference_utils import reference_to_id
+from response.slack.reference_utils import user_ref_to_username
 
 logger = logging.getLogger(__name__)
 
@@ -278,14 +277,6 @@ class SlackClient(object):
 
     def dialog_open(self, dialog, trigger_id):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
-
-
-def user_ref_to_username(value):
-    """takes a <@U123ABCD> style ref and returns an @username"""
-    # strip the '<@' and '>'
-    user_id = reference_to_id(value.group())
-    user_profile = settings.SLACK_CLIENT.get_user_profile(user_id)
-    return "@" + user_profile["name"] or user_id
 
 
 def slack_to_human_readable(value):
