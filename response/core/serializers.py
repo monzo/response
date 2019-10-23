@@ -1,3 +1,4 @@
+import emoji_data_python
 from rest_framework import serializers
 
 from response.core.models import Action, ExternalUser, Incident, TimelineEvent
@@ -22,6 +23,7 @@ class TimelineEventSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         rep["text"] = slack_to_human_readable(rep["text"])
+        rep["text"] = emoji_data_python.replace_colons(rep["text"])
         return rep
 
 
@@ -59,6 +61,7 @@ class ActionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         rep["details"] = slack_to_human_readable(rep["details"])
+        rep["details"] = emoji_data_python.replace_colons(rep["details"])
         return rep
 
 
