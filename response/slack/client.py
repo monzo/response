@@ -1,11 +1,8 @@
 import logging
-import re
 import time
 
 import slackclient
 from slugify import slugify
-
-from response.slack.reference_utils import user_ref_to_username
 
 logger = logging.getLogger(__name__)
 
@@ -279,8 +276,3 @@ class SlackClient(object):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
 
 
-def slack_to_human_readable(value):
-    # replace user references (<@U3231FFD>) with usernames (@chrisevans)
-    value = re.sub(r"(<@U[A-Z0-9]+>)", user_ref_to_username, value)
-    value = re.sub(r"(<#C[A-Z0-9]+\|([\-a-zA-Z0-9]+)>)", r"#\2", value)
-    return value

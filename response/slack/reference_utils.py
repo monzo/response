@@ -25,3 +25,10 @@ def user_ref_to_username(value):
     user_id = reference_to_id(value.group())
     user_profile = settings.SLACK_CLIENT.get_user_profile(user_id)
     return "@" + user_profile["name"] or user_id
+
+
+def slack_to_human_readable(value):
+    # replace user references (<@U3231FFD>) with usernames (@chrisevans)
+    value = re.sub(r"(<@U[A-Z0-9]+>)", user_ref_to_username, value)
+    value = re.sub(r"(<#C[A-Z0-9]+\|([\-a-zA-Z0-9]+)>)", r"#\2", value)
+    return value
