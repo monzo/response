@@ -14,25 +14,30 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 
 class TimelineEventSerializer(serializers.ModelSerializer):
     metadata = serializers.JSONField(allow_null=True, required=False)
+    # Read-only field for displaying human-readable slack references. Updates
+    # should be applied to the text field.
+    text_ui = serializers.SerializerMethodField()
 
     class Meta:
         model = TimelineEvent
-        fields = ("id", "timestamp", "text", "event_type", "metadata")
+        fields = ("id", "timestamp", "text", "event_type", "metadata", "text_ui")
         read_only_fields = ("id",)
 
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep["text"] = slack_to_human_readable(rep["text"])
-        rep["text"] = emoji_data_python.replace_colons(rep["text"])
-        return rep
+    def get_text_ui(self, instance):
+        text_ui = slack_to_human_readable(instance.text)
+        text_ui = emoji_data_python.replace_colons(text_ui)
+        return text_ui
 
 
 class ActionSerializer(serializers.ModelSerializer):
     user = ExternalUserSerializer()
+    # Read-only field for displaying human-readable slack references. Updates
+    # should be applied to the details field.
+    details_ui = serializers.SerializerMethodField()
 
     class Meta:
         model = Action
-        fields = ("id", "details", "done", "user")
+        fields = ("id", "details", "done", "user", "details_ui")
         read_only_fields = ("id",)
 
     def create(self, validated_data):
@@ -58,11 +63,10 @@ class ActionSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep["details"] = slack_to_human_readable(rep["details"])
-        rep["details"] = emoji_data_python.replace_colons(rep["details"])
-        return rep
+    def get_details_ui(self, instance):
+        details_ui = slack_to_human_readable(instance.details)
+        details_ui = emoji_data_python.replace_colons(details_ui)
+        return details_ui
 
 
 class CommsChannelSerializer(serializers.ModelSerializer):
