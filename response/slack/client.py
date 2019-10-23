@@ -278,10 +278,6 @@ class SlackClient(object):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
 
 
-def user_reference(user_id):
-    return f"<@{user_id}>"
-
-
 def reference_to_id(value):
     """take a string containing <@U123ABCD> refs and extract first match"""
     m = re.search(r"<@(U[A-Z0-9]+)>", value)
