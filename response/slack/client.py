@@ -117,14 +117,14 @@ class SlackClient(object):
 
         raise SlackError(f"Channel '{name}' not found")
 
-    def get_usergroup_id(self, group_name):
+    def get_usergroup_id(self, group_handle):
         response = self.api_call("usergroups.list")
         if not response.get("ok", False):
             raise SlackError(
-                f"Failed to get usergroup with group name {group_name} : {response['error']}"
+                f"Failed to get usergroup with group handle {group_handle} : {response['error']}"
             )
         for group in response["usergroups"]:
-            if group["name"] == group_name:
+            if group["handle"] == group_handle:
                 return group["id"]
         return None
 
