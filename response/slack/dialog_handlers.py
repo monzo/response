@@ -6,8 +6,8 @@ from django.conf import settings
 
 from response.core.models import ExternalUser, Incident
 from response.slack.cache import get_user_profile
-from response.slack.client import channel_reference
 from response.slack.decorators import dialog_handler
+from response.slack.reference_utils import channel_reference
 from response.slack.settings import INCIDENT_EDIT_DIALOG, INCIDENT_REPORT_DIALOG
 
 logger = logging.getLogger(__name__)

@@ -1,7 +1,9 @@
+import emoji_data_python
 from rest_framework import serializers
 
 from response.core.models import Action, ExternalUser, Incident, TimelineEvent
 from response.slack.models import CommsChannel
+from response.slack.reference_utils import slack_to_human_readable
 
 
 class ExternalUserSerializer(serializers.ModelSerializer):
@@ -12,19 +14,30 @@ class ExternalUserSerializer(serializers.ModelSerializer):
 
 class TimelineEventSerializer(serializers.ModelSerializer):
     metadata = serializers.JSONField(allow_null=True, required=False)
+    # Read-only field for displaying human-readable slack references. Updates
+    # should be applied to the text field.
+    text_ui = serializers.SerializerMethodField()
 
     class Meta:
         model = TimelineEvent
-        fields = ("id", "timestamp", "text", "event_type", "metadata")
+        fields = ("id", "timestamp", "text", "event_type", "metadata", "text_ui")
         read_only_fields = ("id",)
+
+    def get_text_ui(self, instance):
+        text_ui = slack_to_human_readable(instance.text)
+        text_ui = emoji_data_python.replace_colons(text_ui)
+        return text_ui
 
 
 class ActionSerializer(serializers.ModelSerializer):
     user = ExternalUserSerializer()
+    # Read-only field for displaying human-readable slack references. Updates
+    # should be applied to the details field.
+    details_ui = serializers.SerializerMethodField()
 
     class Meta:
         model = Action
-        fields = ("id", "details", "done", "user")
+        fields = ("id", "details", "done", "user", "details_ui")
         read_only_fields = ("id",)
 
     def create(self, validated_data):
@@ -49,6 +62,11 @@ class ActionSerializer(serializers.ModelSerializer):
         instance.done = validated_data.get("done", instance.done)
         instance.save()
         return instance
+
+    def get_details_ui(self, instance):
+        details_ui = slack_to_human_readable(instance.details)
+        details_ui = emoji_data_python.replace_colons(details_ui)
+        return details_ui
 
 
 class CommsChannelSerializer(serializers.ModelSerializer):
