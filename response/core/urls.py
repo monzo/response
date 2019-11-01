@@ -3,6 +3,7 @@ from rest_framework import routers
 
 from response.core.views import (
     ActionViewSet,
+    EventsViewSet,
     ExternalUserViewSet,
     IncidentActionViewSet,
     IncidentsByMonthViewSet,
@@ -30,6 +31,7 @@ router.register(
 )
 router.register(r"actions", ActionViewSet)
 router.register(r"users", ExternalUserViewSet)
+router.register(r"events", EventsViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

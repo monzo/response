@@ -16,6 +16,8 @@ class ResponseConfig(AppConfig):
             dialog_handlers,
         )
 
+        from .core import signals
+
         site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
             site_settings, "RESPONSE_LOGIN_REQUIRED", True
         )

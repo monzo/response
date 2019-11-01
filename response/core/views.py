@@ -2,6 +2,7 @@ from rest_framework import pagination, viewsets
 
 from response.core import serializers
 from response.core.models.action import Action
+from response.core.models.event import Event
 from response.core.models.incident import Incident
 from response.core.models.timeline import TimelineEvent
 from response.core.models.user_external import ExternalUser
@@ -77,3 +78,8 @@ class IncidentTimelineEventViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         incident_pk = self.kwargs["incident_pk"]
         serializer.save(incident_id=incident_pk)
+
+
+class EventsViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = serializers.EventSerializer
