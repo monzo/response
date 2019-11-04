@@ -72,6 +72,9 @@ class HeadlinePost(models.Model):
             )
         )
 
+        if self.incident.private:
+            msg.add_block(Section(block_id="private", text=Text(f"🔒 Private comms")))
+
         msg.add_block(Divider())
 
         # Add additional info
@@ -97,18 +100,19 @@ class HeadlinePost(models.Model):
             )
         )
 
-        doc_url = urljoin(
-            settings.SITE_URL,
-            reverse("incident_doc", kwargs={"incident_id": self.incident.pk}),
-        )
-        msg.add_block(
-            Section(
-                block_id="incident_doc",
-                text=Text(f"📄 Document: <{doc_url}|Incident {self.incident.pk}>"),
+        if not self.incident.private:
+            doc_url = urljoin(
+                settings.SITE_URL,
+                reverse("incident_doc", kwargs={"incident_id": self.incident.pk}),
             )
-        )
+            msg.add_block(
+                Section(
+                    block_id="incident_doc",
+                    text=Text(f"📄 Document: <{doc_url}|Incident {self.incident.pk}>"),
+                )
+            )
 
-        if not self.incident.report_only:
+        if not self.incident.report_only and not self.incident.private:
             channel_ref = (
                 channel_reference(self.comms_channel.channel_id)
                 if self.comms_channel
@@ -166,13 +170,14 @@ class HeadlinePost(models.Model):
         )
 
 
-# Default/core actions to display on headline post. In order to allow inserting actions between these ones we increment the order by 100
+# Default/core actions to display on headline post.
+# In order to allow inserting actions between these ones we increment the order by 100
 
 
 @headline_post_action(order=100)
 def create_comms_channel_action(headline_post):
-    if headline_post.incident.report_only:
-        # Reports don't have a comms channel
+    if headline_post.incident.report_only or headline_post.incident.private:
+        # Reports and private incidents don't link to comms channels
         return None
     if headline_post.comms_channel:
         # No need to create an action, channel already exists

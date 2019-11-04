@@ -268,6 +268,53 @@ def test_cannot_unset_severity(arf, api_user):
     ), "Got 200 response from API when we expected an error"
 
 
+def test_make_incident_private(arf, api_user):
+    """
+    Tests that we cannot unset the incident severity
+    """
+
+    incident = IncidentFactory.create()
+    serializer = serializers.IncidentSerializer(incident)
+    updated = serializer.data
+
+    updated["private"] = True  # unset severity
+
+    req = arf.put(
+        reverse("incident-detail", kwargs={"pk": incident.pk}), updated, format="json"
+    )
+    force_authenticate(req, user=api_user)
+
+    response = IncidentViewSet.as_view({"put": "update"})(req, pk=incident.pk)
+    print(response.rendered_content)
+    assert response.status_code == 200, "Incident update succeeded"
+
+    new_incident = Incident.objects.get(pk=incident.pk)
+    assert new_incident.private, "Incident not marked as private"
+
+
+def test_cannot_make_private_incident_public(arf, api_user):
+    """
+    Tests that we cannot make private incidents public
+    """
+
+    incident = IncidentFactory.create(private=True)
+    serializer = serializers.IncidentSerializer(incident)
+    updated = serializer.data
+
+    updated["private"] = False
+    req = arf.put(
+        reverse("incident-detail", kwargs={"pk": incident.pk}), updated, format="json"
+    )
+    force_authenticate(req, user=api_user)
+    response = IncidentViewSet.as_view({"put": "update"})(req, pk=incident.pk)
+
+    print(response.rendered_content)
+    assert response.status_code == 200, "Update failed"
+
+    new_incident = Incident.objects.get(pk=incident.pk)
+    assert new_incident.private, "Private incident marked as public"
+
+
 def test_cannot_access_incident_logged_out_if_configured(client, db, settings):
     settings.RESPONSE_LOGIN_REQUIRED = True
 
@@ -277,6 +324,16 @@ def test_cannot_access_incident_logged_out_if_configured(client, db, settings):
 
     assert response.status_code == 302
     assert response["location"].startswith(settings.LOGIN_URL)
+
+
+def test_cannot_access_private_incident(client, db, settings):
+    settings.RESPONSE_LOGIN_REQUIRED = False
+
+    incident = IncidentFactory(private=True)
+
+    response = client.get(reverse("incident_doc", args=(incident.pk,)))
+
+    assert response.status_code == 403
 
 
 def test_can_access_incident_logged_out_if_configured(client, db, settings):
