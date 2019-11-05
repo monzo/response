@@ -36,6 +36,10 @@ def remind_close_incident(incident: Incident):
     if datetime.now().weekday() in (5, 6):
         return
 
+    # Only remind during the day to prevent alerting people at unsociable hours
+    if datetime.now().hour not in range(9, 18):
+        return
+
     try:
         comms_channel = CommsChannel.objects.get(incident=incident)
         if not incident.is_closed():
