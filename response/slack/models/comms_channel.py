@@ -17,7 +17,7 @@ class CommsChannelManager(models.Manager):
         """
         Creates a comms channel in slack, and saves a reference to it in the DB
         """
-        time_string = datetime.now().strftime("%b-%e-%H-%M-%S")
+        time_string = datetime.now().strftime("%b-%-e-%H-%M-%S")
         name = f"inc-{time_string}".lower()
 
         try:
