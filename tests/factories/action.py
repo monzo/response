@@ -1,11 +1,14 @@
 import factory
 from faker import Factory
 
+from django.db.models.signals import post_save
+
 from response.core.models import Action
 
 faker = Factory.create()
 
 
+@factory.django.mute_signals(post_save)
 class ActionFactory(factory.DjangoModelFactory):
     class Meta:
         model = Action
