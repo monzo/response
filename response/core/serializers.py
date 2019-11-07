@@ -125,6 +125,7 @@ class IncidentSerializer(serializers.ModelSerializer):
         instance.summary = validated_data.get("summary", instance.summary)
         instance.severity = validated_data.get("severity", instance.severity)
 
+        # we only allow setting private to true, we don't want to allow private incidents becoming public
         if not instance.private:
             instance.private = validated_data.get("private", instance.private)
 

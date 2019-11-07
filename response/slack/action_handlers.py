@@ -88,7 +88,7 @@ def handle_edit_incident_button(ac: ActionContext):
     if not ac.incident.private:
         dialog_elements.append(
             SelectWithOptions(
-                [("Yes (CANNOT BE UNDONE)", "yes")],
+                [("Yes (cant't be undone)", "yes")],
                 value=None,
                 label="Make the incident private?",
                 name="private",
