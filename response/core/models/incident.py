@@ -14,7 +14,7 @@ class IncidentManager(models.Manager):
         reporter,
         report_time,
         report_only,
-        private,
+        private=False,
         summary=None,
         impact=None,
         lead=None,
