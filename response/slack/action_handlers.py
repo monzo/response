@@ -53,41 +53,53 @@ def handle_create_comms_channel(ac: ActionContext):
 
 @action_handler(HeadlinePost.EDIT_INCIDENT_BUTTON)
 def handle_edit_incident_button(ac: ActionContext):
+    dialog_elements = [
+        Text(label="Report", name="report", value=ac.incident.report),
+        TextArea(
+            label="Summary",
+            name="summary",
+            value=ac.incident.summary,
+            optional=True,
+            placeholder="Can you share any more details?",
+        ),
+        TextArea(
+            label="Impact",
+            name="impact",
+            value=ac.incident.impact,
+            optional=True,
+            placeholder="Who or what might be affected?",
+            hint="Think about affected people, systems, and processes",
+        ),
+        SelectFromUsers(
+            label="Lead",
+            name="lead",
+            value=ac.incident.lead.external_id if ac.incident.lead else None,
+            optional=True,
+        ),
+        SelectWithOptions(
+            [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
+            value=ac.incident.severity,
+            label="Severity",
+            name="severity",
+            optional=True,
+        ),
+    ]
+
+    if not ac.incident.private:
+        dialog_elements.append(
+            SelectWithOptions(
+                [("Yes (cant't be undone)", "yes")],
+                value=None,
+                label="Make the incident private?",
+                name="private",
+                optional=True,
+            )
+        )
+
     dialog = Dialog(
         title=f"Edit Incident {ac.incident.pk}",
         submit_label="Save",
         state=ac.incident.pk,
-        elements=[
-            Text(label="Report", name="report", value=ac.incident.report),
-            TextArea(
-                label="Summary",
-                name="summary",
-                value=ac.incident.summary,
-                optional=True,
-                placeholder="Can you share any more details?",
-            ),
-            TextArea(
-                label="Impact",
-                name="impact",
-                value=ac.incident.impact,
-                optional=True,
-                placeholder="Who or what might be affected?",
-                hint="Think about affected people, systems, and processes",
-            ),
-            SelectFromUsers(
-                label="Lead",
-                name="lead",
-                value=ac.incident.lead.external_id if ac.incident.lead else None,
-                optional=True,
-            ),
-            SelectWithOptions(
-                [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
-                value=ac.incident.severity,
-                label="Severity",
-                name="severity",
-                optional=True,
-            ),
-        ],
+        elements=dialog_elements,
     )
-
     dialog.send_open_dialog(INCIDENT_EDIT_DIALOG, ac.trigger_id)

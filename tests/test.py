@@ -171,6 +171,7 @@ def test_edit_incident(post_from_slack_api, mock_slack):
         reporter=user,
         report_time=datetime.now(),
         report_only=False,
+        private=False,
         summary="Testing editing incidents - before",
         impact="Lots",
         lead=user,
@@ -206,6 +207,73 @@ def test_edit_incident(post_from_slack_api, mock_slack):
     timeout_secs = 2
     backoff = 0.2
     i = Incident.objects.filter(summary=newsummary)
+    while True:
+        d = datetime.now() - start_time
+        if d.total_seconds() > timeout_secs:
+            pytest.fail(f"waited {timeout_secs}s for condition")
+            return
+        time.sleep(backoff)
+
+        if i.exists():
+            break
+
+    # Assert that the headline post gets updated
+    mock_slack.send_or_update_message_block.assert_called_with(
+        "incident-channel-id", blocks=ANY, fallback_text=ANY, ts="123"
+    )
+
+
+@pytest.mark.django_db(transaction=True)
+def test_edit_private_incident(post_from_slack_api, mock_slack):
+    mock_slack.send_or_update_message_block.return_value = {"ts": "123"}
+    mock_slack.get_user_profile.return_value = {"ts": "123", "name": "Opsy McOpsface"}
+
+    user = ExternalUser.objects.get_or_create(
+        app_id="slack", external_id="U123", display_name="Opsy McOpsface"
+    )[0]
+
+    incident = Incident.objects.create_incident(
+        report="Something happened",
+        reporter=user,
+        report_time=datetime.now(),
+        report_only=False,
+        private=True,
+        summary="Testing editing incidents - before",
+        impact="Lots",
+        lead=user,
+        severity="1",
+    )
+
+    newsummary = "Testing editing incidents - after"
+    data = {
+        "payload": json.dumps(
+            {
+                "type": "dialog_submission",
+                "callback_id": "incident-edit-dialog",
+                "user": {"id": "U123"},
+                "channel": {"id": "D123"},
+                "response_url": "https://fake-response-url",
+                "submission": {
+                    "report": "",
+                    "summary": newsummary,
+                    "impact": "",
+                    "lead": "U123",
+                    "severity": "1",
+                    "incident_type": "",
+                },
+                "state": incident.id,
+            }
+        )
+    }
+    r = post_from_slack_api("action", data)
+
+    assert r.status_code == 200
+
+    start_time = datetime.now()
+    timeout_secs = 2
+    backoff = 0.2
+    # we assert that the incident is still private, even though the update omitted the property
+    i = Incident.objects.filter(summary=newsummary, private=True)
     while True:
         d = datetime.now() - start_time
         if d.total_seconds() > timeout_secs:
