@@ -26,5 +26,4 @@ def test_list_events(arf, api_user):
     for event in events:
         assert event["timestamp"]
         assert event["event_type"]
-        payload = json.loads(event["payload"])
-        assert payload["report"]
+        assert event["payload"]["report"]

@@ -1,4 +1,5 @@
 import emoji_data_python
+import json
 from rest_framework import serializers
 
 from response.core.models import Action, Event, ExternalUser, Incident, TimelineEvent
@@ -134,7 +135,12 @@ class IncidentSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    payload = serializers.SerializerMethodField()
+
     class Meta:
         model = Event
         fields = ("id", "timestamp", "event_type", "payload")
         read_only_fields = ("id", "timestamp", "event_type", "payload")
+
+    def get_payload(self, instance):
+        return json.loads(instance.payload)
