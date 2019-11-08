@@ -1,21 +1,22 @@
-from datetime import datetime
-
 import logging
-logger = logging.getLogger(__name__)
-
 import os
-
-from response.core.models import Action, Event, Incident
-from response.core.serializers import ActionSerializer, IncidentSerializer
+from datetime import datetime
 
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.module_loading import import_string
 
+from response.core.models import Action, Event, Incident
+from response.core.serializers import ActionSerializer, IncidentSerializer
 
-class ActionEventHandler():
+logger = logging.getLogger(__name__)
 
+
+
+
+
+class ActionEventHandler:
     def handle(sender, instance: Action, **kwargs):
         logger.info(f"Handling post_save for action: {instance}")
 
@@ -25,14 +26,14 @@ class ActionEventHandler():
         # Event payload should be a dict for serializing to JSON.
         event.payload = ActionSerializer(instance).data
         event.payload["incident_id"] = instance.incident.pk
-        if "details_ui" in event.payload: del event.payload["details_ui"]
+        if "details_ui" in event.payload:
+            del event.payload["details_ui"]
 
         event.timestamp = datetime.now(tz=None)
         event.save()
 
 
-class IncidentEventHandler():
-
+class IncidentEventHandler:
     def handle(sender, instance: Incident, **kwargs):
         logger.info(f"Handling post_save for incident: {instance}")
 
@@ -42,7 +43,8 @@ class IncidentEventHandler():
         # Event payload should be a dict for serializing to JSON.
         event.payload = IncidentSerializer(instance).data
         # Actions generate their own events, no need to duplicate them here.
-        if "action_items" in event.payload: del event.payload["action_items"]
+        if "action_items" in event.payload:
+            del event.payload["action_items"]
 
         event.timestamp = datetime.now(tz=None)
         event.save()

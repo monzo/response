@@ -1,8 +1,8 @@
 from .action import ActionFactory
+from .event import EventFactory
 from .incident import IncidentFactory
 from .timeline import TimelineEventFactory
 from .user import ExternalUserFactory, UserFactory
-from .event import EventFactory
 
 __all__ = (
     "IncidentFactory",

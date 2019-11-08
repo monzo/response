@@ -1,7 +1,6 @@
 import factory
-from faker import Factory
-
 from django.db.models.signals import post_save
+from faker import Factory
 
 from response.core.models import Action
 

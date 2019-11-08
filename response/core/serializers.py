@@ -134,7 +134,6 @@ class IncidentSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Event
         fields = ("id", "timestamp", "event_type", "payload")

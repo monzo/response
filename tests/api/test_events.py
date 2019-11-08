@@ -1,11 +1,10 @@
 import json
 
-from tests.factories.event import EventFactory
-
 from django.urls import reverse
 from rest_framework.test import force_authenticate
 
 from response.core.views import EventsViewSet
+from tests.factories.event import EventFactory
 
 
 def test_list_events(arf, api_user):
@@ -21,7 +20,7 @@ def test_list_events(arf, api_user):
     assert "results" in content, "Response didn't have results key"
     events = content["results"]
     assert len(events) == len(
-        persisted_events,
+        persisted_events
     ), "Didn't get expected number of events back"
 
     for event in events:

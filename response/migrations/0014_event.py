@@ -5,18 +5,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('response', '0013_incident_private'),
-    ]
+    dependencies = [("response", "0013_incident_private")]
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField()),
-                ('event_type', models.CharField(max_length=50)),
-                ('payload', models.TextField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timestamp", models.DateTimeField()),
+                ("event_type", models.CharField(max_length=50)),
+                ("payload", models.TextField()),
             ],
-        ),
+        )
     ]
