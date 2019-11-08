@@ -1,19 +1,14 @@
 import logging
-import os
 from datetime import datetime
 
 from django.conf import settings
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.module_loading import import_string
 
 from response.core.models import Action, Event, Incident
 from response.core.serializers import ActionSerializer, IncidentSerializer
 
 logger = logging.getLogger(__name__)
-
-
-
 
 
 class ActionEventHandler:

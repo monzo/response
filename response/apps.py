@@ -16,7 +16,7 @@ class ResponseConfig(AppConfig):
             dialog_handlers,
         )
 
-        from .core import signals
+        from .core import signals  # noqa: F401
 
         site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
             site_settings, "RESPONSE_LOGIN_REQUIRED", True
