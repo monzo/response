@@ -1,4 +1,4 @@
-from .core.models import Action, ExternalUser, Incident, TimelineEvent
+from .core.models import Action, Event, ExternalUser, Incident, TimelineEvent
 from .slack.models import (
     CommsChannel,
     HeadlinePost,
@@ -9,6 +9,7 @@ from .slack.models import (
 
 __all__ = (
     "Action",
+    "Event",
     "Incident",
     "TimelineEvent",
     "ExternalUser",
