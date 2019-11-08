@@ -1,5 +1,6 @@
-import emoji_data_python
 import json
+
+import emoji_data_python
 from rest_framework import serializers
 
 from response.core.models import Action, Event, ExternalUser, Incident, TimelineEvent
