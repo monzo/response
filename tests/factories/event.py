@@ -20,4 +20,4 @@ class EventFactory(factory.DjangoModelFactory):
     # Using an Incident/Event factory here fails with a mysterious error:
     # https://github.com/pytest-dev/pytest-django/issues/713 (using @pytest.mark...
     # didn't resolve it). For now, a static fixture suffices.
-    payload = {"report": "we're out of milk", "impact": "making tea is difficult"}
+    payload = {"report": "we are out of milk", "impact": "making tea is difficult"}
