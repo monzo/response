@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from rest_framework import pagination, viewsets
 
@@ -87,6 +87,6 @@ class EventsViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.EventSerializer
 
     def get_queryset(self):
-        from_ts = self.request.query_params.get('from', None)
-        to_ts = self.request.query_params.get('to', None)
+        from_ts = self.request.query_params.get('from', datetime.now(tz=None)-timedelta(days=1))
+        to_ts = self.request.query_params.get('to', datetime.now(tz=None))
         return Event.objects.filter(timestamp__range=(from_ts, to_ts))
