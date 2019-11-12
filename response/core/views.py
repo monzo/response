@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import pagination, viewsets
 
 from response.core import serializers
@@ -83,3 +85,8 @@ class IncidentTimelineEventViewSet(viewsets.ModelViewSet):
 class EventsViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = serializers.EventSerializer
+
+    def get_queryset(self):
+        from_ts = self.request.query_params.get('from', None)
+        to_ts = self.request.query_params.get('to', None)
+        return Event.objects.filter(timestamp__range=(from_ts, to_ts))
