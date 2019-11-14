@@ -13,10 +13,6 @@ def incident_doc(request: HttpRequest, incident_id: str):
     except Incident.DoesNotExist:
         raise Http404("Incident does not exist")
 
-    # private incident details cannot be viewed by anyone
-    if incident.private:
-        return HttpResponseForbidden()
-
     events = PinnedMessage.objects.filter(incident=incident).order_by("timestamp")
     user_stats = UserStats.objects.filter(incident=incident).order_by("-message_count")[
         :5

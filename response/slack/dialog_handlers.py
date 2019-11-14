@@ -22,7 +22,6 @@ def report_incident(
     impact = submission["impact"]
     lead_id = submission["lead"]
     severity = submission["severity"]
-    private = True if submission.get("private", False) else False
 
     if "incident_type" in submission:
         report_only = submission["incident_type"] == "report"
@@ -46,7 +45,6 @@ def report_incident(
         reporter=reporter,
         report_time=datetime.now(),
         report_only=report_only,
-        private=private,
         summary=summary,
         impact=impact,
         lead=lead,
@@ -74,7 +72,6 @@ def edit_incident(
     impact = submission["impact"]
     lead_id = submission["lead"]
     severity = submission["severity"]
-    private = True if submission.get("private", False) else False
 
     lead = None
     if lead_id:
@@ -88,10 +85,6 @@ def edit_incident(
 
         if not severity and incident.severity:
             raise Exception("Cannot unset severity")
-
-        if private:
-            # making an incident private is irreversible
-            incident.private = private
 
         # deliberately update in this way the post_save signal gets sent
         # (required for the headline post to auto update)

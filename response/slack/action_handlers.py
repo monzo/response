@@ -85,17 +85,6 @@ def handle_edit_incident_button(ac: ActionContext):
         ),
     ]
 
-    if not ac.incident.private:
-        dialog_elements.append(
-            SelectWithOptions(
-                [("Yes (cant't be undone)", "yes")],
-                value=None,
-                label="Make the incident private?",
-                name="private",
-                optional=True,
-            )
-        )
-
     dialog = Dialog(
         title=f"Edit Incident {ac.incident.pk}",
         submit_label="Save",
