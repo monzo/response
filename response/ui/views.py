@@ -1,4 +1,4 @@
-from django.http import Http404, HttpRequest, HttpResponseForbidden
+from django.http import Http404, HttpRequest
 from django.shortcuts import render
 
 from response.core.models import Incident
