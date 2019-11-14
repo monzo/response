@@ -12,7 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class ActionEventHandler:
+    @staticmethod
     def handle(sender, instance: Action, **kwargs):
+        if instance.incident.private:
+            logger.info(f"Skipping action post_save for private incident: {instance}")
+            return
         logger.info(f"Handling post_save for action: {instance}")
 
         event = Event()
@@ -29,7 +33,11 @@ class ActionEventHandler:
 
 
 class IncidentEventHandler:
+    @staticmethod
     def handle(sender, instance: Incident, **kwargs):
+        if instance.private:
+            logger.info(f"Skipping incident post_save for private incident: {instance}")
+            return
         logger.info(f"Handling post_save for incident: {instance}")
 
         event = Event()
