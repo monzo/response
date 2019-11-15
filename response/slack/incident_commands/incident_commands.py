@@ -19,22 +19,6 @@ def send_help_text(incident: Incident, user_id: str, message: str):
     return True, get_help()
 
 
-@__default_incident_command(
-    ["summary"], helptext="Provide a summary of what's going on"
-)
-def update_summary(incident: Incident, user_id: str, message: str):
-    incident.summary = message
-    incident.save()
-    return True, None
-
-
-@__default_incident_command(["impact"], helptext="Explain the impact of this")
-def update_impact(incident: Incident, user_id: str, message: str):
-    incident.impact = message
-    incident.save()
-    return True, None
-
-
 @__default_incident_command(["lead"], helptext="Assign someone as the incident lead")
 def set_incident_lead(incident: Incident, user_id: str, message: str):
     assignee = reference_to_id(message) or user_id
