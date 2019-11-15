@@ -79,7 +79,7 @@ def get_user_profile_by_email(email):
         - or else from the Slack API
     """
     if not email:
-        return None
+        raise SlackError("Can't fetch user without an email")
 
     try:
         external_user = ExternalUser.objects.get(email=email)
