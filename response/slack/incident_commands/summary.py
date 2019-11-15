@@ -1,39 +1,42 @@
-import logging
 import json
+import logging
 
 from response.core.models import Incident
+from response.slack import block_kit, dialog_builder
+from response.slack.decorators import ActionContext, action_handler, dialog_handler
 from response.slack.decorators.incident_command import __default_incident_command
 from response.slack.models import CommsChannel
-from response.slack import block_kit, dialog_builder
-from response.slack.decorators import action_handler, dialog_handler, ActionContext
-
 
 logger = logging.getLogger(__name__)
 
-UPDATE_CURRENT_SUMMARY_ACTION = 'update-current-summary-action'
-SET_NEW_SUMMARY_ACTION = 'set-new-summary-action'
-PROPOSED_MESSAGE_BLOCK_ID = 'proposed'
+UPDATE_CURRENT_SUMMARY_ACTION = "update-current-summary-action"
+SET_NEW_SUMMARY_ACTION = "set-new-summary-action"
+PROPOSED_MESSAGE_BLOCK_ID = "proposed"
 NO_SUMMARY_TEXT = "This incident doesn't have a summary yet."
-CURRENT_TITLE = '*Current summary:*\n'
-PROPOSED_TITLE = '*Proposed summary:*\n'
-UPDATE_SUMMARY_DIALOG = 'update-summary-dialog'
-SUMMARY_UPDATED_TITLE = '*Summary updated to:*\n'
+CURRENT_TITLE = "*Current summary:*\n"
+PROPOSED_TITLE = "*Proposed summary:*\n"
+UPDATE_SUMMARY_DIALOG = "update-summary-dialog"
+SUMMARY_UPDATED_TITLE = "*Summary updated to:*\n"
 
 
-@__default_incident_command(["summary"], helptext="Provide a summary of what's going on")
+@__default_incident_command(
+    ["summary"], helptext="Provide a summary of what's going on"
+)
 def update_summary(incident: Incident, user_id: str, message: str):
     # Easy case. No summary currently and one has been provided
     if message and not incident.summary:
         incident.summary = message
         incident.save()
-        return True, f'{SUMMARY_UPDATED_TITLE}{message}'
+        return True, f"{SUMMARY_UPDATED_TITLE}{message}"
 
     # Either no new summary has been provided, or one already exists
     msg = block_kit.Message()
     msg.add_block(
         block_kit.Section(
             block_id="update",
-            text=block_kit.Text(f"{CURRENT_TITLE}{incident.summary or NO_SUMMARY_TEXT}"),
+            text=block_kit.Text(
+                f"{CURRENT_TITLE}{incident.summary or NO_SUMMARY_TEXT}"
+            ),
             accessory=block_kit.Button(
                 "Update", UPDATE_CURRENT_SUMMARY_ACTION, value=incident.pk
             ),
@@ -49,7 +52,7 @@ def update_summary(incident: Incident, user_id: str, message: str):
                 text=block_kit.Text(f"{PROPOSED_TITLE}{message}"),
                 accessory=block_kit.Button(
                     "Set to this", SET_NEW_SUMMARY_ACTION, value=incident.pk
-                )
+                ),
             )
         )
 
@@ -60,15 +63,15 @@ def update_summary(incident: Incident, user_id: str, message: str):
 
 @action_handler(SET_NEW_SUMMARY_ACTION)
 def handle_set_new_summary(action_context: ActionContext):
-    for block in action_context.message['blocks']:
-        print('Looking at block', block)
-        if block['block_id'] == PROPOSED_MESSAGE_BLOCK_ID:
-            summary = block['text']['text'].replace(PROPOSED_TITLE, '')
+    for block in action_context.message["blocks"]:
+        print("Looking at block", block)
+        if block["block_id"] == PROPOSED_MESSAGE_BLOCK_ID:
+            summary = block["text"]["text"].replace(PROPOSED_TITLE, "")
             action_context.incident.summary = summary
             action_context.incident.save()
 
             comms_channel = CommsChannel.objects.get(incident=action_context.incident)
-            comms_channel.post_in_channel(f'{SUMMARY_UPDATED_TITLE}{summary}')
+            comms_channel.post_in_channel(f"{SUMMARY_UPDATED_TITLE}{summary}")
             return
 
 
@@ -84,7 +87,7 @@ def handle_open_summary_dialog(action_context: ActionContext):
                 name="summary",
                 optional=False,
                 value=action_context.incident.summary,
-            ),
+            )
         ],
     )
 

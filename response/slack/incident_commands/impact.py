@@ -1,23 +1,22 @@
-import logging
 import json
+import logging
 
 from response.core.models import Incident
+from response.slack import block_kit, dialog_builder
+from response.slack.decorators import ActionContext, action_handler, dialog_handler
 from response.slack.decorators.incident_command import __default_incident_command
 from response.slack.models import CommsChannel
-from response.slack import block_kit, dialog_builder
-from response.slack.decorators import action_handler, dialog_handler, ActionContext
-
 
 logger = logging.getLogger(__name__)
 
-UPDATE_CURRENT_IMPACT_ACTION = 'update-current-impact-action'
-SET_NEW_IMPACT_ACTION = 'set-new-impact-action'
-PROPOSED_MESSAGE_BLOCK_ID = 'proposed'
+UPDATE_CURRENT_IMPACT_ACTION = "update-current-impact-action"
+SET_NEW_IMPACT_ACTION = "set-new-impact-action"
+PROPOSED_MESSAGE_BLOCK_ID = "proposed"
 NO_IMPACT_TEXT = "The impact of this incicent hasn't been set yet."
-CURRENT_TITLE = '*Current impact:*\n'
-PROPOSED_TITLE = '*Proposed impact:*\n'
-UPDATE_IMPACT_DIALOG = 'update-impact-dialog'
-IMPACT_UPDATED_TITLE = '*Impact updated to:*\n'
+CURRENT_TITLE = "*Current impact:*\n"
+PROPOSED_TITLE = "*Proposed impact:*\n"
+UPDATE_IMPACT_DIALOG = "update-impact-dialog"
+IMPACT_UPDATED_TITLE = "*Impact updated to:*\n"
 
 
 @__default_incident_command(["impact"], helptext="Explain the impact of this")
@@ -26,7 +25,7 @@ def update_impact(incident: Incident, user_id: str, message: str):
     if message and not incident.impact:
         incident.impact = message
         incident.save()
-        return True, f'{IMPACT_UPDATED_TITLE}{message}'
+        return True, f"{IMPACT_UPDATED_TITLE}{message}"
 
     # Either no new impact has been provided, or one already exists
     msg = block_kit.Message()
@@ -49,7 +48,7 @@ def update_impact(incident: Incident, user_id: str, message: str):
                 text=block_kit.Text(f"{PROPOSED_TITLE}{message}"),
                 accessory=block_kit.Button(
                     "Set to this", SET_NEW_IMPACT_ACTION, value=incident.pk
-                )
+                ),
             )
         )
 
@@ -60,15 +59,15 @@ def update_impact(incident: Incident, user_id: str, message: str):
 
 @action_handler(SET_NEW_IMPACT_ACTION)
 def handle_set_new_impact(action_context: ActionContext):
-    for block in action_context.message['blocks']:
-        print('Looking at block', block)
-        if block['block_id'] == PROPOSED_MESSAGE_BLOCK_ID:
-            impact = block['text']['text'].replace(PROPOSED_TITLE, '')
+    for block in action_context.message["blocks"]:
+        print("Looking at block", block)
+        if block["block_id"] == PROPOSED_MESSAGE_BLOCK_ID:
+            impact = block["text"]["text"].replace(PROPOSED_TITLE, "")
             action_context.incident.impact = impact
             action_context.incident.save()
 
             comms_channel = CommsChannel.objects.get(incident=action_context.incident)
-            comms_channel.post_in_channel(f'{IMPACT_UPDATED_TITLE}{impact}')
+            comms_channel.post_in_channel(f"{IMPACT_UPDATED_TITLE}{impact}")
             return
 
 
@@ -84,7 +83,7 @@ def handle_open_impact_dialog(action_context: ActionContext):
                 name="impact",
                 optional=False,
                 value=action_context.incident.impact,
-            ),
+            )
         ],
     )
 
