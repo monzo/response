@@ -70,16 +70,6 @@ def slash_command(request):
         )
 
     dialog.add_element(
-        SelectWithOptions(
-            [("Yes (can't be undone)", "yes")],
-            label="Is this a private incident?",
-            hint="Will sensitive information be shared in incident comms?",
-            name="private",
-            optional=True,
-        )
-    )
-
-    dialog.add_element(
         TextArea(
             label="Summary",
             name="summary",
