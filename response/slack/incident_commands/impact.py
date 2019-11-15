@@ -14,7 +14,7 @@ SET_NEW_IMPACT_ACTION = "set-new-impact-action"
 PROPOSED_MESSAGE_BLOCK_ID = "proposed"
 UPDATE_IMPACT_DIALOG = "update-impact-dialog"
 
-NO_IMPACT_TEXT = "The impact of this incicent hasn't been set yet."
+NO_IMPACT_TEXT = "The impact of this incident hasn't been set yet."
 CURRENT_TITLE = "*This is the current impact:*\n"
 PROPOSED_TITLE = "*Or would you like to update the impact to this?*\n"
 IMPACT_UPDATED_TITLE = "*The impact has been updated to:*\n"
