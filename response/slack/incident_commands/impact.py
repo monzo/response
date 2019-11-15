@@ -12,11 +12,14 @@ logger = logging.getLogger(__name__)
 UPDATE_CURRENT_IMPACT_ACTION = "update-current-impact-action"
 SET_NEW_IMPACT_ACTION = "set-new-impact-action"
 PROPOSED_MESSAGE_BLOCK_ID = "proposed"
-NO_IMPACT_TEXT = "The impact of this incicent hasn't been set yet."
-CURRENT_TITLE = "*Current impact:*\n"
-PROPOSED_TITLE = "*Proposed impact:*\n"
 UPDATE_IMPACT_DIALOG = "update-impact-dialog"
-IMPACT_UPDATED_TITLE = "*Impact updated to:*\n"
+
+NO_IMPACT_TEXT = "The impact of this incicent hasn't been set yet."
+CURRENT_TITLE = "*This is the current impact:*\n"
+PROPOSED_TITLE = "*Or would you like to update the impact to this?*\n"
+IMPACT_UPDATED_TITLE = "*The impact has been updated to:*\n"
+CHANGE_BUTTON_TEXT = "Change"
+ACCEPT_PROPOSED_TEXT = "Yes"
 
 
 @__default_incident_command(["impact"], helptext="Explain the impact of this")
@@ -34,7 +37,7 @@ def update_impact(incident: Incident, user_id: str, message: str):
             block_id="update",
             text=block_kit.Text(f"{CURRENT_TITLE}{incident.impact or NO_IMPACT_TEXT}"),
             accessory=block_kit.Button(
-                "Update", UPDATE_CURRENT_IMPACT_ACTION, value=incident.pk
+                CHANGE_BUTTON_TEXT, UPDATE_CURRENT_IMPACT_ACTION, value=incident.pk
             ),
         )
     )
@@ -47,7 +50,7 @@ def update_impact(incident: Incident, user_id: str, message: str):
                 block_id=PROPOSED_MESSAGE_BLOCK_ID,
                 text=block_kit.Text(f"{PROPOSED_TITLE}{message}"),
                 accessory=block_kit.Button(
-                    "Set to this", SET_NEW_IMPACT_ACTION, value=incident.pk
+                    ACCEPT_PROPOSED_TEXT, SET_NEW_IMPACT_ACTION, value=incident.pk
                 ),
             )
         )

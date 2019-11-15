@@ -12,11 +12,14 @@ logger = logging.getLogger(__name__)
 UPDATE_CURRENT_SUMMARY_ACTION = "update-current-summary-action"
 SET_NEW_SUMMARY_ACTION = "set-new-summary-action"
 PROPOSED_MESSAGE_BLOCK_ID = "proposed"
-NO_SUMMARY_TEXT = "This incident doesn't have a summary yet."
-CURRENT_TITLE = "*Current summary:*\n"
-PROPOSED_TITLE = "*Proposed summary:*\n"
 UPDATE_SUMMARY_DIALOG = "update-summary-dialog"
-SUMMARY_UPDATED_TITLE = "*Summary updated to:*\n"
+
+NO_SUMMARY_TEXT = "This incident doesn't have a summary yet."
+CURRENT_TITLE = "*This is the current summary:*\n"
+PROPOSED_TITLE = "*Or would you like to update the summary to this?*\n"
+SUMMARY_UPDATED_TITLE = "*The summary has been updated to:*\n"
+CHANGE_BUTTON_TEXT = "Change"
+ACCEPT_PROPOSED_TEXT = "Yes"
 
 
 @__default_incident_command(
@@ -31,6 +34,7 @@ def update_summary(incident: Incident, user_id: str, message: str):
 
     # Either no new summary has been provided, or one already exists
     msg = block_kit.Message()
+
     msg.add_block(
         block_kit.Section(
             block_id="update",
@@ -38,7 +42,7 @@ def update_summary(incident: Incident, user_id: str, message: str):
                 f"{CURRENT_TITLE}{incident.summary or NO_SUMMARY_TEXT}"
             ),
             accessory=block_kit.Button(
-                "Update", UPDATE_CURRENT_SUMMARY_ACTION, value=incident.pk
+                CHANGE_BUTTON_TEXT, UPDATE_CURRENT_SUMMARY_ACTION, value=incident.pk
             ),
         )
     )
@@ -46,12 +50,13 @@ def update_summary(incident: Incident, user_id: str, message: str):
     # if the user has supplied a message, provide the option for them to set it without
     # retyping in the dialog
     if message:
+        msg.add_block(block_kit.Divider())
         msg.add_block(
             block_kit.Section(
                 block_id=PROPOSED_MESSAGE_BLOCK_ID,
                 text=block_kit.Text(f"{PROPOSED_TITLE}{message}"),
                 accessory=block_kit.Button(
-                    "Set to this", SET_NEW_SUMMARY_ACTION, value=incident.pk
+                    ACCEPT_PROPOSED_TEXT, SET_NEW_SUMMARY_ACTION, value=incident.pk
                 ),
             )
         )
