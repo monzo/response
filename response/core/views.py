@@ -8,11 +8,14 @@ from response.core.models.event import Event
 from response.core.models.incident import Incident
 from response.core.models.timeline import TimelineEvent
 from response.core.models.user_external import ExternalUser
+from response.core.util import LargeResultsSetPagination
 
 
 class ExternalUserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExternalUser.objects.all()
     serializer_class = serializers.ExternalUserSerializer
+    # Set page size to 1000
+    pagination_class = LargeResultsSetPagination
 
 
 class ActionViewSet(viewsets.ModelViewSet):
