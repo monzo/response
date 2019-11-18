@@ -1,6 +1,7 @@
 import bleach
 import bleach_whitelist
 from django.conf import settings
+from rest_framework.pagination import PageNumberPagination
 
 
 def sanitize(string):
@@ -14,3 +15,9 @@ def sanitize(string):
         )
 
     return string
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 500
+    max_page_size = 1000
+    page_size_query_param = "page_size"
