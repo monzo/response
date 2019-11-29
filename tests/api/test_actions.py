@@ -31,6 +31,11 @@ def test_list_actions_by_incident(arf, api_user):
         assert action["details"]
         assert "done" in action
         assert action["user"]
+        assert "created_date" in action
+        assert "due_date" in action
+        assert "done_date" in action
+        assert "priority" in action
+        assert "type" in action
 
 
 def test_create_action(arf, api_user):
