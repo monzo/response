@@ -69,10 +69,6 @@ class ActionSerializer(serializers.ModelSerializer):
         )
         validated_data["user"] = user
 
-        if "priority" not in validated_data:
-            # default to low priority
-            validated_data["priority"] = "3"
-
         return Action.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -85,6 +81,10 @@ class ActionSerializer(serializers.ModelSerializer):
             )
         instance.details = validated_data.get("details", instance.details)
         instance.done = validated_data.get("done", instance.done)
+        instance.priority = validated_data.get("priority", instance.priority)
+        instance.type = validated_data.get("type", instance.type)
+        instance.done_date = validated_data.get("done_date", instance.done_date)
+        instance.due_date = validated_data.get("due_date", instance.due_date)
         instance.save()
         return instance
 

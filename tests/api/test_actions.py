@@ -1,4 +1,5 @@
 import json
+import random
 
 import pytest
 from django.urls import reverse
@@ -95,13 +96,27 @@ def test_update_action(arf, api_user):
     updated_action = Action.objects.get(pk=action.pk)
     assert updated_action.details == action_data["details"]
 
+    priorityChoices = ["1", "2", "3"]
+    priorityChoices.remove(action.priority)
     action_data["done"] = not action_data["done"]
+    action_data["priority"] = str(random.choice(priorityChoices))
+    typeChoices = ["1", "2", "3"]
+    typeChoices.remove(action.type)
+    action_data["type"] = str(random.choice(typeChoices))
+    action_data["done_date"] = faker.date_time_between(
+        start_date=action.created_date, end_date="now"
+    )
+    action_data["due_date"] = faker.date_time_between(start_date="-6m", end_date="+6m")
     response = update_action(arf, api_user, incident.pk, action_data)
     print(response.rendered_content)
     assert response.status_code == 200, "Got non-201 response from API"
 
     updated_action = Action.objects.get(pk=action.pk)
     assert updated_action.done == action_data["done"]
+    assert updated_action.priority == action_data["priority"]
+    assert updated_action.type == action_data["type"]
+    assert updated_action.done_date == action_data["done_date"]
+    assert updated_action.due_date == action_data["due_date"]
 
 
 def test_update_action_sanitized(arf, api_user):
