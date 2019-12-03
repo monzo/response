@@ -44,7 +44,7 @@ class SlackClient(object):
                     try:
                         # Increase backoff with every attempt
                         backoff_seconds = self.retry_base_backoff_seconds * i
-                        logging.warn(
+                        logging.warning(
                             f"Retrying request to {api_endpoint} after error {error}. Backing off {backoff_seconds:.2f}s (attempt {i} of {self.max_retry_attempts})"
                         )
 

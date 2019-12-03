@@ -37,10 +37,28 @@ class ActionSerializer(serializers.ModelSerializer):
     # should be applied to the details field.
     details_ui = serializers.SerializerMethodField()
 
+    # This ensures we can't unset priority
+    # https://www.django-rest-framework.org/api-guide/fields/#required
+    # `required = False` means the field doesn't have to be included when the json request is
+    # deserialised (including creation), and so it remains unchanged (if None, it remains None).
+    # `allow_null` is set to False by default so we still demand a value is given _if_ it's sent in the json.
+    priority = serializers.CharField(required=False)
+
     class Meta:
         model = Action
-        fields = ("id", "details", "done", "user", "details_ui")
-        read_only_fields = ("id",)
+        fields = (
+            "id",
+            "details",
+            "done",
+            "user",
+            "details_ui",
+            "created_date",
+            "done_date",
+            "due_date",
+            "priority",
+            "type",
+        )
+        read_only_fields = ("id", "created_date")
 
     def create(self, validated_data):
         user = ExternalUser.objects.get(
@@ -50,6 +68,7 @@ class ActionSerializer(serializers.ModelSerializer):
             full_name=validated_data["user"]["full_name"],
         )
         validated_data["user"] = user
+
         return Action.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -62,6 +81,10 @@ class ActionSerializer(serializers.ModelSerializer):
             )
         instance.details = validated_data.get("details", instance.details)
         instance.done = validated_data.get("done", instance.done)
+        instance.priority = validated_data.get("priority", instance.priority)
+        instance.type = validated_data.get("type", instance.type)
+        instance.done_date = validated_data.get("done_date", instance.done_date)
+        instance.due_date = validated_data.get("due_date", instance.due_date)
         instance.save()
         return instance
 
