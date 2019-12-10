@@ -138,6 +138,13 @@ class Incident(models.Model):
         else:
             return ":fire:"
 
+    def badge_type(self):
+        if self.is_closed():
+            return "badge-success"
+        elif (self.severity and self.severity) < 3:
+            return "badge-danger"
+        return "badge-warning"
+
     def action_items(self):
         return core.models.Action.objects.filter(incident=self)
 

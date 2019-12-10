@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% load unslackify %}
+{% load markdown_filter %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "incident_doc.css" %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="row pb-4">
+    <div class="col-lg-12 text-center">
+        {% comment %} ----- Heading ----- {% endcomment %}
+        <h1 class="mt-3" id="title"><a href="">Incidents</a></h1>
+    </div>
+
+    <div class="col-lg-12">
+      <ul>
+        {% for incident in incidents %}
+        <li>
+          {{ incident.severity_emoji }}
+          <a href="/incident/{{incident.pk}}" target="_blank">Incident {{incident.pk}}&nbsp;</a>
+          <span class="badge {{ incident.badge_type }} blink_me">{{ incident.status_text|upper }}</span>
+          - {{incident.report}}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+</div>
+{% endblock %}
