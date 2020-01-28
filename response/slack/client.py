@@ -64,7 +64,13 @@ class SlackClient(object):
 
     def users_list(self):
         logger.info(f"Listing Slack users")
-        return self.api_call("users.list")
+        response = self.api_call("users.list")
+        result = response
+        while "response_metadata" in response:
+            next_cursor = response["response_metadata"]["next_cursor"]
+            response = self.get_paginated_users(limit=999, cursor=next_cursor)
+            result["members"].update(response["members"])
+        return result
 
     def get_paginated_users(self, limit=0, cursor=None):
         response = self.api_call("users.list", limit=limit, cursor=cursor)
