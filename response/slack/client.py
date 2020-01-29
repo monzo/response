@@ -67,7 +67,9 @@ class SlackClient(object):
         response = self.api_call("users.list")
         result = response
         while "response_metadata" in response:
-            next_cursor = response["response_metadata"]["next_cursor"]
+            next_cursor = response["response_metadata"].get("next_cursor")
+            if next_cursor is None or next_cursor == "":
+                break
             response = self.get_paginated_users(limit=999, cursor=next_cursor)
             result["members"].extend(response["members"])
         return result
