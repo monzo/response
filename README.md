@@ -36,7 +36,7 @@ $ pip install django-incident-response
 ```
 
 In `settings.py`, add these lines to `INSTALLED_APPS`:
-```
+```python
 INSTALLED_APPS = [
     ...
     "after_response",
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
 Add the following to `settings.py`:
 
-```
+```python
 USE_TZ = False # if this exists elsewhere in your settings.py, just update the value
 
 STATIC_ROOT = "static"
@@ -80,7 +80,7 @@ RESPONSE_LOGIN_REQUIRED = True
 ```
 
 In `urls.py`, add the following to `urlpatterns` (you may also need to import `include`):
-```
+```python
 urlpatterns = [
     ...
     path('slack/', include('response.slack.urls')),
