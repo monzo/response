@@ -11,15 +11,14 @@ SLACK_ACTION_MAPPINGS = {}
 
 
 class ActionContext:
-    def __init__(
-        self, incident, user_id, message, value, trigger_id, response_url
-    ):
+    def __init__(self, incident, user_id, message, value, trigger_id, response_url):
         self.incident = incident
         self.user_id = user_id
         self.message = message
         self.value = value
         self.trigger_id = trigger_id
         self.response_url = response_url
+
 
 def action_handler(callback_id, func=None):
     def _wrapper(fn):
@@ -63,7 +62,7 @@ def handle_action(payload):
         else:
             logger.error(f"Can't handle action with type {action_type}")
             return
- 
+
         # we want to tie all actions to an incident, and have two ways to do this:
         # - if action comes from a comms channel, lookup the incident by comms channel id
         # - if not in comms channel, we rely on the button value containing the incident id
@@ -89,5 +88,3 @@ def handle_action(payload):
         )
 
         handler(action_context)
-
-
