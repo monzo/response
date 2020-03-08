@@ -19,14 +19,17 @@ class IncidentManager(models.Manager):
         impact=None,
         lead=None,
         severity=None,
+        start_time=None,
+        end_time=None,
     ):
         incident = self.create(
             report=report,
             reporter=reporter,
             report_time=report_time,
+            start_time=start_time if start_time else report_time,
+            end_time=end_time,
             report_only=report_only,
             private=private,
-            start_time=report_time,
             summary=summary,
             impact=impact,
             lead=lead,

@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from response.core.models.incident import Incident
+from response.slack import block_kit, report_flow
 from response.slack.authentication import slack_authenticate
 from response.slack.cache import update_user_cache
 from response.slack.decorators import (
@@ -13,6 +14,7 @@ from response.slack.decorators import (
     handle_dialog,
     handle_event,
     handle_notifications,
+    handle_view,
 )
 from response.slack.dialog_builder import (
     Dialog,
@@ -32,78 +34,21 @@ def slash_command(request):
     """
     Handles slash commands from slack
     More details here: https://api.slack.com/slash-commands
-    Note: The order the elements are specified is the order they
-    appear in the slack dialog
 
     @param request the request from slack containing the slash command
     @return: return a HTTP response to indicate the request was handled
     """
 
     user_id = request.POST.get("user_id")
+    channel_id = request.POST.get("channel_id")
     trigger_id = request.POST.get("trigger_id")
     report = request.POST.get("text")
 
-    dialog = Dialog(
-        title="Report an Incident",
-        submit_label="Report",
-        elements=[
-            Text(
-                label="Report",
-                name="report",
-                placeholder="What's the tl;dr?",
-                value=report,
-            )
-        ],
-    )
-
-    if hasattr(settings, "INCIDENT_REPORT_CHANNEL_ID"):
-        dialog.add_element(
-            SelectWithOptions(
-                [
-                    ("Yes - this is a live incident happening right now", "live"),
-                    ("No - this is just a report of something that happened", "report"),
-                ],
-                label="Is this a live incident?",
-                name="incident_type",
-                optional=False,
-            )
-        )
-
-    dialog.add_element(
-        TextArea(
-            label="Summary",
-            name="summary",
-            optional=True,
-            placeholder="Can you share any more details?",
-        )
-    )
-
-    dialog.add_element(
-        TextArea(
-            label="Impact",
-            name="impact",
-            optional=True,
-            placeholder="Who or what might be affected?",
-            hint="Think about affected people, systems, and processes",
-        )
-    )
-
-    dialog.add_element(SelectFromUsers(label="Lead", name="lead", optional=True))
-
-    dialog.add_element(
-        SelectWithOptions(
-            [(s.capitalize(), i) for i, s in Incident.SEVERITIES],
-            label="Severity",
-            name="severity",
-            optional=True,
-        )
-    )
-
     logger.info(
-        f"Handling Slack slash command for user {user_id}, report {report} - opening dialog"
+        f"Handling Slack slash command for user {user_id}, report {report} - opening modal"
     )
+    report_flow.start_report_flow(user_id, channel_id, report, trigger_id)
 
-    dialog.send_open_dialog(INCIDENT_REPORT_DIALOG, trigger_id)
     return HttpResponse()
 
 
@@ -125,6 +70,8 @@ def action(request):
         handle_dialog.after_response(payload)
     elif action_type == "block_actions":
         handle_action.after_response(payload)
+    elif action_type == "view_submission":
+        handle_view.after_response(payload)
     else:
         logger.error(f"No handler for action type {action_type}")
 

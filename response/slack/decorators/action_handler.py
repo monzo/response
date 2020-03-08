@@ -11,13 +11,11 @@ SLACK_ACTION_MAPPINGS = {}
 
 
 class ActionContext:
-    def __init__(
-        self, incident, user_id, message, button_value, trigger_id, response_url
-    ):
+    def __init__(self, incident, user_id, message, value, trigger_id, response_url):
         self.incident = incident
         self.user_id = user_id
         self.message = message
-        self.button_value = button_value
+        self.value = value
         self.trigger_id = trigger_id
         self.response_url = response_url
 
@@ -39,8 +37,10 @@ def remove_action_handler(callback_id):
 @after_response.enable
 def handle_action(payload):
     actions = payload["actions"]
+
     if actions:
-        action_id = actions[0]["action_id"]
+        action = actions[0]
+        action_id = action["action_id"]
 
         if action_id not in SLACK_ACTION_MAPPINGS:
             logger.error(f"Can't find handler for action id {action_id}")
@@ -50,10 +50,18 @@ def handle_action(payload):
 
         user_id = payload["user"]["id"]
         channel_id = payload["channel"]["id"]
-        button_value = actions[0]["value"]
         message = payload["message"]
         trigger_id = payload["trigger_id"]
         response_url = payload["response_url"]
+
+        action_type = action["type"]
+        if action_type == "button":
+            value = action["value"]
+        elif action_type == "static_select":
+            value = action["selected_option"]["value"]
+        else:
+            logger.error(f"Can't handle action with type {action_type}")
+            return
 
         # we want to tie all actions to an incident, and have two ways to do this:
         # - if action comes from a comms channel, lookup the incident by comms channel id
@@ -62,7 +70,7 @@ def handle_action(payload):
             comms_channel = CommsChannel.objects.get(channel_id=channel_id)
             incident = comms_channel.incident
         except CommsChannel.DoesNotExist:
-            incident_id = button_value
+            incident_id = value
             incident = Incident.objects.get(pk=incident_id)
         except Incident.DoesNotExist:
             logger.error(
@@ -74,7 +82,7 @@ def handle_action(payload):
             incident=incident,
             user_id=user_id,
             message=message,
-            button_value=button_value,
+            value=value,
             trigger_id=trigger_id,
             response_url=response_url,
         )

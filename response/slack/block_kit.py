@@ -26,6 +26,19 @@ class Message:
             channel, blocks=self.serialize(), fallback_text=self.fallback_text, ts=ts
         )
 
+    def open_modal(
+        self, trigger_id, callback_id, title, submit, close, private_metadata=None
+    ):
+        return settings.SLACK_CLIENT.open_modal(
+            trigger_id,
+            callback_id,
+            title,
+            submit,
+            close,
+            self.serialize(),
+            private_metadata=private_metadata,
+        )
+
 
 class Block:
     def __init__(self, block_id=None):
@@ -94,7 +107,8 @@ class Divider(Block):
 
 
 class Confirm(Block):
-    def __init__(self, title, text, confirm, deny):
+    def __init__(self, title, text, confirm, deny, block_id=None):
+        super().__init__(block_id=block_id)
         self.title = title
         self.text = text
         self.confirm = confirm
@@ -109,6 +123,36 @@ class Confirm(Block):
         }
 
 
+class Text(Block):
+    def __init__(
+        self, text, title=None, text_type="mrkdwn", add_new_line=False, block_id=None
+    ):
+        super().__init__(block_id=block_id)
+        self.text_type = text_type
+        self.text = text
+        self.title = title
+        self.add_new_line = add_new_line
+
+    def serialize(self):
+        text = f"{self.text}\n\u00A0" if self.add_new_line else self.text
+
+        return {
+            "type": self.text_type,
+            "text": self.text if not self.title else f"*{self.title}*\n{text}",
+        }
+
+
+class Context(Block):
+    def __init__(self, text):
+        self.text = text
+
+    def serialize(self):
+        return {"type": "context", "elements": [{"type": "mrkdwn", "text": self.text}]}
+
+
+#
+#  These are action accessories for inside section blocks
+#
 class Button:
     def __init__(self, text, action_id, value=None, confirm=None):
         self.text = Text(text=text, text_type="plain_text")
@@ -132,17 +176,171 @@ class Button:
         return button
 
 
-class Text:
-    def __init__(self, text, title=None, text_type="mrkdwn", add_new_line=False):
-        self.text_type = text_type
+class StaticSelectOption:
+    def __init__(self, text, value):
         self.text = text
-        self.title = title
-        self.add_new_line = add_new_line
+        self.value = value
 
     def serialize(self):
-        text = f"{self.text}\n\u00A0" if self.add_new_line else self.text
-
         return {
-            "type": self.text_type,
-            "text": self.text if not self.title else f"*{self.title}*\n{text}",
+            "text": {"type": "plain_text", "emoji": True, "text": self.text},
+            "value": self.value,
         }
+
+
+class StaticSelect:
+    def __init__(self, options, action_id, placeholder_text=None):
+        self.options = options
+        self.placeholder_text = placeholder_text
+        self.action_id = action_id
+
+    def serialize(self):
+        serialized = {
+            "type": "static_select",
+            "action_id": self.action_id,
+            "options": [o.serialize() for o in self.options],
+        }
+
+        if self.placeholder_text:
+            serialized["placeholder"] = {
+                "type": "plain_text",
+                "emoji": True,
+                "text": self.placeholder_text,
+            }
+
+        return serialized
+
+
+#
+# These are inputs
+#
+
+
+class PlainTextInput(Block):
+    def __init__(
+        self,
+        label,
+        action_id,
+        initial_value=None,
+        placeholder_text=None,
+        multiline=False,
+        optional=False,
+        block_id=None,
+    ):
+        super().__init__(block_id=block_id)
+        self.label = label
+        self.initial_value = initial_value
+        self.placeholder_text = placeholder_text
+        self.action_id = action_id
+        self.multiline = multiline
+        self.optional = optional
+
+    def serialize(self):
+        block = {
+            "block_id": self.block_id,
+            "type": "input",
+            "element": {
+                "type": "plain_text_input",
+                "multiline": self.multiline,
+                "action_id": self.action_id,
+            },
+            "label": {"type": "plain_text", "text": self.label, "emoji": True},
+            "optional": self.optional,
+        }
+
+        if self.placeholder_text:
+            block["element"]["placeholder"] = {
+                "type": "plain_text",
+                "text": self.placeholder_text,
+            }
+
+        if self.initial_value:
+            block["element"]["initial_value"] = self.initial_value
+
+        print(block)
+        return block
+
+
+class StaticSelectInput(Block):
+    def __init__(
+        self,
+        label,
+        options,
+        action_id,
+        initial_option=None,
+        placeholder_text=None,
+        optional=False,
+        block_id=None,
+    ):
+        super().__init__(block_id=block_id)
+        self.label = label
+        self.options = options
+        self.placeholder_text = placeholder_text
+        self.action_id = action_id
+        self.optional = optional
+        self.initial_option = initial_option
+
+    def serialize(self):
+        serialized = {
+            "block_id": self.block_id,
+            "type": "input",
+            "element": {
+                "type": "static_select",
+                "action_id": self.action_id,
+                "options": [o.serialize() for o in self.options],
+            },
+            "optional": self.optional,
+            "label": {"type": "plain_text", "text": self.label, "emoji": True},
+        }
+
+        if self.placeholder_text:
+            serialized["element"]["placeholder"] = {
+                "type": "plain_text",
+                "emoji": True,
+                "text": self.placeholder_text,
+            }
+
+        if self.initial_option:
+            serialized["element"]["initial_option"] = self.initial_option
+
+        return serialized
+
+
+class UserSelect(Block):
+    def __init__(
+        self,
+        label,
+        action_id,
+        block_id=None,
+        initial_user=None,
+        placeholder_text=None,
+        optional=False,
+    ):
+        super().__init__(block_id=block_id)
+        self.label = label
+        self.initial_user = initial_user
+        self.placeholder_text = placeholder_text
+        self.action_id = action_id
+        self.optional = optional
+
+    def serialize(self):
+        serialized = {
+            "block_id": self.block_id,
+            "type": "input",
+            "element": {
+                "type": "users_select",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": self.placeholder_text,
+                    "emoji": True,
+                },
+                "action_id": self.action_id,
+            },
+            "optional": self.optional,
+            "label": {"type": "plain_text", "text": self.label, "emoji": True},
+        }
+
+        if self.initial_user:
+            serialized["element"]["initial_user"] = self.initial_user
+
+        return serialized
