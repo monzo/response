@@ -146,3 +146,38 @@ class Text:
             "type": self.text_type,
             "text": self.text if not self.title else f"*{self.title}*\n{text}",
         }
+
+
+class StaticSelectOption:
+    def __init__(self, text, value):
+        self.text = text
+        self.value = value
+
+    def serialize(self):
+        return {
+            "text": {"type": "plain_text", "emoji": True, "text": self.text},
+            "value": self.value,
+        }
+
+
+class StaticSelect:
+    def __init__(self, options, action_id, placeholder_text=None):
+        self.options = options
+        self.placeholder_text = placeholder_text
+        self.action_id = action_id
+
+    def serialize(self):
+        serialized = {
+            "type": "static_select",
+            "action_id": self.action_id,
+            "options": [o.serialize() for o in self.options],
+        }
+
+        if self.placeholder_text:
+            serialized["placeholder"] = {
+                "type": "plain_text",
+                "emoji": True,
+                "text": self.placeholder_text,
+            }
+
+        return serialized
