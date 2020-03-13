@@ -115,7 +115,7 @@ class Incident(models.Model):
             if sev_id == self.severity:
                 return text
         return None
-    
+
     def severity_emoji(self):
         if not self.severity:
             return "☁️"
