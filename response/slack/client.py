@@ -189,6 +189,18 @@ class SlackClient(object):
             attachments=attachments,
         )
 
+    def open_modal(self, trigger_id, callback_id, title, submit, close, blocks):
+        view = {
+            "type": "modal",
+            "callback_id": callback_id,
+            "title": {"type": "plain_text", "text": title},
+            "submit": {"type": "plain_text", "text": submit, "emoji": True},
+            "close": {"type": "plain_text", "text": close, "emoji": True},
+            "blocks": blocks,
+        }
+
+        return self.api_call("views.open", trigger_id=trigger_id, view=view)
+
     def send_or_update_message_block(self, channel_id, blocks, fallback_text, ts=None):
         api_call = "chat.postMessage" if not ts else "chat.update"
 
