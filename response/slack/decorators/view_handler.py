@@ -6,15 +6,17 @@ logger = logging.getLogger(__name__)
 
 VIEW_HANDLERS = {}
 
+
 class ViewContext:
-    def __init__(self, form_data, private_metadata, user_id, trigger_id, view_id, response_url):
+    def __init__(
+        self, form_data, private_metadata, user_id, trigger_id, view_id, response_url
+    ):
         self.form_data = form_data
         self.private_metadata = private_metadata
         self.user_id = user_id
         self.trigger_id = trigger_id
         self.view_id = view_id
         self.response_url = response_url
-
 
 
 def view_handler(callback_id, func=None):
@@ -54,16 +56,16 @@ def handle_view(payload):
                 continue
 
             form_data[action_id] = value
-            
+
     # Extract any private metadata
-    private_metadata = json.loads(payload["view"]["private_metadata"]) 
-        
+    private_metadata = json.loads(payload["view"]["private_metadata"])
+
     view_context = ViewContext(
         form_data,
         private_metadata,
         payload["user"]["id"],
         payload["trigger_id"],
         payload["view"]["id"],
-        payload["response_urls"]
+        payload["response_urls"],
     )
     handler(view_context)

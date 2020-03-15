@@ -190,7 +190,16 @@ class SlackClient(object):
             attachments=attachments,
         )
 
-    def open_modal(self, trigger_id, callback_id, title, submit, close, blocks, private_metadata=None):
+    def open_modal(
+        self,
+        trigger_id,
+        callback_id,
+        title,
+        submit,
+        close,
+        blocks,
+        private_metadata=None,
+    ):
         view = {
             "type": "modal",
             "callback_id": callback_id,
