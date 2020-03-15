@@ -26,9 +26,9 @@ class Message:
             channel, blocks=self.serialize(), fallback_text=self.fallback_text, ts=ts
         )
 
-    def open_modal(self, trigger_id, callback_id, title, submit, close):
+    def open_modal(self, trigger_id, callback_id, title, submit, close, private_metadata=None):
         return settings.SLACK_CLIENT.open_modal(
-            trigger_id, callback_id, title, submit, close, blocks=self.serialize()
+            trigger_id, callback_id, title, submit, close, self.serialize(), private_metadata=private_metadata
         )
 
 

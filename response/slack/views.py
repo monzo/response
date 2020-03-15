@@ -44,13 +44,14 @@ def slash_command(request):
     """
 
     user_id = request.POST.get("user_id")
+    channel_id = request.POST.get("channel_id")
     trigger_id = request.POST.get("trigger_id")
     report = request.POST.get("text")
 
     logger.info(
         f"Handling Slack slash command for user {user_id}, report {report} - opening dialog"
     )
-    report_flow.start_report(user_id, report, trigger_id)
+    report_flow.start_report_flow(user_id, channel_id, report, trigger_id)
 
     return HttpResponse()
 

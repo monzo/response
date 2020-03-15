@@ -1,5 +1,6 @@
 import logging
 import time
+import json
 
 import slackclient
 from slugify import slugify
@@ -189,7 +190,7 @@ class SlackClient(object):
             attachments=attachments,
         )
 
-    def open_modal(self, trigger_id, callback_id, title, submit, close, blocks):
+    def open_modal(self, trigger_id, callback_id, title, submit, close, blocks, private_metadata=None):
         view = {
             "type": "modal",
             "callback_id": callback_id,
@@ -197,6 +198,7 @@ class SlackClient(object):
             "submit": {"type": "plain_text", "text": submit, "emoji": True},
             "close": {"type": "plain_text", "text": close, "emoji": True},
             "blocks": blocks,
+            "private_metadata": json.dumps(private_metadata),
         }
 
         return self.api_call("views.open", trigger_id=trigger_id, view=view)

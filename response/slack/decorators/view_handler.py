@@ -1,9 +1,20 @@
 import logging
+import json
 import after_response
 
 logger = logging.getLogger(__name__)
 
 VIEW_HANDLERS = {}
+
+class ViewContext:
+    def __init__(self, form_data, private_metadata, user_id, trigger_id, view_id, response_url):
+        self.form_data = form_data
+        self.private_metadata = private_metadata
+        self.user_id = user_id
+        self.trigger_id = trigger_id
+        self.view_id = view_id
+        self.response_url = response_url
+
 
 
 def view_handler(callback_id, func=None):
@@ -26,7 +37,8 @@ def handle_view(payload):
 
     handler = VIEW_HANDLERS[callback_id]
 
-    view_submission = {}
+    # Extract form data from view
+    form_data = {}
     for _, block in payload["view"]["state"]["values"].items():
         for action_id, action in block.items():
             action_type = action["type"]
@@ -41,6 +53,17 @@ def handle_view(payload):
             else:
                 continue
 
-            view_submission[action_id] = value
+            form_data[action_id] = value
             
-    handler(payload["trigger_id"], payload["user"]["id"], view_submission)
+    # Extract any private metadata
+    private_metadata = json.loads(payload["view"]["private_metadata"]) 
+        
+    view_context = ViewContext(
+        form_data,
+        private_metadata,
+        payload["user"]["id"],
+        payload["trigger_id"],
+        payload["view"]["id"],
+        payload["response_urls"]
+    )
+    handler(view_context)
