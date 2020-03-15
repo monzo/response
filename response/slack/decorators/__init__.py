@@ -9,6 +9,7 @@ from .incident_notification import (
     single_notification,
 )
 from .keyword_handler import handle_keywords, keyword_handler
+from .view_handler import handle_view, view_handler
 
 __all__ = (
     "ActionContext",
@@ -26,4 +27,5 @@ __all__ = (
     "handle_action",
     "handle_dialog",
     "handle_notifications",
+    "view_handler",
 )
