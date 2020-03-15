@@ -298,7 +298,7 @@ class StaticSelectInput(Block):
                 "emoji": True,
                 "text": self.placeholder_text,
             }
-        
+
         if self.initial_option:
             serialized["element"]["initial_option"] = self.initial_option
 

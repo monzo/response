@@ -1,13 +1,12 @@
 from datetime import datetime
 
-from response.slack import block_kit
-from response.slack.decorators.view_handler import view_handler, ViewContext
-from response.core.models import ExternalUser, Incident
-from response.slack.cache import get_user_profile
-from response.slack.reference_utils import channel_reference
-
-
 from django.conf import settings
+
+from response.core.models import ExternalUser, Incident
+from response.slack import block_kit
+from response.slack.cache import get_user_profile
+from response.slack.decorators.view_handler import ViewContext, view_handler
+from response.slack.reference_utils import channel_reference
 
 
 def start_report_flow(user_id, channel_id, report, trigger_id):
@@ -247,7 +246,6 @@ def report_only_capture_submit(vc: ViewContext):
     settings.SLACK_CLIENT.send_ephemeral_message(channel_id, vc.user_id, text)
 
 
-
 def edit_incident(incident, trigger_id):
     msg = block_kit.Message()
 
@@ -263,12 +261,12 @@ def edit_incident(incident, trigger_id):
 
     msg.add_block(
         block_kit.UserSelect(
-            label="Lead", 
+            label="Lead",
             action_id="incident-lead",
             block_id="incident-lead",
             initial_user=incident.lead.external_id,
             placeholder_text="Who's leading this incident?",
-            optional=True
+            optional=True,
         )
     )
 
@@ -282,8 +280,8 @@ def edit_incident(incident, trigger_id):
             action_id="severity",
             block_id="severity",
             initial_option=block_kit.StaticSelectOption(
-                incident.severity_text().capitalize(), 
-                incident.severity).serialize()
+                incident.severity_text().capitalize(), incident.severity
+            ).serialize(),
         )
     )
 
@@ -295,7 +293,7 @@ def edit_incident(incident, trigger_id):
             placeholder_text="Can you share any more details?",
             initial_value=incident.summary,
             multiline=True,
-            optional=True
+            optional=True,
         )
     )
 
@@ -309,7 +307,7 @@ def edit_incident(incident, trigger_id):
             placeholder_text="Who or what might be affected?",
             initial_value=incident.impact,
             multiline=True,
-            optional=True
+            optional=True,
         )
     )
 
@@ -325,8 +323,9 @@ def edit_incident(incident, trigger_id):
         "Edit Incident",
         "Save",
         "Cancel",
-        private_metadata={"incident_id": incident.pk}
+        private_metadata={"incident_id": incident.pk},
     )
+
 
 @view_handler("edit_incident")
 def edit_incident_submit(vc: ViewContext):
@@ -340,7 +339,7 @@ def edit_incident_submit(vc: ViewContext):
     incident.severity = vc.form_data["severity"]
     incident.summary = vc.form_data["summary"]
     incident.impact = vc.form_data["impact"]
-    
+
     user_id = vc.form_data["incident-lead"]
     name = get_user_profile(user_id)["name"]
     incident.lead, _ = ExternalUser.objects.get_or_create_slack(
@@ -348,5 +347,3 @@ def edit_incident_submit(vc: ViewContext):
     )
 
     incident.save()
-    
-

@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from response.core.models.incident import Incident
+from response.slack import block_kit, report_flow
 from response.slack.authentication import slack_authenticate
 from response.slack.cache import update_user_cache
 from response.slack.decorators import (
@@ -22,10 +23,7 @@ from response.slack.dialog_builder import (
     Text,
     TextArea,
 )
-from response.slack import block_kit
 from response.slack.settings import INCIDENT_REPORT_DIALOG
-
-from response.slack import report_flow
 
 logger = logging.getLogger(__name__)
 

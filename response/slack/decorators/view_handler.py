@@ -1,5 +1,6 @@
-import logging
 import json
+import logging
+
 import after_response
 
 logger = logging.getLogger(__name__)

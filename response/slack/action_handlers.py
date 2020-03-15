@@ -55,4 +55,3 @@ def handle_create_comms_channel(ac: ActionContext):
 @action_handler(HeadlinePost.EDIT_INCIDENT_BUTTON)
 def handle_edit_incident_button(ac: ActionContext):
     edit_incident(ac.incident, ac.trigger_id)
-
