@@ -52,7 +52,10 @@ def handle_view(payload):
                     value = None
             elif action_type == "static_select":
                 value = action["selected_option"]["value"]
+            elif action_type == "users_select":
+                value = action["selected_user"]
             else:
+                logger.error(f"Unknown action type {action_type}: {action}")
                 continue
 
             form_data[action_id] = value

@@ -245,3 +245,108 @@ def report_only_capture_submit(vc: ViewContext):
     )
 
     settings.SLACK_CLIENT.send_ephemeral_message(channel_id, vc.user_id, text)
+
+
+
+def edit_incident(incident, trigger_id):
+    msg = block_kit.Message()
+
+    msg.add_block(
+        block_kit.PlainTextInput(
+            label="Report",
+            placeholder_text="What's the tl;dr?",
+            initial_value=incident.report,
+            action_id="report",
+            block_id="report",
+        )
+    )
+
+    msg.add_block(
+        block_kit.UserSelect(
+            label="Lead", 
+            action_id="incident-lead",
+            block_id="incident-lead",
+            initial_user=incident.lead.external_id,
+            placeholder_text="Who's leading this incident?",
+            optional=True
+        )
+    )
+
+    msg.add_block(
+        block_kit.StaticSelectInput(
+            options=[
+                block_kit.StaticSelectOption(sev.capitalize(), i)
+                for i, sev in Incident.SEVERITIES
+            ],
+            label="Severity",
+            action_id="severity",
+            block_id="severity",
+            initial_option=block_kit.StaticSelectOption(
+                incident.severity_text().capitalize(), 
+                incident.severity).serialize()
+        )
+    )
+
+    msg.add_block(
+        block_kit.PlainTextInput(
+            label="Summary",
+            action_id="summary",
+            block_id="summary",
+            placeholder_text="Can you share any more details?",
+            initial_value=incident.summary,
+            multiline=True,
+            optional=True
+        )
+    )
+
+    msg.add_block(block_kit.Context("This should fully explain what's happened"))
+
+    msg.add_block(
+        block_kit.PlainTextInput(
+            label="Impact",
+            action_id="impact",
+            block_id="impact",
+            placeholder_text="Who or what might be affected?",
+            initial_value=incident.impact,
+            multiline=True,
+            optional=True
+        )
+    )
+
+    msg.add_block(
+        block_kit.Context(
+            "This should detail any impacted processes, people, or systems"
+        )
+    )
+
+    msg.open_modal(
+        trigger_id,
+        "edit_incident",
+        "Edit Incident",
+        "Save",
+        "Cancel",
+        private_metadata={"incident_id": incident.pk}
+    )
+
+@view_handler("edit_incident")
+def edit_incident_submit(vc: ViewContext):
+    incident_id = vc.private_metadata["incident_id"]
+    incident = Incident.objects.get(pk=incident_id)
+
+    print(vc.form_data)
+
+    # Update the fields
+    incident.report = vc.form_data["report"]
+    incident.severity = vc.form_data["severity"]
+    incident.summary = vc.form_data["summary"]
+    incident.impact = vc.form_data["impact"]
+    
+    user_id = vc.form_data["incident-lead"]
+    name = get_user_profile(user_id)["name"]
+    incident.lead, _ = ExternalUser.objects.get_or_create_slack(
+        external_id=user_id, display_name=name
+    )
+
+    incident.save()
+    
+

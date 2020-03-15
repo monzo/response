@@ -267,6 +267,7 @@ class StaticSelectInput(Block):
         label,
         options,
         action_id,
+        initial_option=None,
         placeholder_text=None,
         optional=False,
         block_id=None,
@@ -277,6 +278,7 @@ class StaticSelectInput(Block):
         self.placeholder_text = placeholder_text
         self.action_id = action_id
         self.optional = optional
+        self.initial_option = initial_option
 
     def serialize(self):
         serialized = {
@@ -291,11 +293,14 @@ class StaticSelectInput(Block):
         }
 
         if self.placeholder_text:
-            serialized["element"]["placeholder"]: {
+            serialized["element"]["placeholder"] = {
                 "type": "plain_text",
                 "emoji": True,
                 "text": self.placeholder_text,
             }
+        
+        if self.initial_option:
+            serialized["element"]["initial_option"] = self.initial_option
 
         return serialized
 
@@ -305,10 +310,10 @@ class UserSelect(Block):
         self,
         label,
         action_id,
+        block_id=None,
         initial_user=None,
         placeholder_text=None,
         optional=False,
-        block_id=None,
     ):
         super().__init__(block_id=block_id)
         self.label = label
@@ -327,9 +332,9 @@ class UserSelect(Block):
                     "type": "plain_text",
                     "text": self.placeholder_text,
                     "emoji": True,
-                }
-                # "initial_user": self.initial_user
-                # "action_id": self.action_id
+                },
+                "initial_user": self.initial_user,
+                "action_id": self.action_id,
             },
             "label": {"type": "plain_text", "text": self.label, "emoji": True},
         }
