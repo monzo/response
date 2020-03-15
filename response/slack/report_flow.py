@@ -96,20 +96,6 @@ def basic_report_capture(user_id, channel_id, report, trigger_id):
         )
     )
 
-    # msg.add_block(
-    #     block_kit.StaticSelectInput(
-    #         options=[
-    #             block_kit.StaticSelectOption("Critical", "critical"),
-    #             block_kit.StaticSelectOption("Major", "major"),
-    #             block_kit.StaticSelectOption("Minor", "minor"),
-    #             block_kit.StaticSelectOption("Trivial", "trivial"),
-    #         ],
-    #         label="Severity",
-    #         action_id="severity",
-    #         block_id="severity"
-    #     )
-    # )
-
     msg.open_modal(
         trigger_id, 
         "basic_report_capture", 
@@ -122,35 +108,135 @@ def basic_report_capture(user_id, channel_id, report, trigger_id):
 
 @view_handler("basic_report_capture")
 def basic_report_capture_submit(vc: ViewContext):
-    if "report_only" in vc.form_data and vc.form_data["report_only"] == "true":
-        report_only = True
-    else:
-        report_only = False
+    user_id = vc.user_id
+    channel_id = vc.private_metadata["channel_id"]
+    report = vc.form_data["report"]
+    trigger_id = vc.trigger_id
 
-    name = get_user_profile(vc.user_id)["name"]
+    # Fork into the report only flow here
+    if "report_only" in vc.form_data and vc.form_data["report_only"] == "true":
+        report_only_capture(user_id, channel_id, report, trigger_id)
+        return
+
+
+    name = get_user_profile(user_id)["name"]
     reporter, _ = ExternalUser.objects.get_or_create_slack(
         external_id=vc.user_id, display_name=name
     )
 
     Incident.objects.create_incident(
-        report=vc.form_data["report"],
+        report=report,
         reporter=reporter,
         report_time=datetime.now(),
-        report_only=report_only,
+        report_only=False,
         summary=vc.form_data["summary"],
         impact=vc.form_data["impact"],
     )
 
-    if report_only and hasattr(settings, "INCIDENT_REPORT_CHANNEL_ID"):
-        incidents_channel_ref = channel_reference(settings.INCIDENT_REPORT_CHANNEL_ID)
-    else:
-        incidents_channel_ref = channel_reference(settings.INCIDENT_CHANNEL_ID)
+    incidents_channel_ref = channel_reference(settings.INCIDENT_CHANNEL_ID)
 
     text = (
         f"Thanks for raising the incident 🙏\n\nHead over to {incidents_channel_ref} "
-        f"to complete the report and/or help deal with the issue"
+        "help deal with the issue"
     )
     
-    settings.SLACK_CLIENT.send_ephemeral_message(vc.private_metadata["channel_id"], vc.user_id, text)    
+    settings.SLACK_CLIENT.send_ephemeral_message(channel_id, vc.user_id, text)    
 
+
+
+def report_only_capture(user_id, channel_id, report, trigger_id):
+    msg = block_kit.Message()
+
+    msg.add_block(
+        block_kit.PlainTextInput(
+            label="Report",
+            placeholder_text="What's the tl;dr?",
+            initial_value=report,
+            action_id="report",
+            block_id="report",
+        )
+    )
+
+    msg.add_block(
+        block_kit.PlainTextInput(
+            label="Summary",
+            action_id="summary",
+            block_id="summary",
+            placeholder_text="Can you share any more details?",
+            multiline=True,
+        )
+    )
+
+    msg.add_block(
+        block_kit.Context("This should fully explain what's happened")
+    )
+
+    msg.add_block(
+        block_kit.PlainTextInput(
+            label="Impact",
+            action_id="impact",
+            block_id="impact",
+            placeholder_text="Who or what might be affected?",
+            multiline=True,
+        )
+    )
+
+    msg.add_block(
+        block_kit.Context("This should detail any impacted processes, people, or systems")
+    )
+
+    msg.add_block(
+        block_kit.StaticSelectInput(
+            options=[
+                block_kit.StaticSelectOption(sev.capitalize(), i) for i, sev in Incident.SEVERITIES
+            ],
+            label="Severity",
+            action_id="severity",
+            block_id="severity"
+        )
+    )
+
+    msg.open_modal(
+        trigger_id, 
+        "report_only_capture", 
+        "Report an Incident", 
+        "Report", 
+        "Cancel", 
+        private_metadata={"channel_id": channel_id},
+    )
+
+
+@view_handler("report_only_capture")
+def report_only_capture_submit(vc: ViewContext):
+    user_id = vc.user_id
+    channel_id = vc.private_metadata["channel_id"]
+    report = vc.form_data["report"]
+    time_now = datetime.now()
+
+    name = get_user_profile(user_id)["name"]
+    reporter, _ = ExternalUser.objects.get_or_create_slack(
+        external_id=vc.user_id, display_name=name
+    )
+
+    Incident.objects.create_incident(
+        report=report,
+        reporter=reporter,
+        lead=reporter,
+        report_time=time_now,
+        start_time=time_now,
+        end_time=time_now,
+        report_only=True,
+        summary=vc.form_data["summary"],
+        impact=vc.form_data["impact"],
+        severity=vc.form_data["severity"]
+    )
+
+    incidents_channel_ref = channel_reference(settings.INCIDENT_REPORT_CHANNEL_ID)
+    
+    text = (
+        f"Thanks for reporting the incident 🙏\n\nHead over to {incidents_channel_ref} "
+        f"if you need to make any changes."
+    )
+    
+    settings.SLACK_CLIENT.send_ephemeral_message(channel_id, vc.user_id, text)    
 
