@@ -101,12 +101,15 @@ urlpatterns = [
 - In the OAuth and Permissions page, scroll down to scopes.
 
 - Add the following scopes:
+  - `app_mentions:read`
   - `channels:history`
+  - `channels:join`
+  - `channels:manage`
   - `channels:read`
   - `channels:write`
-  - `reactions:write`
   - `chat:write:bot`
   - `chat:write:user`
+  - `reactions:write`
   - `users:read`
   - `users:read.email`
 

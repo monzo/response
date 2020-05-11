@@ -172,7 +172,6 @@ class SlackClient(object):
     def send_message(self, channel_id, text, attachments=None, thread_ts=None):
         return self.api_call(
             "chat.postMessage",
-            as_user=False,
             channel=channel_id,
             text=text,
             attachments=attachments,
@@ -182,7 +181,6 @@ class SlackClient(object):
     def send_ephemeral_message(self, channel_id, user_id, text, attachments=None):
         return self.api_call(
             "chat.postEphemeral",
-            as_user=False,
             channel=channel_id,
             text=text,
             user=user_id,
