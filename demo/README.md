@@ -17,21 +17,7 @@ Broadly speaking, this sets things up as below:
 
 ## 1. Create a Slack App
 
-- Navigate to [https://api.slack.com/apps](https://api.slack.com/apps) and click `Create New App`.
-- Give it a name, e.g. 'Response', and select the relevant workspace.
-
-- In the OAuth and Permissions page, scroll down to scopes.
-
-- Add the following scopes:
-  - `channels:history`
-  - `channels:read`
-  - `channels:write`
-  - `chat:write:bot`
-  - `chat:write:user`
-  - `users:read`
-  - `reactions:write`
-
-- At the top of the page, the `Install App to Workspace` button is now available.  Click it!
+Follow [these instructions](../docs/slack_app_create.md) to create a new Slack App.
 
 ## 2. Configure the demo app
 
@@ -41,31 +27,12 @@ $ cp env.example .env
 ```
 and update the variables in it:
 
-### OAuth Access Token (`SLACK_TOKEN`)
-
-Response needs an OAuth access token to use the Slack API.
-
-- Copy the token that starts `xoxp-...` from the OAuth & Permissions section of your Slack App and use it to set the `SLACK_TOKEN` variable.
-
-**Note:** Since some of the APIs commands we use require a _user_ token, we only need the token starting with `xoxp-...`.  If/when Slack allow these actions to be controlled by Bots, we can use the _bot_ token, starting `xoxb-...`.
-
-### Signing Secret (`SLACK_SIGNING_SECRET`)
-
-Response uses the Slack signing secret to restrict access to public endpoints.
-
-- Copy the Signing secret from the Basic Information page and use it to set the `SIGNING SECRET` variable.
-
-### Incident Channel (`INCIDENT_CHANNEL_NAME`)
-
-When an incident is declared, a 'headline' post is sent to a central channel.
-
-- The default channel is `incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else (note: do not include the #).
-
-### Bot Name (`INCIDENT_BOT_NAME`)
-
-We want to invite the Bot to all Incident Channels, so need to know its ID.
-
-- The default bot name is `incident` - change the `INCIDENT_BOT_NAME` if your app uses something different.
+| Environment Variable  | Descriptions |
+|---|---|
+| `SLACK_TOKEN`  |  Response needs an OAuth access token to use the Slack API.<br /><br />Copy the Bot Token that starts `xoxb-...` from the OAuth & Permissions section of your Slack App and use it to set the `SLACK_TOKEN` variable. |
+|  `SLACK_SIGNING_SECRET` | Response uses the Slack signing secret to restrict access to public endpoints.<br /><br />Copy the Signing secret from the Basic Information page and use it to set the `SIGNING SECRET` variable.  |
+| `INCIDENT_CHANNEL_NAME`  |  When an incident is declared, a 'headline' post is sent to a central channel.<br /><br />The default channel is `incidents` - change `INCIDENT_CHANNEL_NAME` if you want them to be sent somewhere else (note: do not include the #). |
+| `INCIDENT_BOT_NAME`  | We want to invite the Bot to all Incident Channels, so need to know its ID. You can find/configure this in the App Home section of the Slack App.<br /><br />The default bot name is `incident` - change the `INCIDENT_BOT_NAME` if your app uses something different.<br /><br />⚠️ If your chosen username has ever been used on your Slack workspace, Slack will silently change the underlying username and won't show you the actual name in use anywhere. The easiest way to find the exact name you need to use is to make the API call directly [here](https://api.slack.com/methods/users.list/test), using your bot token from above, and searching the response for you APP ID, which is shown in the Basic Info page.  |
 
 ## 3. Run Response
 
@@ -82,6 +49,12 @@ This starts the following containers:
 - cron: a container running cron, configured to hit an endpoint in Response every minute
 - ngrok: ngrok in a container, providing a public URL pointed at Response.
 
+
+You can tail the logs of all containers with:
+```
+docker-compose logs -f
+```
+
 Ngrok establishes a new, random, URL any time it starts.  You'll need this to complete the Slack app setup, so look for an entry like this and make note of the https://abc123.ngrok.io address - this is your public URL.
 
 ```
@@ -89,7 +62,7 @@ ngrok       | The ngrok tunnel is active
 ngrok       | https://6bb315c8.ngrok.io ---> response:8000
 ```
 
-If everything has started successfully, you should see logs resembling the following:
+If everything has started successfully, you should see logs that look like this:
 
 ```
 response    | Django version 2.1.7, using settings 'response.settings.dev'
@@ -101,7 +74,6 @@ response    | Quit the server with CONTROL-C.
 
 Head back to the Slack web UI and complete the configuration of your app, as [described here](../docs/slack_app_config.md).
 
-
 ## 5. Test it's working!
 
 In Slack, start an incident with `/incident Something's happened`.  You should see a post in your incidents channel!
@@ -109,5 +81,3 @@ In Slack, start an incident with `/incident Something's happened`.  You should s
 - Visit the incident doc by clicking the Doc link.
 - Create a comms channel by clicking the button.
 - In the comms channel check out the `@incident` commands.  You can find the ones available by entering `@incident help`.
-
-
