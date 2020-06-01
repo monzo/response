@@ -80,7 +80,7 @@ class CommsChannel(models.Model):
                 )
                 raise e
         else:
-            logger.info(f"Attempted to rename channel to nothing. No action take.")
+            logger.info("Attempted to rename channel to nothing. No action take.")
 
     def __str__(self):
         return self.incident.report
