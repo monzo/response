@@ -49,16 +49,25 @@
             {% endif %}
 
         </ul>
+        {% comment %} ----- Actions ----- {% endcomment %}
+        <h2>Actions</h2>
+        {% if actions %}
+        <ul>
+          {% for action in actions.all %}
+          <li>{{ action.details|unslackify|markdown_filter|safe }} </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
 
         {% comment %} ----- Timeline ----- {% endcomment %}
         <h2>Timeline</h2>
-        {% if events %}
+        {% if incident.timeline_events %}
         <div class="timeline">
-            {% for event in events.all %}
+            {% for event in incident.timeline_events.all %}
             <div class="container">
                 <div class="content">
-                    <strong>{{ event.icon|safe }}{{ event.timestamp|date:"H:i:s" }}</strong>
-                    {{ event|stringformat:'s'|unslackify|markdown_filter|safe  }}
+                    <strong>{{ event.timestamp|date:"H:i:s" }}</strong>
+                    {{ event.text|stringformat:'s'|unslackify|markdown_filter|safe  }}
                 </div>
             </div>
             {% endfor %}
