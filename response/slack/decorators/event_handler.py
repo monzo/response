@@ -48,7 +48,7 @@ def handle_event(payload):
 
     # ignore bot messages
     if event.get("subtype", None) == "bot_message":
-        logger.info(f"Ignoring bot message")
+        logger.info("Ignoring bot message")
         return
 
     # if it doesn't exist, error and return

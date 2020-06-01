@@ -82,7 +82,7 @@ def close_incident(incident: Incident, user_id: str, message: str):
     incident.end_time = datetime.now()
     incident.save()
 
-    comms_channel.post_in_channel(f"This incident has been closed! 📖 ⟶ 📕")
+    comms_channel.post_in_channel("This incident has been closed! 📖 ⟶ 📕")
 
     return True, None
 

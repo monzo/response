@@ -63,7 +63,7 @@ class SlackClient(object):
         return response
 
     def users_list(self):
-        logger.info(f"Listing Slack users")
+        logger.info("Listing Slack users")
         return self.api_call("users.list")
 
     def get_paginated_users(self, limit=0, cursor=None):
@@ -106,7 +106,7 @@ class SlackClient(object):
                 logger.info(f"get_channel_id - next_cursor == [{next_cursor}]")
             except LookupError:
                 logger.error(
-                    f"get_channel_id - I guess checking next_cursor in response object didn't work."
+                    "get_channel_id - I guess checking next_cursor in response object didn't work."
                 )
 
             for channel in response["channels"]:
@@ -146,7 +146,7 @@ class SlackClient(object):
             return response["channel"]["id"]
         except KeyError:
             raise SlackError(
-                f"Got unexpected response from Slack API for channels.create - couldn't find channel.id key"
+                "Got unexpected response from Slack API for channels.create - couldn't find channel.id key"
             )
 
     def get_or_create_channel(self, channel_name, auto_unarchive=False):
@@ -223,7 +223,7 @@ class SlackClient(object):
             return self.api_call("auth.test")["user_id"]
         except KeyError:
             raise SlackError(
-                f"Got unexpected response from Slack API for auth.test - couldn't find user_id key"
+                "Got unexpected response from Slack API for auth.test - couldn't find user_id key"
             )
 
     def invite_user_to_channel(self, user_id, channel_id):

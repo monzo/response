@@ -95,65 +95,18 @@ urlpatterns = [
 
 ## 1. Create a Slack App
 
-- Navigate to [https://api.slack.com/apps](https://api.slack.com/apps) and click `Create New App`.
-- Give it a name, e.g. 'Response', and select the relevant workspace.
-
-- In the OAuth and Permissions page, scroll down to scopes.
-
-- Add the following scopes:
-  - `app_mentions:read`
-  - `channels:history`
-  - `channels:join`
-  - `channels:manage`
-  - `channels:read`
-  - `channels:write`
-  - `chat:write:bot`
-  - `chat:write:user`
-  - `reactions:write`
-  - `users:read`
-  - `users:read.email`
-
-- At the top of the page, the `Install App to Workspace` button is now available.  Click it!
+Follow [these instructions](./docs/slack_app_create.md) to create a new Slack App.
 
 ## 2. Update your `settings.py`
 
-### Base site address (`SITE_URL`)
-
-Response needs to know where it is running in order to create links to the UI in Slack.  Whilst running locally, you might want this set to something like `http://localhost:8000`.
-
-### OAuth Access Token (`SLACK_TOKEN`)
-
-Response needs an OAuth access token to use the Slack API.
-
-- Copy the token that starts `xoxp-...` from the OAuth & Permissions section of your Slack App and use it to set the `SLACK_TOKEN` variable.
-
-**Note:** Since some of the APIs commands we use require a _user_ token, we only need the token starting with `xoxp-...`.  If/when Slack allow these actions to be controlled by Bots, we can use the _bot_ token, starting `xoxb-...`.
-
-### Slack Client (`SLACK_CLIENT`)
-
-Response needs a shared global instance of a Slack Client to talk to the Slack API. Typically this does not require any additional configuration.
-
-```python
-from response.slack.client import SlackClient
-SLACK_CLIENT = SlackClient(SLACK_TOKEN)
-```
-
-### Signing Secret (`SLACK_SIGNING_SECRET`)
-
-Response uses the Slack signing secret to restrict access to public endpoints.
-
-- Copy the Signing secret from the Basic Information page and use it to set the `SIGNING SECRET` variable.
-
-### Incident Channel and ID (`INCIDENT_CHANNEL_NAME`, `INCIDENT_CHANNEL_ID`)
-
-When an incident is declared, a 'headline' post is sent to a central channel.
-
-See the demo app for an example of how to get the incident channel ID from the Slack API.
-
-### Bot Name and ID (`INCIDENT_BOT_NAME`, `INCIDENT_BOT_ID`)
-
-We want to invite the Bot to all Incident Channels, so need to know its ID.
-
+| Environment Variable  | Descriptions |
+|---|---|
+| `SLACK_TOKEN`  | Response needs an OAuth access token to use the Slack API.<br /><br />Copy the Bot Token that starts `xoxb-...` from the OAuth & Permissions section of your Slack App and use it to set the `SLACK_TOKEN` variable.|
+| `SITE_URL`  | Response needs to know where it is running in order to create links to the UI in Slack.  Whilst running locally, you might want this set to something like `http://localhost:8000`. |
+| `SLACK_SIGNING_SECRET`  | Response uses the Slack signing secret to restrict access to public endpoints.<br /><br />Copy the Signing secret from the Basic Information page and use it to set the `SIGNING SECRET` variable. |
+| `INCIDENT_CHANNEL_ID`  | When an incident is declared, a 'headline' post is sent to a central channel.<br /><br />See the [demo app settings](./demo/demo/settings/dev.py) for an example of how to get the incident channel ID from the Slack API. |
+| `INCIDENT_BOT_ID`  | We want to invite the Bot to all Incident Channels, so need to know its ID.<br /><br />See the [demo app settings](./demo/demo/settings/dev.py) for an example of how to get the bot ID from the Slack API. |
+| `SLACK_CLIENT`  | Response needs a shared global instance of a Slack Client to talk to the Slack API. Typically this does not require any additional configuration. <br /><pre>from response.slack.client import SlackClient<br />SLACK_CLIENT = SlackClient(SLACK_TOKEN)</pre> |
 
 ## 3. Running the server
 

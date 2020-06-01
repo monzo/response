@@ -39,12 +39,6 @@ def handle_create_comms_channel(ac: ActionContext):
     except Exception as ex:
         logger.error(ex)
 
-    # Un-invite the user who owns the Slack token,
-    #   otherwise they'll be added to every incident channel
-    slack_token_owner = settings.SLACK_CLIENT.get_slack_token_owner()
-    if ac.incident.reporter != slack_token_owner:
-        settings.SLACK_CLIENT.leave_channel(comms_channel.channel_id)
-
     # Update the headline post to link to this
     headline_post = HeadlinePost.objects.get(incident=ac.incident)
     headline_post.comms_channel = comms_channel
