@@ -47,7 +47,7 @@ def handle_event(payload):
     logger.info(f"Handling Slack event {event} of type {event_type}")
 
     # ignore bot messages
-    if event.get("subtype", None) == "bot_message":
+    if event.get("subtype", None) == "bot_message" or event.get("bot_id", None):
         logger.info("Ignoring bot message")
         return
 
