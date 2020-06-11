@@ -20,9 +20,9 @@
         {% for incident in incidents %}
         <li>
           {{ incident.severity_emoji }}
-          <a href="/incident/{{incident.pk}}" target="_blank">Incident {{incident.pk}}&nbsp;</a>
+          <a href="{% url 'incident_doc' incident.pk %}" target="_blank">Incident {{ incident.pk }}&nbsp;</a>
           <span class="badge {{ incident.badge_type }} blink_me">{{ incident.status_text|upper }}</span>
-          - {{incident.report}}
+          - {{ incident.report }}
         </li>
         {% endfor %}
       </ul>
