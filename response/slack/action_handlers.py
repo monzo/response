@@ -1,8 +1,6 @@
 import logging
 from datetime import datetime
 
-from django.conf import settings
-
 from response.core.models.incident import Incident
 from response.slack.decorators import ActionContext, action_handler
 from response.slack.dialog_builder import (
@@ -30,14 +28,6 @@ def handle_create_comms_channel(ac: ActionContext):
         return
 
     comms_channel = CommsChannel.objects.create_comms_channel(ac.incident)
-
-    # Invite the bot to the channel
-    try:
-        settings.SLACK_CLIENT.invite_user_to_channel(
-            settings.INCIDENT_BOT_ID, comms_channel.channel_id
-        )
-    except Exception as ex:
-        logger.error(ex)
 
     # Update the headline post to link to this
     headline_post = HeadlinePost.objects.get(incident=ac.incident)
