@@ -93,7 +93,7 @@ class SlackClient(object):
 
         while next_cursor != "":
             response = self.api_call(
-                "channels.list",
+                "conversations.list",
                 exclude_archived=not auto_unarchive,
                 exclude_members=True,
                 limit=800,
@@ -141,12 +141,12 @@ class SlackClient(object):
         return None
 
     def create_channel(self, name):
-        response = self.api_call("channels.create", name=name)
+        response = self.api_call("conversations.create", name=name)
         try:
             return response["channel"]["id"]
         except KeyError:
             raise SlackError(
-                "Got unexpected response from Slack API for channels.create - couldn't find channel.id key"
+                "Got unexpected response from Slack API for conversations.create - couldn't find channel.id key"
             )
 
     def get_or_create_channel(self, channel_name, auto_unarchive=False):
@@ -161,11 +161,11 @@ class SlackClient(object):
 
     def set_channel_topic(self, channel_id, channel_topic):
         return self.api_call(
-            "channels.setTopic", channel=channel_id, topic=channel_topic
+            "conversations.setTopic", channel=channel_id, topic=channel_topic
         )
 
     def unarchive_channel(self, channel_id):
-        response = self.api_call("channels.unarchive", channel=channel_id)
+        response = self.api_call("conversations.unarchive", channel=channel_id)
         if not response.get("ok", False):
             raise SlackError(f"Couldn't unarchive channel {channel_id}")
 
@@ -227,13 +227,15 @@ class SlackClient(object):
             )
 
     def invite_user_to_channel(self, user_id, channel_id):
-        return self.api_call("channels.invite", user=user_id, channel=channel_id)
+        return self.api_call(
+            "conversations.invite", users=[user_id], channel=channel_id
+        )
 
     def join_channel(self, channel_id):
-        return self.api_call("channels.join", name=channel_id)
+        return self.api_call("conversations.join", channel=channel_id)
 
     def leave_channel(self, channel_id):
-        return self.api_call("channels.leave", channel=channel_id)
+        return self.api_call("conversations.leave", channel=channel_id)
 
     def get_user_profile(self, user_id):
         if not user_id:
@@ -268,7 +270,7 @@ class SlackClient(object):
 
         new_name = slugify(f"{prefix}{new_name}", max_length=80)
 
-        return self.api_call("channels.rename", channel=channel_id, name=new_name)
+        return self.api_call("conversations.rename", channel=channel_id, name=new_name)
 
     def dialog_open(self, dialog, trigger_id):
         return self.api_call("dialog.open", trigger_id=trigger_id, dialog=dialog)
