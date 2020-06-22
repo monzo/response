@@ -21,3 +21,8 @@ class ResponseConfig(AppConfig):
         site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
             site_settings, "RESPONSE_LOGIN_REQUIRED", True
         )
+
+        for template in site_settings.TEMPLATES:
+            context_processors = template.get("OPTIONS", {}).get("context_processors")
+            if context_processors:
+                context_processors.append("response.core.context_processors.site")
