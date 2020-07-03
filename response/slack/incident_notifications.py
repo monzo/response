@@ -23,7 +23,7 @@ def remind_incident_lead(incident: Incident):
         comms_channel = CommsChannel.objects.get(incident=incident)
         if not incident.lead:
             comms_channel.post_in_channel(
-                "👩‍🚒 This incident hasn't got a lead. Please set one with `@incident lead ...`"
+                "👩‍🚒 This incident doesn't have a lead. Please set one with `@incident lead ...`"
             )
     except CommsChannel.DoesNotExist:
         pass
