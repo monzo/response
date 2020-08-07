@@ -50,7 +50,7 @@ def slash_command(request):
             Text(
                 label="Report",
                 name="report",
-                placeholder="What's the tl;dr?",
+                placeholder="What's happened, in a sentence?",
                 value=report,
             )
         ],
