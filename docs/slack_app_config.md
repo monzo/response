@@ -4,7 +4,9 @@ The steps here outline how to complete the Slack side setup for Response.  The a
 
 ## Slash Command
 
-- In the Slash commands page click `Create New Command`.
+- In the Slash commands page on your app (something like: https://api.slack.com/apps/%YOUR-APP-ID%/slash-commands), click `Create New Command`.
+
+<img width="150px" src="./slack_command.png"><br />
 
 - Enter the following info:
   - Command:  `/incident`
