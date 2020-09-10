@@ -17,7 +17,7 @@ services:
       POSTGRES: "true"
     env_file: .env
     volumes:
-      - ./:/app
+      - ./:/app:z
       - ../:/response:z
       - pypd:/app/pypd
     stdin_open: true
