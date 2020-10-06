@@ -19,7 +19,7 @@ def update_user_cache(exclude_bots=False):
         logger.info(f"Updating {len(users)} users in the cache")
         with transaction.atomic():
             for user in users:
-                if exclude_bots and user["is_bot"].lower() == "true":
+                if exclude_bots and user["is_bot"]:
                     continue
                 ExternalUser.objects.update_or_create_slack(
                     external_id=user["id"],
