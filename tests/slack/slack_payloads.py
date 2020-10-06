@@ -74,7 +74,7 @@ users_list_response = {
             "is_primary_owner": "False",
             "is_restricted": "False",
             "is_ultra_restricted": "False",
-            "is_bot": "False",
+            "is_bot": "True",
             "updated": 1480527098,
             "has_2fa": "False",
         },

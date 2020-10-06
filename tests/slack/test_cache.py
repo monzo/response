@@ -24,6 +24,15 @@ def test_update_cache_from_empty(mock_slack):
 
 
 @pytest.mark.django_db
+def test_update_cache_excludes_bots(mock_slack):
+    mock_slack.get_paginated_users.return_value = users_list_response
+
+    update_user_cache(True)
+
+    assert len(ExternalUser.objects.all()) == 1
+
+
+@pytest.mark.django_db
 def test_update_cache_from_populated(mock_slack):
     mock_slack.get_paginated_users.return_value = users_list_response
 
