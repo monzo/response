@@ -1,6 +1,6 @@
 import random
 
-import factory
+import factory.django
 from django.db.models.signals import post_save
 from faker import Factory
 
@@ -12,13 +12,13 @@ from .action import ActionFactory
 faker = Factory.create()
 
 
-class CommsChannelFactory(factory.DjangoModelFactory):
+class CommsChannelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CommsChannel
 
 
 @factory.django.mute_signals(post_save)
-class IncidentFactory(factory.DjangoModelFactory):
+class IncidentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Incident
 

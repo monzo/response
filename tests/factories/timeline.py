@@ -1,6 +1,6 @@
 import random
 
-import factory
+import factory.django
 from faker import Factory
 
 from response.core.models import TimelineEvent
@@ -8,7 +8,7 @@ from response.core.models import TimelineEvent
 faker = Factory.create()
 
 
-class TimelineEventFactory(factory.DjangoModelFactory):
+class TimelineEventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TimelineEvent
 

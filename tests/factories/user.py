@@ -1,4 +1,4 @@
-import factory
+import factory.django
 from django.contrib.auth.models import User
 from faker import Factory
 
@@ -7,7 +7,7 @@ from response.core.models import ExternalUser
 faker = Factory.create()
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
@@ -15,7 +15,7 @@ class UserFactory(factory.DjangoModelFactory):
     password = factory.LazyFunction(faker.password)
 
 
-class ExternalUserFactory(factory.DjangoModelFactory):
+class ExternalUserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ExternalUser
 

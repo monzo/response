@@ -1,6 +1,6 @@
 import random
 
-import factory
+import factory.django
 from faker import Factory
 
 from response.core.models import Event
@@ -8,7 +8,7 @@ from response.core.models import Event
 faker = Factory.create()
 
 
-class EventFactory(factory.DjangoModelFactory):
+class EventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Event
 
