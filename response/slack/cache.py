@@ -9,7 +9,7 @@ from response.slack.client import SlackError
 logger = logging.getLogger(__name__)
 
 
-def update_user_cache():
+def update_user_cache(exclude_bots=False):
     cursor = None
     while cursor != "":
         response = settings.SLACK_CLIENT.get_paginated_users(limit=200, cursor=cursor)
@@ -19,6 +19,8 @@ def update_user_cache():
         logger.info(f"Updating {len(users)} users in the cache")
         with transaction.atomic():
             for user in users:
+                if exclude_bots and user["is_bot"]:
+                    continue
                 ExternalUser.objects.update_or_create_slack(
                     external_id=user["id"],
                     defaults={
