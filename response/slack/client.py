@@ -248,6 +248,7 @@ class SlackClient(object):
             "name": response["user"]["name"],
             "fullname": response["user"]["profile"]["real_name"],
             "email": response["user"]["profile"].get("email", None),
+            "deleted": response["user"]["deleted"],
         }
 
     def get_user_profile_by_email(self, email):
@@ -261,6 +262,7 @@ class SlackClient(object):
             "name": response["user"]["name"],
             "fullname": response["user"]["profile"]["real_name"],
             "email": email,
+            "deleted": response["user"]["deleted"],
         }
 
     def rename_channel(self, channel_id, new_name):

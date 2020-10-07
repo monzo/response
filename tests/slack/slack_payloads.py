@@ -5,7 +5,7 @@ users_list_response = {
             "id": "W012A3CDE",
             "team_id": "T012AB3C4",
             "name": "spengler",
-            "deleted": False,
+            "deleted": True,
             "color": "9f69e7",
             "real_name": "spengler",
             "tz": "America/Los_Angeles",

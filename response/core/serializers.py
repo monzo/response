@@ -11,7 +11,14 @@ from response.slack.reference_utils import slack_to_human_readable
 class ExternalUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalUser
-        fields = ("app_id", "external_id", "display_name", "full_name", "email")
+        fields = (
+            "app_id",
+            "external_id",
+            "display_name",
+            "full_name",
+            "email",
+            "deleted",
+        )
 
 
 class TimelineEventSerializer(serializers.ModelSerializer):
