@@ -1,0 +1,1 @@
+* * * * * wget -qO- $RESPONSE_URL/slack/cron_minute

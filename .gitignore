@@ -18,3 +18,4 @@ dist/
 .python-version
 
 .mypy_cache/
+env
