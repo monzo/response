@@ -19,6 +19,7 @@ INSTALL_REQUIRES = [
     "python-slugify>=1.2.6",
     "slackclient>=1.3,<2",
     "statuspageio>=0.0.1",
+    "psycopg2>=2.8.6"
 ]
 
 # allow setup.py to be run from any path
@@ -35,7 +36,7 @@ setup(
     version=VERSION,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude="demo"),
+    packages=find_packages(exclude="response-app"),
     install_requires=INSTALL_REQUIRES,
     package_dir={"response": "response"},
     python_requires=">3.6",
