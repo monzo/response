@@ -9,7 +9,9 @@ from response.slack.models import PinnedMessage, UserStats
 @response_login_required
 def home(request: HttpRequest):
     incidents = Incident.objects.all
-    return render(request, template_name="home.html", context={"incidents": incidents})
+    return render(
+        request, template_name="response/home.html", context={"incidents": incidents}
+    )
 
 
 @response_login_required
