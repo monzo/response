@@ -16,6 +16,7 @@ import os
 from django.core.exceptions import ImproperlyConfigured
 
 from response.slack.client import SlackClient
+from response.grafana.client import GrafanaClient
 
 logger = logging.getLogger(__name__)
 
@@ -197,3 +198,11 @@ SLACK_CLIENT = SlackClient(SLACK_TOKEN)
 # Whether to use https://pypi.org/project/bleach/ to strip potentially dangerous
 # HTML input in string fields
 RESPONSE_SANITIZE_USER_INPUT = True
+
+GRAFANA_URL = get_env_var("GRAFANA_URL", warn_only=True)
+GRAFANA_CLIENT = None
+if GRAFANA_URL:
+    GRAFANA_CLIENT = GrafanaClient(
+        GRAFANA_URL,
+        get_env_var("GRAFANA_TOKEN")
+    )

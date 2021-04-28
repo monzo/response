@@ -77,6 +77,8 @@ class Incident(models.Model):
         max_length=10, blank=True, null=True, choices=SEVERITIES
     )
 
+    grafana_annotation_id = models.PositiveIntegerField(null=True, blank=True)
+
     def __str__(self):
         return self.report
 
