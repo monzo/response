@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('response', '0017_externaluser_deleted'),
+        ("response", "0017_externaluser_deleted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='incident',
-            name='grafana_annotation_id',
+            model_name="incident",
+            name="grafana_annotation_id",
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
     ]

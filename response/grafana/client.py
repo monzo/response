@@ -1,4 +1,5 @@
 import logging
+
 import requests
 
 logger = logging.getLogger(__name__)
@@ -21,17 +22,19 @@ class GrafanaClient(object):
         payload = {
             "time": kwargs.get("time"),
             "tags": kwargs.get("tags"),
-            "text": kwargs.get("text")
+            "text": kwargs.get("text"),
         }
 
         headers = {
-            'Authorization': 'Bearer {}'.format(self.token),
-            'Content-Type': 'application/json'
+            "Authorization": "Bearer {}".format(self.token),
+            "Content-Type": "application/json",
         }
-        res = requests.post('{0}/api/{1}'.format(self.url, "annotations"),
-                            headers=headers,
-                            json=payload,
-                            verify=True)
+        res = requests.post(
+            "{0}/api/{1}".format(self.url, "annotations"),
+            headers=headers,
+            json=payload,
+            verify=True,
+        )
 
         result = res.json()
         res.close()
@@ -53,16 +56,20 @@ class GrafanaClient(object):
             payload["tags"] = tags
 
         headers = {
-            'Authorization': 'Bearer {}'.format(self.token),
-            'Content-Type': 'application/json'
+            "Authorization": "Bearer {}".format(self.token),
+            "Content-Type": "application/json",
         }
-        res = requests.patch('{0}/api/{1}/{2}'.format(self.url, "annotations", annotation_id),
-                             headers=headers,
-                             json=payload,
-                             verify=True)
+        res = requests.patch(
+            "{0}/api/{1}/{2}".format(self.url, "annotations", annotation_id),
+            headers=headers,
+            json=payload,
+            verify=True,
+        )
 
         result = res.json()
         res.close()
         if res.status_code == 200:
             return result
-        raise GrafanaError(f"Failed to update annotation: '{annotation_id}': '{result}'")
+        raise GrafanaError(
+            f"Failed to update annotation: '{annotation_id}': '{result}'"
+        )

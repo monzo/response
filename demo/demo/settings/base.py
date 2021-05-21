@@ -15,8 +15,8 @@ import os
 
 from django.core.exceptions import ImproperlyConfigured
 
-from response.slack.client import SlackClient
 from response.grafana.client import GrafanaClient
+from response.slack.client import SlackClient
 
 logger = logging.getLogger(__name__)
 
@@ -202,7 +202,4 @@ RESPONSE_SANITIZE_USER_INPUT = True
 GRAFANA_URL = get_env_var("GRAFANA_URL", warn_only=True)
 GRAFANA_CLIENT = None
 if GRAFANA_URL:
-    GRAFANA_CLIENT = GrafanaClient(
-        GRAFANA_URL,
-        get_env_var("GRAFANA_TOKEN")
-    )
+    GRAFANA_CLIENT = GrafanaClient(GRAFANA_URL, get_env_var("GRAFANA_TOKEN"))
