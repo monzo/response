@@ -1,14 +1,13 @@
 import logging
-from urllib.parse import urljoin
 
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.conf import settings
 
-from response.grafana.client import GrafanaClient
 from response.core.models import Incident
 
 logger = logging.getLogger(__name__)
+
 
 @receiver(post_save, sender=Incident)
 def update_grafana_annotation_after_incident_save(sender, instance: Incident, **kwargs):
@@ -30,6 +29,7 @@ def update_grafana_annotation_after_incident_save(sender, instance: Incident, **
             tags=tags
         )
 
+
 @receiver(pre_save, sender=Incident)
 def create_grafana_annotation_before_incident_save(sender, instance: Incident, **kwargs):
     """
@@ -46,4 +46,3 @@ def create_grafana_annotation_before_incident_save(sender, instance: Incident, *
 
         grafana_annotation = settings.GRAFANA_CLIENT.create_annotation(time=start_time, tags=tags, text=text)
         instance.grafana_annotation_id = grafana_annotation["id"]
-
