@@ -1,0 +1,98 @@
+{% load static %}
+{% load bootstrap4_alerts %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% block head %}
+    <title>
+      {% block title %}
+        Response
+      {% endblock %}
+    </title>
+
+    {% block favicon %}
+      <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+    {% endblock %}
+
+    {% block meta %}
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="Response">
+      <meta name="author" content="Monzo">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+    {% endblock %}
+
+    {% block static %}
+      <link rel="manifest" href="{% static 'manifest.json' %}">
+      <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+      <link href="{% static 'common.css' %}" rel="stylesheet">
+    {% endblock %}
+
+    {% block head_extra %}{% endblock %}
+  {% endblock %}
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  {% block navigation %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+      <div class="{% block navbar_container_class %}container{% endblock %}">
+        {% block navigation_brand %}
+          <a class="navbar-brand" href="/">
+            <img  id="logo" src="{% static 'images/response.png' %}" />
+            <strong>Response</strong>
+          </a>
+        {% endblock %}
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            {% block navigation_items %}{% endblock %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  {% endblock %}
+
+  <div class="{% block container_class %}container{% endblock %} mt-4 mb-4">
+
+    <!-- Django Messages -->
+    {% block messages %}
+      <div id="alerts" class="mt-4">
+        {% for message in messages %}
+          <div class="alert {{ message|bootstrap4_alert_class }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endblock %}
+
+    <!-- Page Content -->
+    {% block content %}{% endblock %}
+
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  {% block javascript %}
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    {% block javascript_extra %}{% endblock %}
+  {% endblock %}
+
+</body>
+
+</html>
