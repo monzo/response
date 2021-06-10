@@ -110,7 +110,7 @@ Follow [these instructions](./docs/slack_app_create.md) to create a new Slack Ap
 
 ## 3. Running the server
 
-Before you can complete the Slack app setup, you need to have the app running somewhere that's accesible to to the internet.  That means either deploying your Django project somewhere (see [here](https://lmgtfy.com/?q=deploy+django+app&s=) or running it locally and exposing with something like [ngrok](https://ngrok.com/).
+Before you can complete the Slack app setup, you need to have the app running somewhere that's accessible to the Internet.  That means either deploying your Django project somewhere (see [here](https://lmgtfy.com/?q=deploy+django+app&s=) or running it locally and exposing with something like [ngrok](https://ngrok.com/).
 
 For simplicity, we'll assume you're developing using ngrok.
 
