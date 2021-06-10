@@ -107,6 +107,7 @@ Follow [these instructions](./docs/slack_app_create.md) to create a new Slack Ap
 | `INCIDENT_CHANNEL_ID`  | When an incident is declared, a 'headline' post is sent to a central channel.<br /><br />See the [demo app settings](./demo/demo/settings/dev.py) for an example of how to get the incident channel ID from the Slack API. |
 | `INCIDENT_BOT_ID`  | We want to invite the Bot to all Incident Channels, so need to know its ID.<br /><br />See the [demo app settings](./demo/demo/settings/dev.py) for an example of how to get the bot ID from the Slack API. |
 | `SLACK_CLIENT`  | Response needs a shared global instance of a Slack Client to talk to the Slack API. Typically this does not require any additional configuration. <br /><pre>from response.slack.client import SlackClient<br />SLACK_CLIENT = SlackClient(SLACK_TOKEN)</pre> |
+|  `GRAFANA_URL`<br /> `GRAFANA_TOKEN`| (OPTIONAL) Send annotations to grafana<br />See [grafana annotations support](./docs/grafana_annoations_support.md). |
 
 ## 3. Running the server
 

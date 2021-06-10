@@ -18,6 +18,8 @@ class ResponseConfig(AppConfig):
 
         from .core import signals as core_signals  # noqa: F401
 
+        from .grafana import signals as grafana_signals  # noqa: F401
+
         site_settings.RESPONSE_LOGIN_REQUIRED = getattr(
             site_settings, "RESPONSE_LOGIN_REQUIRED", True
         )
