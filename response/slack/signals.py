@@ -67,104 +67,101 @@ def add_timeline_events(sender, instance: Incident, **kwargs):
         # Incident hasn't been saved yet, nothing to do here.
         return
 
-    if prev_state.lead != instance.lead:
-        update_incident_lead_event(prev_state, instance)
-
-    if prev_state.report != instance.report:
-        update_incident_report_event(prev_state, instance)
-
-    if prev_state.summary != instance.summary:
-        update_incident_summary_event(prev_state, instance)
-
-    if prev_state.impact != instance.impact:
-        update_incident_impact_event(prev_state, instance)
-
-    if prev_state.severity != instance.severity:
-        update_incident_severity_event(prev_state, instance)
-
-
-def update_incident_lead_event(prev_state, instance):
-    old_lead = None
-    if prev_state.lead:
-        old_lead = ExternalUserSerializer(prev_state.lead).data
-
-    new_lead = None
-    if instance.lead:
-        new_lead = ExternalUserSerializer(instance.lead).data
-
-    if prev_state.lead:
-        if instance.lead:
-            text = f"Incident lead changed from {prev_state.lead.display_name} to {instance.lead.display_name}"
+    for attr_name in instance.attributes:
+        if attr_name=="severity":
+            UpdateSeverityEvent(attr_name).update_incident_event(prev_state,instance)
+        elif attr_name=="lead":
+            UpdateLeadEvent(attr_name).update_incident_event(prev_state,instance)
         else:
-            text = f"{prev_state.lead.display_name} was removed as incident lead"
-
-    else:
-        text = f"{instance.lead.display_name} was added as incident lead"
-
-    add_incident_update_event(
-        incident=instance,
-        update_type="incident_lead",
-        text=text,
-        old_value=old_lead,
-        new_value=new_lead,
-    )
+            UpdateIncidentEvent(attr_name).update_incident_event(prev_state,instance)
 
 
-def update_incident_report_event(prev_state, instance):
-    add_incident_update_event(
-        incident=instance,
-        update_type="incident_report",
-        text=f'Incident report updated from "{prev_state.report}" to "{instance.report}"',
-        old_value=prev_state.report,
-        new_value=instance.report,
-    )
+#Generic handler for updating stat 
+class UpdateIncidentEvent():
+    def __init__(self,prev_state, instance, attr_name=""):
+        self.prev_state=prev_state
+        self.instance=instance
+        self.attr_name=attr_name
 
+    def getText(self):
+        text=f'Incident environment '
+        prev_attr=getattr(self.prev_state, self.attr_name)
+        inst_attr=getattr(self.instance, self.attr_name)
+        if prev_attr:
+            return text + f'updated from "{prev_attr}" to "{inst_attr}"'
+        else:
+            return text + f'added: "{inst_attr}"'
 
-def update_incident_summary_event(prev_state, instance):
-    if prev_state.summary:
-        text = f'Incident summary updated from "{prev_state.summary}" to "{instance.summary}"'
-    else:
-        text = f'Incident summary added: "{instance.summary}"'
+    def isUpdated(self):
+        return getattr(self.prev_state, self.attr_name) != getattr(self.instance, self.attr_name)
 
-    add_incident_update_event(
-        incident=instance,
-        update_type="incident_summary",
-        text=text,
-        old_value=prev_state.summary,
-        new_value=instance.summary,
-    )
+    def add_incident_event(
+            self,
+            incident=None,
+            update_type=None,
+            text=None,
+            old_value=None,
+            new_value=None
+        ):
+        #lets us override update_incident_event and pass in custom parameters
+        if not incident:
+            incident=self.instance
+        if not update_type:
+            update_type=self.attr_name
+        if not text:
+            text=self.getText()
+        if not old_value:
+            old_value=getattr(self.prev_state, self.attr_name)
+        if not new_value:
+            new_value=getattr(self.instance, self.attr_name)
 
-
-def update_incident_impact_event(prev_state, instance):
-    if prev_state.impact:
-        text = (
-            f'Incident impact updated from "{prev_state.impact}" to "{instance.impact}"'
+        add_incident_update_event(
+            incident=incident,
+            update_type=update_type,
+            text=text,
+            old_value=old_value,
+            new_value=new_value,
         )
-    else:
-        text = f'Incident impact added: "{instance.impact}"'
 
-    add_incident_update_event(
-        incident=instance,
-        update_type="incident_impact",
-        text=text,
-        old_value=prev_state.impact,
-        new_value=instance.impact,
-    )
+    def update_incident_event(self):
+        #to be overriden to add custom values
+        self.add_incident_event()     
 
 
-def update_incident_severity_event(prev_state, instance):
-    if prev_state.severity:
-        text = f"Incident severity updated from {prev_state.severity_text()} to {instance.severity_text()}"
-    else:
-        text = f"Incident severity set to {instance.severity_text()}"
+class UpdateLeadEvent(UpdateIncidentEvent):
 
-    add_incident_update_event(
-        incident=instance,
-        update_type="incident_severity",
-        text=text,
-        old_value={
-            "id": prev_state.severity,
-            "text": prev_state.severity_text() if prev_state else "",
-        },
-        new_value={"id": instance.severity, "text": instance.severity_text()},
-    )
+    def __init__(self, prev_state, instance, attr_name=""):
+        super.__init__(attr_name, prev_state, instance)
+
+    def update_incident_event(self):  
+        self.add_incident_event(
+            old_value=ExternalUserSerializer(self.prev_state.lead).data if self.prev_state.lead  else None,
+            new_value=ExternalUserSerializer(self.instance.lead).data if self.instance.lead  else None
+    )  
+
+    def getText(self):
+        if not self.prev_state.lead:
+            return f"{self.instance.lead.display_name} was added as incident lead" 
+        elif self.instance.lead:
+            return f"Incident lead changed from {self.prev_state.lead.display_name} to {self.instance.lead.display_name}"
+        else:
+            return f"{self.prev_state.lead.display_name} was removed as incident lead"
+
+
+class UpdateSeverityEvent(UpdateIncidentEvent):
+
+    def __init__(self, prev_state, instance, attr_name=""):
+        super.__init__(prev_state, instance, attr_name)
+
+    def update_incident_event(self):  
+        self.add_incident_event(
+            update_type="incident_severity",
+            old_value={
+                "id": self.prev_state.severity,
+                "text": self.prev_state.severity_text() if self.prev_state else "",
+            },
+            new_value={   
+                "id": self.instance.severity, 
+                "text": self.instance.severity_text()
+            }
+    )     
