@@ -1,3 +1,4 @@
+import json
 import os
 
 from .base import *  # noqa: F401, F403
@@ -47,6 +48,8 @@ LOGGING = {
 
 SLACK_TOKEN = get_env_var("SLACK_TOKEN")
 SLACK_SIGNING_SECRET = get_env_var("SLACK_SIGNING_SECRET")
+SLACK_EPHEMERAL_RESPONSES = json.loads(os.getenv("SLACK_EPHEMERAL_RESPONSES",
+                                                 "[]"))
 INCIDENT_CHANNEL_NAME = get_env_var("INCIDENT_CHANNEL_NAME")
 INCIDENT_REPORT_CHANNEL_NAME = get_env_var("INCIDENT_REPORT_CHANNEL_NAME")
 INCIDENT_BOT_NAME = get_env_var("INCIDENT_BOT_NAME")
