@@ -126,7 +126,14 @@ def handle_incident_command(command_name, message, thread_ts, channel_id, user_i
             react_not_ok(channel_id, thread_ts)
 
         if response:
-            settings.SLACK_CLIENT.send_message(comms_channel.channel_id, response)
+            if command_name in settings.SLACK_EPHEMERAL_RESPONSES:
+                settings.SLACK_CLIENT.send_ephemeral_message(
+                    channel_id,
+                    user_id,
+                    response
+                )
+            else:
+                settings.SLACK_CLIENT.send_message(comms_channel.channel_id, response)
 
     except CommsChannel.DoesNotExist:
         logger.error("No matching incident found for this channel")
