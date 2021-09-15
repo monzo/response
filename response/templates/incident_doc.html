@@ -15,7 +15,7 @@
         {% comment %} ----- Heading ----- {% endcomment %}
         <h1 class="mt-3" id="title"><a href="">Incident {{ incident.pk }}</a></h1>
         <div id="status"><strong class="{{ incident.status_text }} blink_me">{{ incident.status_text|upper }}</strong>
-        {% if incident.severity_text %}- {{ incident.severity_text|upper}} SEVERITY{% endif %}</div>
+        {% if incident.severity_text %}— {{ incident.severity_text|upper}} SEVERITY{% endif %}</div>
     </div>
 
     <div class="col-lg-12">
