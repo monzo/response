@@ -8,7 +8,7 @@
 #status .live {
   padding: 5px;
   background: red;
-  color: lightpink;
+  color: white;
   margin-right: 5px;
   animation: blinker 1s linear infinite;
 }
@@ -16,7 +16,7 @@
 #status .resolved {
   padding: 5px;
   background: green;
-  color: lightgreen;
+  color: white;
   margin-right: 5px;
 }
 
