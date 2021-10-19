@@ -19,7 +19,7 @@ If you're interested in how we use this tool at Monzo, there's an overview in [t
 
 # Try it out
 
-Response is a Django app which you can include in your project.  If you're just looking to give it a try, follow the instuctions for the [demo app](demo/README.md)!
+Response is a Django app which you can include in your project.  If you're just looking to give it a try, follow the instructions for the [demo app](demo/README.md)!
 
 ---
 
