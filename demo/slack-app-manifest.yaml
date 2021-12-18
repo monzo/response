@@ -1,0 +1,46 @@
+_metadata:
+  major_version: 1
+  minor_version: 1
+display_information:
+  name: Response
+features:
+  bot_user:
+    display_name: Response
+    always_online: true
+  slash_commands:
+    - command: /incident
+      url: https://*****.ngrok.io/slack/slash_command # docker logs ngrok
+      description: Trigger an incident
+      usage_hint: What's the problem?
+      should_escape: false
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:join
+      - channels:manage
+      - channels:read
+      - chat:write
+      - chat:write.public
+      - reactions:write
+      - users:read
+      - users:read.email
+      - commands
+      - pins:read
+settings:
+  event_subscriptions:
+    request_url: <Google Apps Script URL for respond the Slack Challenge Request>
+    bot_events:
+      - app_mention
+      - channel_rename
+      - message.channels
+      - pin_added
+      - pin_removed
+  interactivity:
+    is_enabled: true
+    request_url: https://*****.ngrok.io/slack/action
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
+

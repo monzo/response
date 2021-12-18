@@ -16,6 +16,14 @@ The steps here outline how to complete the Slack side setup for Response.  The a
 
 **Important** You need to have the server running and available to setup events, as Slack sends a challenge request to this address and expects a specific response.
 
+For example, Google Apps Script.
+```js
+function doPost(e){
+  var params = JSON.parse(e.postData.getDataAsString());
+  return ContentService.createTextOutput(params.challenge);
+}
+```
+
 In the Event Subscriptions page we need to configure the following:
 
 - Toggle `Enable Events` to On
@@ -32,6 +40,10 @@ In the Event Subscriptions page we need to configure the following:
 
 - In the Interactive Components page, enable and set the URL to `https://<public-url>/slack/action`.
 
+
+## Example
+
+[Example of a Slack App Manifest](../demo/slack-app-manifest.yaml)
 
 ## Reinstall App
 
