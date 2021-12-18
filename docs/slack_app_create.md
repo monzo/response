@@ -16,5 +16,9 @@
   - `reactions:write`
   - `users:read`
   - `users:read.email`
+  - `commands`
+  - `pins:read`
 
 - At the top of the page, the `Install App to Workspace` button is now available.  Click it!
+
+[Example of a Slack App Manifest](../demo/slack-app-manifest.yaml)
